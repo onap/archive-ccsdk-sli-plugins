@@ -19,18 +19,41 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.restapicall;
+package org.onap.ccsdk.restapicall;
 
-public enum Format {
-    JSON, XML;
+public class RetryPolicy {
+    private String[] hostnames;
+    private Integer maximumRetries;  
 
-    public static Format fromString(String s) {
-        if (s == null)
-            return null;
-        if (s.equalsIgnoreCase("json"))
-            return JSON;
-        if (s.equalsIgnoreCase("xml"))
-            return XML;
-        throw new IllegalArgumentException("Invalid value for format: " + s);
+    public Integer getMaximumRetries() {
+        return maximumRetries;
     }
+    
+    public String getNextHostName(String uri) throws RetryException {
+        Integer position = null;
+
+        for (int i = 0; i < hostnames.length; i++) {
+            if (uri.contains(hostnames[i])) {
+                position = i;
+                break;
+            }
+        }
+
+        if(position == null){
+            throw new RetryException("No match found for the provided uri[" + uri + "] so the next host name could not be retreived");
+        }
+        position++;
+
+        if (position > hostnames.length - 1) {
+            position = 0;
+        }
+        return hostnames[position];
+    }
+
+    public RetryPolicy(String[] hostnames, Integer maximumRetries){
+        this.hostnames = hostnames;
+        this.maximumRetries = maximumRetries;
+    }
+    
+
 }

@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.restapicall;
+package org.onap.ccsdk.restapicall;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -27,6 +27,6 @@
        http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<service ref="propertiesNode" interface="org.openecomp.sdnc.prop.PropertiesNode" />
+	<service ref="propertiesNode" interface="org.onap.ccsdk.prop.PropertiesNode" />
 
 </beans:beans>

@@ -34,7 +34,7 @@
 		<feature>spring-dm</feature>
 		<bundle>mvn:com.sun.jersey/jersey-client/${jersey.version}</bundle>
 		<bundle>mvn:org.codehaus.jettison/jettison/${jettison.version}</bundle>
-		<bundle>mvn:org.openecomp.sdnc.plugins/restapi-call-node-provider/${project.version}</bundle>
+		<bundle>mvn:org.onap.ccsdk.plugins/restapi-call-node-provider/${project.version}</bundle>
 	</feature>
 
 </features>

@@ -19,13 +19,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.restapicall;
+package org.onap.ccsdk.restapicall;
 
-import javax.ws.rs.core.MultivaluedMap;
+public class RetryException extends Exception {
 
-public class HttpResponse {
-    public int code;
-    public String message;
-    public String body;
-    public MultivaluedMap<String, String> headers;
+    public RetryException(String message) {
+        super(message);
+    }
+
 }

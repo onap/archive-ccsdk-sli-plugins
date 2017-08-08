@@ -85,7 +85,7 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>org.onap.ccsdk.sli.restapicall</Bundle-SymbolicName>
-						<Export-Package>org.openecomp.sdnc.restapicall</Export-Package>
+						<Export-Package>org.onap.ccsdk.restapicall</Export-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
 
