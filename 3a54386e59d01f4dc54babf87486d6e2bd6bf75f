@@ -1,0 +1,694 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a1a2d67_d0541d23",
+        "filename": "properties-node/features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "Should we update this as well?",
+      "range": {
+        "startLine": 30,
+        "startChar": 16,
+        "endLine": 30,
+        "endChar": 71
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_b031a10d",
+        "filename": "properties-node/features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "According to https://jira.onap.org/browse/CCSDK-21 I believe this should be onap.ccsdk.sli.plugins/*",
+      "range": {
+        "startLine": 35,
+        "startChar": 14,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_50400d56",
+        "filename": "properties-node/provider/src/main/java/org/onap/ccsdk/prop/PropertiesNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be onap.ccsdk.sli.plugins.prop ?",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_302591c2",
+        "filename": "properties-node/provider/src/main/resources/META-INF/spring/properties-node-context.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 29,
+        "startChar": 34,
+        "endLine": 29,
+        "endChar": 53
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_102295b9",
+        "filename": "restapi-call-node/features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 30,
+        "startChar": 16,
+        "endLine": 30,
+        "endChar": 75
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_f02ef9a4",
+        "filename": "restapi-call-node/features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 37,
+        "startChar": 13,
+        "endLine": 37,
+        "endChar": 36
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_d02bfd92",
+        "filename": "restapi-call-node/provider/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 88,
+        "startChar": 22,
+        "endLine": 88,
+        "endChar": 36
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_b0188185",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/Format.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 34
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_901d8576",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/HttpMethod.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 35
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_7012e963",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/HttpResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 34
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_5017ed51",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/JsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_300c7142",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/Parameters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_f005d914",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/RestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 33
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_d002dd0a",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/RetryException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 23
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_abfff400",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/RetryPolicy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 23
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_8b043816",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/RetryPolicyStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_6b09dc2b",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/XmlJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_4b0e2036",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/restapicall/XmlParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_2b13e45d",
+        "filename": "restapi-call-node/provider/src/main/resources/META-INF/spring/restapi-call-node-context.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 41,
+        "startChar": 35,
+        "endLine": 41,
+        "endChar": 49
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_0b10284d",
+        "filename": "restapi-call-node/provider/src/main/resources/META-INF/spring/restapi-call-node-context.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 46,
+        "startChar": 36,
+        "endLine": 46,
+        "endChar": 50
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_eb1ccc6c",
+        "filename": "restapi-call-node/provider/src/main/resources/META-INF/spring/restapi-call-node-osgi-context.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 30,
+        "startChar": 43,
+        "endLine": 30,
+        "endChar": 58
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_cb19107b",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 31
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_ab26d4b8",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestJsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 32,
+        "startChar": 7,
+        "endLine": 32,
+        "endChar": 29
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_8b2b1882",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestRestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 22,
+        "startChar": 8,
+        "endLine": 22,
+        "endChar": 28
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_6b20bc9b",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestRestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 28,
+        "startChar": 6,
+        "endLine": 28,
+        "endChar": 35
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_4b2500aa",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestXmlJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 22,
+        "startChar": 10,
+        "endLine": 22,
+        "endChar": 28
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_2b3ac4cd",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestXmlJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 29,
+        "startChar": 7,
+        "endLine": 29,
+        "endChar": 23
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_0b3708e5",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestXmlParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 22,
+        "startChar": 14,
+        "endLine": 22,
+        "endChar": 28
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_eb33acf4",
+        "filename": "restapi-call-node/provider/src/test/java/jtest/org/onap/ccsdk/restapicall/TestXmlParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "same",
+      "range": {
+        "startLine": 34,
+        "startChar": 6,
+        "endLine": 34,
+        "endChar": 31
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a1a2d67_cb30f0ea",
+        "filename": "restapi-call-node/provider/src/test/resources/test.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-08T21:47:59Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 26,
+        "startChar": 11,
+        "endLine": 26,
+        "endChar": 24
+      },
+      "revId": "3a54386e59d01f4dc54babf87486d6e2bd6bf75f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
