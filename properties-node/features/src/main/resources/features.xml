@@ -32,7 +32,7 @@
 		<feature version="${sdnctl.sli.version}">sdnc-sli</feature>
 		<feature>spring</feature>
 		<feature>spring-dm</feature>
-		<bundle>mvn:org.openecomp.sdnc.plugins/properties-node-provider/${project.version}
+		<bundle>mvn:org.onap.ccsdk.sli.plugins/properties-node-provider/${project.version}
 		</bundle>
 	</feature>
 

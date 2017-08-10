@@ -13,11 +13,11 @@
 
   <profiles>
     <profile>
-      <id>openecomp-release</id>
+      <id>onap-release</id>
       <repositories>
         <repository>
-          <id>openecomp-release</id>
-          <name>openecomp-release</name>
+          <id>onap-release</id>
+          <name>onap-release</name>
           <url>https://ecomp-nexus:8443/repository/maven-releases/</url>
           <releases>
             <enabled>true</enabled>
@@ -30,8 +30,8 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>openecomp-release</id>
-          <name>openecomp-release</name>
+          <id>onap-release</id>
+          <name>onap-release</name>
           <url>https://ecomp-nexus:8443/repository/maven-releases/</url>
           <releases>
             <enabled>true</enabled>
@@ -45,11 +45,11 @@
     </profile>
 
     <profile>
-      <id>openecomp-snapshots</id>
+      <id>onap-snapshots</id>
       <repositories>
         <repository>
-          <id>openecomp-snapshot</id>
-          <name>openecomp-snapshot</name>
+          <id>onap-snapshot</id>
+          <name>onap-snapshot</name>
           <url>https://ecomp-nexus:8443/repository/maven-snapshots/</url>
           <releases>
             <enabled>false</enabled>
@@ -61,8 +61,8 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>openecomp-snapshot</id>
-          <name>openecomp-snapshot</name>
+          <id>onap-snapshot</id>
+          <name>onap-snapshot</name>
           <url>https://ecomp-nexus:8443/repository/maven-snapshots/</url>
           <releases>
             <enabled>false</enabled>
@@ -137,8 +137,8 @@
   </profiles>
 
   <activeProfiles>
-    <activeProfile>openecomp-release</activeProfile>
-    <activeProfile>openecomp-snapshots</activeProfile>
+    <activeProfile>onap-release</activeProfile>
+    <activeProfile>onap-snapshots</activeProfile>
     <activeProfile>opendaylight-release</activeProfile>
     <activeProfile>opendaylight-snapshots</activeProfile>
   </activeProfiles>
@@ -150,12 +150,12 @@
     <password>PASSWORD</password>
    </server>
    <server> 
-    <id>openecomp-release</id> 
+    <id>onap-release</id> 
     <username>USERNAME</username> 
     <password>PASSWORD</password> 
    </server> 
    <server> 
-    <id>openecomp-snapshot</id> 
+    <id>onap-snapshot</id> 
          <username>USERNAME</username> 
     <password>PASSWORD</password> 
    </server> 

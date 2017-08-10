@@ -14,33 +14,33 @@
 	<artifactId>sdnc-plugins</artifactId>
 
 	<name>SDN-C Java Plugins</name>
-	<url>https://wiki.openecomp.org</url>
+	<url>https://wiki.onap.org</url>
 	<description>The SDN-C core components contains the SLI, dblib and root pom</description>
 
 
 	<issueManagement>
 		<system>JIRA</system>
-		<url>https://jira.openecomp.org/</url>
+		<url>https://jira.onap.org/</url>
 	</issueManagement>
 
 
 	<scm>
-		<connection>scm:git:ssh://git@${openecomp.git.host}/sdnc-plugins.git</connection>
-		<developerConnection>scm:git:ssh://${openecomp.git.host}:${openecomp.git.port}/${openecomp.git.project}/sdnc-iplugins.git</developerConnection>
-		<url>${openecomp.git.protocol}://${openecomp.git.host}/projects/${openecomp.git.project}/repos/sdnc-plugins/browse</url>
+		<connection>scm:git:ssh://git@${onap.git.host}/ccsdk/sli/plugins.git</connection>
+		<developerConnection>scm:git:ssh://${onap.git.host}:${onap.git.port}/${onap.git.project}/ccsdk/sli/plugins.git</developerConnection>
+		<url>${onap.git.protocol}://${onap.git.host}/projects/${onap.git.project}/repos/ccsdk/sli/plugins/browse</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<ciManagement>
 		<system>Jenkins</system>
-		<url>https://jenkins.openecomp.org</url>
+		<url>https://jenkins.onap.org</url>
 	</ciManagement>
 
 
 	<distributionManagement>
 		<site>
 			<id>sdnc-javadoc</id>
-			<url>dav:https://${openecomp.nexus.host}/content/sites/site/org/onap/sdnc/plugins/${project.artifactId}/${project.version}</url>
+			<url>dav:https://${onap.nexus.host}/content/sites/site/org/onap/sdnc/plugins/${project.artifactId}/${project.version}</url>
 		</site>
 	</distributionManagement>
 
@@ -97,9 +97,9 @@
 				<version>1.6.7</version>
 				<extensions>true</extensions>
 				<configuration>
-					<nexusUrl>https://${openecomp.nexus.host}</nexusUrl>
-					<stagingProfileId>${openecomp.nexus.staging.profile-id}</stagingProfileId>
-					<serverId>${openecomp.nexus.staging.server-id}</serverId>
+					<nexusUrl>https://${onap.nexus.host}</nexusUrl>
+					<stagingProfileId>${onap.nexus.staging.profile-id}</stagingProfileId>
+					<serverId>${onap.nexus.staging.server-id}</serverId>
 				</configuration>
 			</plugin>
 		</plugins>

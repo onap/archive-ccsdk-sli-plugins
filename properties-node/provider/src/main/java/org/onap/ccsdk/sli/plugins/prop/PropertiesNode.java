@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.prop;
+package org.onap.ccsdk.sli.plugins.prop;
 
 import java.io.FileInputStream;
 import java.io.IOException;

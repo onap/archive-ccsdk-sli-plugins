@@ -27,6 +27,6 @@
        http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<service ref="restapiCallNode" interface="org.openecomp.sdnc.restapicall.RestapiCallNode" />
+	<service ref="restapiCallNode" interface="org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode" />
 
 </beans:beans>

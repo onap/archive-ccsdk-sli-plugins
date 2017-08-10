@@ -23,7 +23,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.openecomp.sdnctl</groupId>
+		<groupId>org.onap.ccsdk.sli.plugins</groupId>
 		<artifactId>restapi-call-node</artifactId>
 		<version>6.0.0-SNAPSHOT</version>
 	</parent>
@@ -47,12 +47,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.sdnctl</groupId>
+			<groupId>org.onap.ccsdk.sli</groupId>
 			<artifactId>sli-common</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.openecomp.sdnctl</groupId>
+			<groupId>org.onap.ccsdk.sli</groupId>
 			<artifactId>sli-provider</artifactId>
 			<scope>compile</scope>
 		</dependency>
@@ -99,7 +99,7 @@
 				<groupId>com.brocade.developer</groupId>
 				<artifactId>providermodule-plugin</artifactId>
 				<configuration>
-					<packageId>org.openecomp.sdnctl</packageId>
+					<packageId>org.onap.ccsdk.sli.plugins</packageId>
 					<appName>restapi-call-node</appName>
 				</configuration>
 				<executions>
@@ -119,8 +119,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>org.openecomp.sdnc.restapicall</Bundle-SymbolicName>
-						<Export-Package>org.openecomp.sdnc.restapicall</Export-Package>
+						<Bundle-SymbolicName>org.onap.ccsdk.sli.plugins.restapicall</Bundle-SymbolicName>
+						<Export-Package>org.onap.ccsdk.sli.plugins.restapicall</Export-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
 

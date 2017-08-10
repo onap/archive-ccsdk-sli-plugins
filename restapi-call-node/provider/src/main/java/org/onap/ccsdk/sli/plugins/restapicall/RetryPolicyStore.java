@@ -19,24 +19,36 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.restapicall;
+package org.onap.ccsdk.sli.plugins.restapicall;
 
-public enum HttpMethod {
-    GET, POST, PUT, DELETE, PATCH;
+import java.util.HashMap;
 
-    public static HttpMethod fromString(String s) {
-        if (s == null)
-            return null;
-        if (s.equalsIgnoreCase("get"))
-            return GET;
-        if (s.equalsIgnoreCase("post"))
-            return POST;
-        if (s.equalsIgnoreCase("put"))
-            return PUT;
-        if (s.equalsIgnoreCase("delete"))
-            return DELETE;
-        if (s.equalsIgnoreCase("patch"))
-            return PATCH;
-        throw new IllegalArgumentException("Invalid value for HTTP Method: " + s);
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class RetryPolicyStore {
+    private static final Logger log = LoggerFactory.getLogger(RetryPolicyStore.class);
+
+    HashMap<String, RetryPolicy> retryPolicies;
+    public String proxyServers;
+
+    public String getProxyServers() {
+        return proxyServers;
     }
+
+    public void setProxyServers(String admServers) {
+        this.proxyServers = admServers;
+        String[] adminServersArray = admServers.split(",");
+        RetryPolicy adminPortalRetry = new RetryPolicy(adminServersArray, adminServersArray.length);
+        retryPolicies.put("dme2proxy", adminPortalRetry);
+    }
+
+    public RetryPolicyStore() {
+        retryPolicies = new HashMap<String, RetryPolicy>();
+    }
+    
+    public RetryPolicy getRetryPolicy(String policyName) {
+        return (this.retryPolicies.get(policyName));
+    }
+
 }

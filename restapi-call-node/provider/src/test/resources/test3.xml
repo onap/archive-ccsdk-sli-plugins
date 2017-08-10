@@ -20,8 +20,8 @@
   ============LICENSE_END=========================================================
   -->
 
-<ApplyGroupResponse xmlns="http://openecomp.org/vpn/schema/v1"
-	xmlns:ns2="http://openecomp.org/prov/vpn/schema/v2">
+<ApplyGroupResponse xmlns="http://onap.org/vpn/schema/v1"
+	xmlns:ns2="http://onap.org/prov/vpn/schema/v2">
 	<ApplyGroupResponseData>
 		<ServiceInstanceId>ICOREPVC-81114561</ServiceInstanceId>
 		<VrfDetails>

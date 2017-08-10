@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.restapicall;
+package org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

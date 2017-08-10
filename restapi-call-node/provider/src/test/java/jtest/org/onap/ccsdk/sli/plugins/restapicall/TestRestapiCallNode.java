@@ -19,14 +19,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.openecomp.sdnc.restapicall;
+package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.openecomp.sdnc.restapicall.RestapiCallNode;
+import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
