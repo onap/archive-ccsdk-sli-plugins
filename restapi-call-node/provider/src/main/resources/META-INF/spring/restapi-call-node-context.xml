@@ -25,25 +25,25 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
         
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-	        <property name="locations">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="locations">
             <list>
                 <value>file:${SDNC_CONFIG_DIR}/ueb.properties</value>
                 <value>file:${SDNC_CONFIG_DIR}/dme2.properties</value>
             </list>
         </property> 
-		<property name="ignoreResourceNotFound" value="true" />
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-	</bean>
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean>
 
-	<!-- context:property-placeholder location="file:${SDNC_CONFIG_DIR}/ueb.properties" /-->
+    <!-- context:property-placeholder location="file:${SDNC_CONFIG_DIR}/ueb.properties" /-->
 
-	<bean id="restapiCallNode" class="org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode">
-		<property name="uebServers" value="${servers}" />
-		<property name="retryPolicyStore" ref="retryPolicyStore"/>
-	</bean>
+    <bean id="restapiCallNode" class="org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode">
+        <property name="uebServers" value="${servers}" />
+        <property name="retryPolicyStore" ref="retryPolicyStore"/>
+    </bean>
 
-	<bean id="retryPolicyStore" class="org.onap.ccsdk.sli.plugins.restapicall.RetryPolicyStore">
-		<property name="proxyServers" value="${proxyUrl}" />
-	</bean>
+    <bean id="retryPolicyStore" class="org.onap.ccsdk.sli.plugins.restapicall.RetryPolicyStore">
+        <property name="proxyServers" value="${proxyUrl}" />
+    </bean>
 </beans>

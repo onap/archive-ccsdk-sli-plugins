@@ -34,52 +34,52 @@ import org.slf4j.LoggerFactory;
 
 public class JsonParser {
 
-	private static final Logger log = LoggerFactory.getLogger(JsonParser.class);
+    private static final Logger log = LoggerFactory.getLogger(JsonParser.class);
 
-	@SuppressWarnings("unchecked")
-	public static Map<String, String> convertToProperties(String s) throws JSONException {
-		JSONObject json = new JSONObject(s);
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> convertToProperties(String s) throws JSONException {
+        JSONObject json = new JSONObject(s);
 
-		Map<String, Object> wm = new HashMap<String, Object>();
-		Iterator<String> ii = json.keys();
-		while (ii.hasNext()) {
-			String key1 = ii.next();
-			wm.put(key1, json.get(key1));
-		}
+        Map<String, Object> wm = new HashMap<String, Object>();
+        Iterator<String> ii = json.keys();
+        while (ii.hasNext()) {
+            String key1 = ii.next();
+            wm.put(key1, json.get(key1));
+        }
 
-		Map<String, String> mm = new HashMap<String, String>();
+        Map<String, String> mm = new HashMap<String, String>();
 
-		while (!wm.isEmpty())
-			for (String key : new ArrayList<>(wm.keySet())) {
-				Object o = wm.get(key);
-				wm.remove(key);
+        while (!wm.isEmpty())
+            for (String key : new ArrayList<>(wm.keySet())) {
+                Object o = wm.get(key);
+                wm.remove(key);
 
-				if (o instanceof Boolean || o instanceof Number || o instanceof String) {
-					mm.put(key, o.toString());
+                if (o instanceof Boolean || o instanceof Number || o instanceof String) {
+                    mm.put(key, o.toString());
 
-					log.info("Added property: " + key + ": " + o.toString());
-				}
+                    log.info("Added property: " + key + ": " + o.toString());
+                }
 
-				else if (o instanceof JSONObject) {
-					JSONObject jo = (JSONObject) o;
-					Iterator<String> i = jo.keys();
-					while (i.hasNext()) {
-						String key1 = i.next();
-						wm.put(key + "." + key1, jo.get(key1));
-					}
-				}
+                else if (o instanceof JSONObject) {
+                    JSONObject jo = (JSONObject) o;
+                    Iterator<String> i = jo.keys();
+                    while (i.hasNext()) {
+                        String key1 = i.next();
+                        wm.put(key + "." + key1, jo.get(key1));
+                    }
+                }
 
-				else if (o instanceof JSONArray) {
-					JSONArray ja = (JSONArray) o;
-					mm.put(key + "_length", String.valueOf(ja.length()));
+                else if (o instanceof JSONArray) {
+                    JSONArray ja = (JSONArray) o;
+                    mm.put(key + "_length", String.valueOf(ja.length()));
 
-					log.info("Added property: " + key + "_length" + ": " + String.valueOf(ja.length()));
+                    log.info("Added property: " + key + "_length" + ": " + String.valueOf(ja.length()));
 
-					for (int i = 0; i < ja.length(); i++)
-						wm.put(key + '[' + i + ']', ja.get(i));
-				}
-			}
+                    for (int i = 0; i < ja.length(); i++)
+                        wm.put(key + '[' + i + ']', ja.get(i));
+                }
+            }
 
-		return mm;
-	}
+        return mm;
+    }
 }
