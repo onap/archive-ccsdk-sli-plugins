@@ -35,31 +35,33 @@ import org.slf4j.LoggerFactory;
 
 public class TestJsonParser {
 
-	private static final Logger log = LoggerFactory.getLogger(TestJsonParser.class);
+    private static final Logger log = LoggerFactory.getLogger(TestJsonParser.class);
 
-	@Test
-	public void test() throws Exception {
-		BufferedReader in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("test.json")));
-		String ss = "";
-		String line = null;
-		while ((line = in.readLine()) != null)
-			ss += line + '\n';
+    @Test
+    public void test() throws Exception {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(ClassLoader.getSystemResourceAsStream("test.json"))
+        );
+        String ss = "";
+        String line = null;
+        while ((line = in.readLine()) != null)
+            ss += line + '\n';
 
-		Map<String, String> mm = JsonParser.convertToProperties(ss);
+        Map<String, String> mm = JsonParser.convertToProperties(ss);
 
-		logProperties(mm);
+        logProperties(mm);
 
-		in.close();
-	}
+        in.close();
+    }
 
-	private void logProperties(Map<String, String> mm) {
-		List<String> ll = new ArrayList<>();
-		for (Object o : mm.keySet())
-			ll.add((String) o);
-		Collections.sort(ll);
+    private void logProperties(Map<String, String> mm) {
+        List<String> ll = new ArrayList<>();
+        for (Object o : mm.keySet())
+            ll.add((String) o);
+        Collections.sort(ll);
 
-		log.info("Properties:");
-		for (String name : ll)
-			log.info("--- " + name + ": " + mm.get(name));
-	}
+        log.info("Properties:");
+        for (String name : ll)
+            log.info("--- " + name + ": " + mm.get(name));
+    }
 }

@@ -20,13 +20,13 @@
  */
 
 {
-	"event":{
-		"header":{
-			"eventSource":"sdn-c"
-		},
-		"body":
+    "event":{
+        "header":{
+            "eventSource":"sdn-c"
+        },
+        "body":
 
 ${rootVarName}
 
-	}
+    }
 }

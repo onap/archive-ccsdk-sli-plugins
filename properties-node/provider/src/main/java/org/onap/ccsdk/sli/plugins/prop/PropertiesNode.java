@@ -35,63 +35,63 @@ import org.slf4j.LoggerFactory;
 
 public class PropertiesNode implements SvcLogicJavaPlugin {
 
-	private static final Logger log = LoggerFactory.getLogger(PropertiesNode.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertiesNode.class);
 
-	public void readProperties(Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException {
-		String fileName = parseParam(paramMap, "fileName", true, null);
-		String contextPrefix = parseParam(paramMap, "contextPrefix", false, null);
+    public void readProperties(Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException {
+        String fileName = parseParam(paramMap, "fileName", true, null);
+        String contextPrefix = parseParam(paramMap, "contextPrefix", false, null);
 
-		try {
-			Properties pp = new Properties();
-			InputStream in = new FileInputStream(fileName);
-			pp.load(in);
-			for (Object key : pp.keySet()) {
-				String pfx = contextPrefix != null ? contextPrefix + '.' : "";
-				String name = (String) key;
-				String value = pp.getProperty(name);
-				if (value != null && value.trim().length() > 0) {
-					ctx.setAttribute(pfx + name, value.trim());
-					log.info("+++ " + pfx + name + ": [" + value + "]");
-				}
-			}
-		} catch (IOException e) {
-			throw new SvcLogicException("Cannot read property file: " + fileName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            Properties pp = new Properties();
+            InputStream in = new FileInputStream(fileName);
+            pp.load(in);
+            for (Object key : pp.keySet()) {
+                String pfx = contextPrefix != null ? contextPrefix + '.' : "";
+                String name = (String) key;
+                String value = pp.getProperty(name);
+                if (value != null && value.trim().length() > 0) {
+                    ctx.setAttribute(pfx + name, value.trim());
+                    log.info("+++ " + pfx + name + ": [" + value + "]");
+                }
+            }
+        } catch (IOException e) {
+            throw new SvcLogicException("Cannot read property file: " + fileName + ": " + e.getMessage(), e);
+        }
+    }
 
-	private String parseParam(Map<String, String> paramMap, String name, boolean required, String def)
-	        throws SvcLogicException {
-		String s = paramMap.get(name);
+    private String parseParam(Map<String, String> paramMap, String name, boolean required, String def)
+            throws SvcLogicException {
+        String s = paramMap.get(name);
 
-		if (s == null || s.trim().length() == 0) {
-			if (!required)
-				return def;
-			throw new SvcLogicException("Parameter " + name + " is required in PropertiesNode");
-		}
+        if (s == null || s.trim().length() == 0) {
+            if (!required)
+                return def;
+            throw new SvcLogicException("Parameter " + name + " is required in PropertiesNode");
+        }
 
-		s = s.trim();
-		String value = "";
-		int i = 0;
-		int i1 = s.indexOf('%');
-		while (i1 >= 0) {
-			int i2 = s.indexOf('%', i1 + 1);
-			if (i2 < 0)
-				throw new SvcLogicException("Cannot parse parameter " + name + ": " + s + ": no matching %");
+        s = s.trim();
+        String value = "";
+        int i = 0;
+        int i1 = s.indexOf('%');
+        while (i1 >= 0) {
+            int i2 = s.indexOf('%', i1 + 1);
+            if (i2 < 0)
+                throw new SvcLogicException("Cannot parse parameter " + name + ": " + s + ": no matching %");
 
-			String varName = s.substring(i1 + 1, i2);
-			String varValue = System.getenv(varName);
-			if (varValue == null)
-				varValue = "";
+            String varName = s.substring(i1 + 1, i2);
+            String varValue = System.getenv(varName);
+            if (varValue == null)
+                varValue = "";
 
-			value += s.substring(i, i1);
-			value += varValue;
+            value += s.substring(i, i1);
+            value += varValue;
 
-			i = i2 + 1;
-			i1 = s.indexOf('%', i);
-		}
-		value += s.substring(i);
+            i = i2 + 1;
+            i1 = s.indexOf('%', i);
+        }
+        value += s.substring(i);
 
-		log.info("Parameter " + name + ": " + value);
-		return value;
-	}
+        log.info("Parameter " + name + ": " + value);
+        return value;
+    }
 }

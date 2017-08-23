@@ -37,7 +37,7 @@
          <service-type>${service-topology-operation-input.service-information.service-type}</service-type>
          <subscriber-global-id>${service-topology-operation-input.service-information.subscriber-global-id}</subscriber-global-id>
          <subscriber-name>${service-topology-operation-input.service-information.subscriber-name}</subscriber-name>
-	</service-information>
+    </service-information>
         ${'northbound-anyData}
     </${northbound-Container}>
    </input>
