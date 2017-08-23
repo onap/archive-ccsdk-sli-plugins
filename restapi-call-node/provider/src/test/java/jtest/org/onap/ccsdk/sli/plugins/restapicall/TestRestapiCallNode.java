@@ -32,61 +32,61 @@ import org.slf4j.LoggerFactory;
 
 public class TestRestapiCallNode {
 
-	private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
+    private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
 
 
-	@Test
-	public void testDelete() throws Exception {
-		SvcLogicContext ctx = new SvcLogicContext();
+    @Test
+    public void testDelete() throws Exception {
+        SvcLogicContext ctx = new SvcLogicContext();
 
-		Map<String, String> p = new HashMap<String, String>();
-		p.put("restapiUrl", "https://echo.getpostman.com/delete");
-		p.put("restapiUser", "user1");
-		p.put("restapiPassword", "pwd1");
-		p.put("httpMethod", "delete");
-		p.put("skipSending", "true");
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "pwd1");
+        p.put("httpMethod", "delete");
+        p.put("skipSending", "true");
 
-		RestapiCallNode rcn = new RestapiCallNode();
-		rcn.sendRequest(p, ctx);
-	}
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
 
-	@Test
-	public void testJsonTemplate() throws Exception {
-		SvcLogicContext ctx = new SvcLogicContext();
-		ctx.setAttribute("tmp.sdn-circuit-req-row_length", "3");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].source-uid", "APIDOC-123");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].action", "delete");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].request-timestamp", "2016-09-09 16:30:35.0");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].request-status", "New");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].processing-status", "New");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].service-clfi", "testClfi1");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[1].clci", "clci");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].source-uid", "APIDOC-123");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].action", "delete");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].request-timestamp", "2016-09-09 16:30:35.0");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].request-status", "New");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].processing-status", "New");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].service-clfi", "testClfi1");
-		ctx.setAttribute("tmp.sdn-circuit-req-row[2].clci", "clci");
+    @Test
+    public void testJsonTemplate() throws Exception {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "3");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[1].clci", "clci");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[2].clci", "clci");
 
-		Map<String, String> p = new HashMap<String, String>();
-		p.put("templateFileName", "src/test/resources/test-template.json");
-		p.put("restapiUrl", "http://echo.getpostman.com");
-		p.put("restapiUser", "user1");
-		p.put("restapiPassword", "abc123");
-		p.put("format", "json");
-		p.put("httpMethod", "post");
-		p.put("responsePrefix", "response");
-		p.put("skipSending", "true");
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/test-template.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
 
-		RestapiCallNode rcn = new RestapiCallNode();
-		rcn.sendRequest(p, ctx);
-	}
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
 }

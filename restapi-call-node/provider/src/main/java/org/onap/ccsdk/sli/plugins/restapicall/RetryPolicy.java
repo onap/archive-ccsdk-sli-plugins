@@ -40,7 +40,8 @@ public class RetryPolicy {
         }
 
         if(position == null){
-            throw new RetryException("No match found for the provided uri[" + uri + "] so the next host name could not be retreived");
+            throw new RetryException("No match found for the provided uri[" + uri + "] " +
+                    "so the next host name could not be retreived");
         }
         position++;
 
