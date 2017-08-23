@@ -37,39 +37,41 @@ import org.slf4j.LoggerFactory;
 
 public class TestXmlParser {
 
-	private static final Logger log = LoggerFactory.getLogger(TestXmlParser.class);
+    private static final Logger log = LoggerFactory.getLogger(TestXmlParser.class);
 
-	@Test
-	public void test() throws Exception {
-		BufferedReader in = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("test3.xml")));
-		String ss = "";
-		String line = null;
-		while ((line = in.readLine()) != null)
-			ss += line + '\n';
+    @Test
+    public void test() throws Exception {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(ClassLoader.getSystemResourceAsStream("test3.xml"))
+        );
+        String ss = "";
+        String line = null;
+        while ((line = in.readLine()) != null)
+            ss += line + '\n';
 
-		Set<String> listNameList = new HashSet<String>();
-		listNameList.add("project.dependencies.dependency");
-		listNameList.add("project.build.plugins.plugin");
-		listNameList.add("project.build.plugins.plugin.executions.execution");
-		listNameList.add("project.build.pluginManagement.plugins.plugin");
-		listNameList.add(
-		        "project.build.pluginManagement.plugins.plugin.configuration.lifecycleMappingMetadata.pluginExecutions.pluginExecution");
+        Set<String> listNameList = new HashSet<String>();
+        listNameList.add("project.dependencies.dependency");
+        listNameList.add("project.build.plugins.plugin");
+        listNameList.add("project.build.plugins.plugin.executions.execution");
+        listNameList.add("project.build.pluginManagement.plugins.plugin");
+        listNameList.add("project.build.pluginManagement." +
+                        "plugins.plugin.configuration.lifecycleMappingMetadata.pluginExecutions.pluginExecution");
 
-		Map<String, String> mm = XmlParser.convertToProperties(ss, listNameList);
+        Map<String, String> mm = XmlParser.convertToProperties(ss, listNameList);
 
-		logProperties(mm);
+        logProperties(mm);
 
-		in.close();
-	}
+        in.close();
+    }
 
-	private void logProperties(Map<String, String> mm) {
-		List<String> ll = new ArrayList<>();
-		for (Object o : mm.keySet())
-			ll.add((String) o);
-		Collections.sort(ll);
+    private void logProperties(Map<String, String> mm) {
+        List<String> ll = new ArrayList<>();
+        for (Object o : mm.keySet())
+            ll.add((String) o);
+        Collections.sort(ll);
 
-		log.info("Properties:");
-		for (String name : ll)
-			log.info("--- " + name + ": " + mm.get(name));
-	}
+        log.info("Properties:");
+        for (String name : ll)
+            log.info("--- " + name + ": " + mm.get(name));
+    }
 }

@@ -22,18 +22,18 @@
 
 
 <features name="sdnc-properties-node-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
 
-	<repository>mvn:org.opendaylight.mdsal/features-mdsal/${odl.mdsal.features.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.mdsal/features-mdsal/${odl.mdsal.features.version}/xml/features</repository>
 
-	<feature name='sdnc-properties-node' description="sdnc-properties-node"
-		version='${project.version}'>
-		<feature version="${sdnctl.sli.version}">sdnc-sli</feature>
-		<feature>spring</feature>
-		<feature>spring-dm</feature>
-		<bundle>mvn:org.onap.ccsdk.sli.plugins/properties-node-provider/${project.version}
-		</bundle>
-	</feature>
+    <feature name='sdnc-properties-node' description="sdnc-properties-node"
+        version='${project.version}'>
+        <feature version="${sdnctl.sli.version}">sdnc-sli</feature>
+        <feature>spring</feature>
+        <feature>spring-dm</feature>
+        <bundle>mvn:org.onap.ccsdk.sli.plugins/properties-node-provider/${project.version}
+        </bundle>
+    </feature>
 
 </features>
