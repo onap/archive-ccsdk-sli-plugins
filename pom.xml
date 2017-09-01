@@ -13,9 +13,9 @@
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>ccsdk-sli-plugins</artifactId>
 
-    <name>SDN-C Java Plugins</name>
+    <name>CCSDK Java Plugins</name>
     <url>https://wiki.onap.org</url>
-    <description>The SDN-C core components contains the SLI, dblib and root pom</description>
+    <description>CCSDK Java Plugins</description>
 
 
     <issueManagement>
@@ -88,7 +88,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.17</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <skipTests>false</skipTests>
                 </configuration>
             </plugin>
             <plugin>
