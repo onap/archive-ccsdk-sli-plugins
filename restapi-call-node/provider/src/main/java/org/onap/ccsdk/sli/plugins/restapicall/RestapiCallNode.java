@@ -173,7 +173,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     if (retryCount < retryPolicy.getMaximumRetries() + 1) {
                         URI uri = new URI(paramMap.get("restapiUrl"));
                         String hostname = uri.getHost();
-                        String retryString = retryPolicy.getNextHostName((uri.toString()));
+                        String retryString = retryPolicy.getNextHostName(uri.toString());
                         URI uriTwo = new URI(retryString);
                         URI retryUri = UriBuilder.fromUri(uri).host(uriTwo.getHost()).port(uriTwo.getPort()).scheme(
                                 uriTwo.getScheme()).build();
@@ -212,7 +212,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
         p.listNameList = getListNameList(paramMap);
         String skipSendingStr = paramMap.get("skipSending");
-        p.skipSending = skipSendingStr != null && skipSendingStr.equalsIgnoreCase("true");
+        p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         p.convertResponse = Boolean.valueOf(parseParam(paramMap, "convertResponse", false, "true"));
         p.trustStoreFileName = parseParam(paramMap, "trustStoreFileName", false, null);
         p.trustStorePassword = parseParam(paramMap, "trustStorePassword", false, null);
@@ -228,9 +228,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
     protected Set<String> getListNameList(Map<String, String> paramMap) {
         Set<String> ll = new HashSet<String>();
-        for (String key : paramMap.keySet())
-            if (key.startsWith("listName"))
-                ll.add(paramMap.get(key));
+        for (Map.Entry<String,String> entry : paramMap.entrySet())
+            if (entry.getKey().startsWith("listName"))
+                ll.add(entry.getValue());
         return ll;
     }
 
@@ -503,12 +503,12 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     protected void setFailureResponseStatus(SvcLogicContext ctx, String prefix, String errorMessage, HttpResponse r) {
-        r = new HttpResponse();
-        r.code = 500;
-        r.message = errorMessage;
+        HttpResponse resp = new HttpResponse();
+        resp.code = 500;
+        resp.message = errorMessage;
         String pp = prefix != null ? prefix + '.' : "";
-        ctx.setAttribute(pp + "response-code", String.valueOf(r.code));
-        ctx.setAttribute(pp + "response-message", r.message);
+        ctx.setAttribute(pp + "response-code", String.valueOf(resp.code));
+        ctx.setAttribute(pp + "response-message", resp.message);
     }
 
     protected void setResponseStatus(SvcLogicContext ctx, String prefix, HttpResponse r) {
@@ -633,7 +633,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             String pp = p.responsePrefix != null ? p.responsePrefix + '.' : "";
 
-            String req = null;
+            String req;
 
             if (p.templateFileName == null) {
                 log.info("No template file name specified. Using default UEB template: " + defaultUebTemplateFileName);
@@ -679,7 +679,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.rootVarName = parseParam(paramMap, "rootVarName", false, null);
         p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
         String skipSendingStr = paramMap.get("skipSending");
-        p.skipSending = skipSendingStr != null && skipSendingStr.equalsIgnoreCase("true");
+        p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         return p;
     }
 
