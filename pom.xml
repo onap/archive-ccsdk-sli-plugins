@@ -13,7 +13,7 @@
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>ccsdk-sli-plugins</artifactId>
 
-    <name>CCSDK Java Plugins</name>
+    <name>ccsdk-sli-plugins</name>
     <url>https://wiki.onap.org</url>
     <description>CCSDK Java Plugins</description>
 
