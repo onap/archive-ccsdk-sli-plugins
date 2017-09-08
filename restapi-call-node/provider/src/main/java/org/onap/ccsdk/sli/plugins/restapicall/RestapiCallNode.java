@@ -627,7 +627,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     public void postMessageOnUeb(Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException {
-        HttpResponse r = null;
+        HttpResponse r;
         try {
             UebParam p = getUebParameters(paramMap);
 
@@ -659,7 +659,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             setResponseStatus(ctx, prefix, r);
         }
 
-        if (r != null && r.code >= 300)
+        if (r.code >= 300)
             throw new SvcLogicException(String.valueOf(r.code) + ": " + r.message);
     }
 
