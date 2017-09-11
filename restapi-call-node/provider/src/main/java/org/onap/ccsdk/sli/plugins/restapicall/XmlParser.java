@@ -69,7 +69,7 @@ public class XmlParser {
             super();
             this.listNameList = listNameList;
             if (this.listNameList == null)
-                this.listNameList = new HashSet<String>();
+                this.listNameList = new HashSet<>();
         }
 
         String currentName = "";
@@ -88,7 +88,7 @@ public class XmlParser {
                 name = name.substring(i2 + 1);
 
             if (currentName.length() > 0)
-                currentName += '.';
+                currentName += Character.toString('.');
             currentName += name;
 
             String listName = removeIndexes(currentName);
@@ -152,7 +152,7 @@ public class XmlParser {
                 else if (c == ']')
                     add = true;
                 else if (add)
-                    s += c;
+                    s += Character.toString(c);
             }
             return s;
         }

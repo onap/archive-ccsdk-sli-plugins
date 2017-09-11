@@ -44,7 +44,7 @@ public class RetryPolicyStore {
     }
 
     public RetryPolicyStore() {
-        retryPolicies = new HashMap<String, RetryPolicy>();
+        retryPolicies = new HashMap<>();
     }
     
     public RetryPolicy getRetryPolicy(String policyName) {
