@@ -137,6 +137,75 @@
       "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_224069a4",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/IFabricDiscoveryService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-12T10:05:16Z",
+      "side": 1,
+      "message": "access identifier is redundant here.",
+      "range": {
+        "startLine": 11,
+        "startChar": 2,
+        "endLine": 11,
+        "endChar": 8
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_42a36d4f",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/IFabricDiscoveryService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-12T10:05:16Z",
+      "side": 1,
+      "message": "should we be receiving \"Map\u003cString, String\u003e paramMap, SvcLogicContext ctx\" here which will bring in more flexibility? and afcourse paramMap should contain \"stream\" and \"enable\".\nAlso if might help to provide back the output.",
+      "range": {
+        "startLine": 11,
+        "startChar": 43,
+        "endLine": 11,
+        "endChar": 56
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_c2e07d98",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/IFabricDiscoveryService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-12T10:05:16Z",
+      "side": 1,
+      "message": "not sure if I understood the purpose of this boolean, is it a start \u0026 stop flag or something else?",
+      "range": {
+        "startLine": 11,
+        "startChar": 58,
+        "endLine": 11,
+        "endChar": 72
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
