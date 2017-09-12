@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+           odl:use-default-for-reference-types="true">
+
+
+    <bean id="fabricDiscoveryPlugin" class="org.onap.ccsdk.sli.plugins.fabricdiscovery.FabricDiscoveryPlugin" />
+    <service ref="fabricDiscoveryPlugin" interface="org.onap.ccsdk.sli.plugins.fabricdiscovery.IFabricDiscoveryService" />
+
+</blueprint>
