@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a437d4f_453ff7d6",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2017-09-12T13:43:25Z",
+      "side": 1,
+      "message": "If this is going to be called from an execute node, then the method called must take (Map\u003cString,String\u003e, SvcLogicContext) as arguments.  There is no such method here.  You need to add that.",
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a437d4f_e2fca140",
         "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
         "patchSetId": 1
