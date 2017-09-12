@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_e2fca140",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-12T09:56:58Z",
+      "side": 1,
+      "message": "i think it should be thread safe, suggest to use Concurrenthashmap",
+      "range": {
+        "startLine": 40,
+        "startChar": 41,
+        "endLine": 40,
+        "endChar": 50
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_02d7a5c0",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-12T09:56:58Z",
+      "side": 1,
+      "message": "suggest to have the below signature for DG plugin methods\nvoid methodName(Map, SvcLogicContext)",
+      "range": {
+        "startLine": 49,
+        "startChar": 16,
+        "endLine": 49,
+        "endChar": 43
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_e2e5c1a8",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-12T09:56:58Z",
+      "side": 1,
+      "message": "no need local varibale \"np\", can directly pass new NotificationProcessor(stream, enable) to execute()",
+      "range": {
+        "startLine": 56,
+        "startChar": 30,
+        "endLine": 56,
+        "endChar": 32
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_a2efb986",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-12T09:56:58Z",
+      "side": 1,
+      "message": "is there any scenario need to shutdown the running threads in abnormal case ?",
+      "range": {
+        "startLine": 57,
+        "startChar": 16,
+        "endLine": 57,
+        "endChar": 23
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_82f2756d",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-12T09:56:58Z",
+      "side": 1,
+      "message": "suggest to print the exception in the log",
+      "range": {
+        "startLine": 74,
+        "startChar": 40,
+        "endLine": 74,
+        "endChar": 41
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_c2f75d58",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-12T09:56:58Z",
+      "side": 1,
+      "message": "use Logger to print the exception",
+      "range": {
+        "startLine": 84,
+        "startChar": 24,
+        "endLine": 84,
+        "endChar": 43
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
