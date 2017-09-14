@@ -40,14 +40,14 @@ public class JsonParser {
     public static Map<String, String> convertToProperties(String s) throws JSONException {
         JSONObject json = new JSONObject(s);
 
-        Map<String, Object> wm = new HashMap<String, Object>();
+        Map<String, Object> wm = new HashMap<>();
         Iterator<String> ii = json.keys();
         while (ii.hasNext()) {
             String key1 = ii.next();
             wm.put(key1, json.get(key1));
         }
 
-        Map<String, String> mm = new HashMap<String, String>();
+        Map<String, String> mm = new HashMap<>();
 
         while (!wm.isEmpty())
             for (String key : new ArrayList<>(wm.keySet())) {

@@ -147,8 +147,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         mm = JsonParser.convertToProperties(r.body);
 
                     if (mm != null)
-                        for (String key : mm.keySet())
-                            ctx.setAttribute(pp + key, mm.get(key));
+                        for (Map.Entry<String,String> entry : mm.entrySet())
+                            ctx.setAttribute(pp + entry.getKey(), entry.getValue());
                 }
             }
         } catch (Exception e) {
@@ -227,7 +227,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     protected Set<String> getListNameList(Map<String, String> paramMap) {
-        Set<String> ll = new HashSet<String>();
+        Set<String> ll = new HashSet<>();
         for (Map.Entry<String,String> entry : paramMap.entrySet())
             if (entry.getKey().startsWith("listName"))
                 ll.add(entry.getValue());
@@ -473,7 +473,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     protected SSLContext createSSLContext(Parameters p) {
-        try {
+        try (FileInputStream in = new FileInputStream(p.keyStoreFileName)) {
             System.setProperty("jsse.enableSNIExtension", "false");
             System.setProperty("javax.net.ssl.trustStore", p.trustStoreFileName);
             System.setProperty("javax.net.ssl.trustStorePassword", p.trustStorePassword);
@@ -487,7 +487,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             });
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            FileInputStream in = new FileInputStream(p.keyStoreFileName);
             KeyStore ks = KeyStore.getInstance("PKCS12");
             char[] pwd = p.keyStorePassword.toCharArray();
             ks.load(in, pwd);
