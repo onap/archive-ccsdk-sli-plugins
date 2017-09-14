@@ -65,6 +65,30 @@
     },
     {
       "key": {
+        "uuid": "9a437d4f_9bde5c10",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2017-09-14T18:27:53Z",
+      "side": 1,
+      "message": "This method should be more like so:\n\npublic void processDcNotificationStream(Map\u003cString,String\u003e parmMap, SvcLogicContext ctx) {\n\n  boolean enable \u003d \"true\".equalsIgnoreCase(parmMap.get(\"enable\");\n  String stream \u003d parmMap.get(\"stream\");\n\n...\n\nThen, in DG, execute node would look like so:\n\u003cexecute plugin\u003d\"org.onap.ccsdk.sli.plugins.fabricdiscovery.FabricDiscoveryPlugin\" method\u003d\"processDcNotificationStream\"\u003e\n  \u003cparameter name\u003d\"enable\" value\u003d\"true\"/\u003e\n  \u003cparameter name\u003d\"stream\" value\u003d\"http://fqdn:port/xxx\"/\u003e\n\u003c/execute\u003e",
+      "parentUuid": "9a437d4f_02d7a5c0",
+      "range": {
+        "startLine": 49,
+        "startChar": 16,
+        "endLine": 49,
+        "endChar": 43
+      },
+      "revId": "52ab2c3deeb9a3db287d054e7fe57c5a447cf6e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a437d4f_e2e5c1a8",
         "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
         "patchSetId": 1
