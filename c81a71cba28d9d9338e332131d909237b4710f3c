@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_ef135864",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-15T10:23:23Z",
+      "side": 1,
+      "message": "shall we use logger method here instead,\n\"Start monitoring notification stream: {}\", stream\n\nSame comment for rest of LOG in this file.",
+      "range": {
+        "startLine": 58,
+        "startChar": 25,
+        "endLine": 58,
+        "endChar": 74
+      },
+      "revId": "c81a71cba28d9d9338e332131d909237b4710f3c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0f1d7c73",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-15T10:23:23Z",
+      "side": 1,
+      "message": "StringBuilder would be useful in this scenario, multiple string concatenations like this may impact performance.",
+      "range": {
+        "startLine": 125,
+        "startChar": 12,
+        "endLine": 126,
+        "endChar": 30
+      },
+      "revId": "c81a71cba28d9d9338e332131d909237b4710f3c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_cf165455",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/IFabricDiscoveryService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-15T10:23:23Z",
+      "side": 1,
+      "message": "can we define the exception which this API can throw as JAVADOC.. Also kindly use spaces instead of tab.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 4
+      },
+      "revId": "c81a71cba28d9d9338e332131d909237b4710f3c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
