@@ -559,7 +559,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod", false, "post"));
         p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
         String skipSendingStr = paramMap.get("skipSending");
-        p.skipSending = skipSendingStr != null && skipSendingStr.equalsIgnoreCase("true");
+        p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         return p;
     }
 
