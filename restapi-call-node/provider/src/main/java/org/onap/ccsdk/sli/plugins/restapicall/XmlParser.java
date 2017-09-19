@@ -21,37 +21,49 @@
 
 package org.onap.ccsdk.sli.plugins.restapicall;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class XmlParser {
+public final class XmlParser {
 
     private static final Logger log = LoggerFactory.getLogger(XmlParser.class);
 
-    public static Map<String, String> convertToProperties(String s, Set<String> listNameList) {
+    private XmlParser() {
+        // Preventing instantiation of the same.
+    }
+
+    public static Map<String, String> convertToProperties(String s, Set<String> listNameList)
+        throws SvcLogicException {
+
+        checkNotNull(s, "Input should not be null.");
+
         Handler handler = new Handler(listNameList);
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             InputStream in = new ByteArrayInputStream(s.getBytes());
             saxParser.parse(in, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new SvcLogicException("Unable to convert XML to properties" + e.getLocalizedMessage(), e);
         }
-
         return handler.getProperties();
     }
 
@@ -72,8 +84,8 @@ public class XmlParser {
                 this.listNameList = new HashSet<>();
         }
 
-        String currentName = "";
-        String currentValue = "";
+        StringBuilder currentName = new StringBuilder();
+        StringBuilder currentValue = new StringBuilder();
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -88,15 +100,16 @@ public class XmlParser {
                 name = name.substring(i2 + 1);
 
             if (currentName.length() > 0)
-                currentName += Character.toString('.');
-            currentName += name;
+                currentName.append(Character.toString('.'));
+            currentName.append(name);
 
-            String listName = removeIndexes(currentName);
+            String listName = removeIndexes(currentName.toString());
 
             if (listNameList.contains(listName)) {
-                int len = getInt(properties, currentName + "_length");
-                properties.put(currentName + "_length", String.valueOf(len + 1));
-                currentName += "[" + len + "]";
+                String newName = currentName.append("_length").toString();
+                int len = getInt(properties, newName);
+                properties.put(newName, String.valueOf(len + 1));
+                currentName.append("[").append(len).append("]");
             }
         }
 
@@ -111,20 +124,19 @@ public class XmlParser {
             if (i2 >= 0)
                 name = name.substring(i2 + 1);
 
-            if (currentValue.trim().length() > 0) {
-                currentValue = currentValue.trim();
-                properties.put(currentName, currentValue);
+            String s = currentValue.toString().trim();
+            if (s.length() > 0) {
+                properties.put(currentName.toString(), s);
 
-                log.info("Added property: " + currentName + ": " + currentValue);
-
-                currentValue = "";
+                log.info("Added property: {} : {}", currentName, s);
+                currentValue = new StringBuilder();
             }
 
             int i1 = currentName.lastIndexOf("." + name);
             if (i1 <= 0)
-                currentName = "";
+                currentName = new StringBuilder();
             else
-                currentName = currentName.substring(0, i1);
+                currentName = new StringBuilder(currentName.substring(0, i1));
         }
 
         @Override
@@ -132,7 +144,7 @@ public class XmlParser {
             super.characters(ch, start, length);
 
             String value = new String(ch, start, length);
-            currentValue += value;
+            currentValue.append(value);
         }
 
         private static int getInt(Map<String, String> mm, String name) {
@@ -143,7 +155,7 @@ public class XmlParser {
         }
 
         private String removeIndexes(String currentName) {
-            String s = "";
+            StringBuilder b = new StringBuilder();
             boolean add = true;
             for (int i = 0; i < currentName.length(); i++) {
                 char c = currentName.charAt(i);
@@ -152,9 +164,9 @@ public class XmlParser {
                 else if (c == ']')
                     add = true;
                 else if (add)
-                    s += Character.toString(c);
+                    b.append(Character.toString(c));
             }
-            return s;
+            return b.toString();
         }
     }
 }
