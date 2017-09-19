@@ -29,9 +29,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XmlJsonUtil {
+public final class XmlJsonUtil {
 
     private static final Logger log = LoggerFactory.getLogger(XmlJsonUtil.class);
+
+    private XmlJsonUtil() {
+        // Preventing instantiation of the same.
+    }
 
     public static String getXml(Map<String, String> varmap, String var) {
         boolean escape = true;
@@ -99,7 +103,7 @@ public class XmlJsonUtil {
                 try {
                     length = Integer.parseInt(lengthStr);
                 } catch (Exception e) {
-                    log.warn("Invalid number for " + var + "_length:" + lengthStr);
+                    log.warn("Invalid number for {}_length:{}", var, lengthStr);
                 }
             }
 
@@ -364,9 +368,9 @@ public class XmlJsonUtil {
     }
 
     private static String pad(int n) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (int i = 0; i < n; i++)
-            s += Character.toString('\t');
-        return s;
+            s.append(Character.toString('\t'));
+        return s.toString();
     }
 }

@@ -44,10 +44,10 @@ public class TestXmlParser {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(ClassLoader.getSystemResourceAsStream("test3.xml"))
         );
-        String ss = "";
-        String line = null;
+        StringBuilder b = new StringBuilder();
+        String line;
         while ((line = in.readLine()) != null)
-            ss += line + '\n';
+            b.append(line).append('\n');
 
         Set<String> listNameList = new HashSet<String>();
         listNameList.add("project.dependencies.dependency");
@@ -57,10 +57,8 @@ public class TestXmlParser {
         listNameList.add("project.build.pluginManagement." +
                         "plugins.plugin.configuration.lifecycleMappingMetadata.pluginExecutions.pluginExecution");
 
-        Map<String, String> mm = XmlParser.convertToProperties(ss, listNameList);
-
+        Map<String, String> mm = XmlParser.convertToProperties(b.toString(), listNameList);
         logProperties(mm);
-
         in.close();
     }
 
