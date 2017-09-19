@@ -403,13 +403,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         if (p.ssl && p.restapiUrl.startsWith("https"))
             ssl = createSSLContext(p);
         if (ssl != null) {
-            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
+            HostnameVerifier hostnameVerifier = (hostname, session) -> true;
 
             config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES,
                     new HTTPSProperties(hostnameVerifier, ssl));
@@ -478,13 +472,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             System.setProperty("javax.net.ssl.trustStore", p.trustStoreFileName);
             System.setProperty("javax.net.ssl.trustStorePassword", p.trustStorePassword);
 
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-
-                @Override
-                public boolean verify(String string, SSLSession ssls) {
-                    return true;
-                }
-            });
+            HttpsURLConnection.setDefaultHostnameVerifier((string, ssls) -> true);
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             KeyStore ks = KeyStore.getInstance("PKCS12");
