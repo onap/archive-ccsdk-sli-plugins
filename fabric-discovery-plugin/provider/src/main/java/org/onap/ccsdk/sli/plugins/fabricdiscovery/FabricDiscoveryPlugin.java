@@ -39,6 +39,8 @@ public class FabricDiscoveryPlugin implements SvcLogicJavaPlugin, IFabricDiscove
     private ExecutorService service;
     private Map<String, WebSocketClient> streamMap;
     private static final Logger LOG = LoggerFactory.getLogger(FabricDiscoveryPlugin.class);
+    private static final String STREAM_PREFIX = "ws://";
+    private static final String FB_DISCOVERY_STATUS = "fb-response";
 
     public FabricDiscoveryPlugin() {
         service = Executors.newFixedThreadPool(10);
@@ -47,10 +49,29 @@ public class FabricDiscoveryPlugin implements SvcLogicJavaPlugin, IFabricDiscove
 
     @Override
     public void processDcNotificationStream (Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException {
-        boolean enable = Boolean.parseBoolean(parseParam(paramMap, "enable", true, null));
+        boolean enable;
         String stream = parseParam(paramMap, "stream", true, null);
+        String prefix = parseParam(paramMap, "contextPrefix", false, null);
+        String enableStr = parseParam(paramMap, "enable", true, null);
 
+        // Validate the input parameters
+        String pfx = (prefix != null) ? prefix + '.' : "";
+        if ("true".equalsIgnoreCase(enableStr)) {
+            enable = true;
+        } else if ("false".equalsIgnoreCase(enableStr)) {
+            enable = false;
+        } else {
+            ctx.setAttribute(pfx + FB_DISCOVERY_STATUS, "Failure");
+            throw new SvcLogicException("Incorrect parameter: enable. Valid values are ['true', 'false']");
+        }
+        if (!STREAM_PREFIX.equalsIgnoreCase(stream.substring(0, 5))) {
+            ctx.setAttribute(pfx + FB_DISCOVERY_STATUS, "Failure");
+            throw new SvcLogicException("Incorrect parameter: stream, Input is not a web socket address");
+        }
+
+        ctx.setAttribute(pfx + FB_DISCOVERY_STATUS, "Success");
         LOG.info("{} monitoring notification stream: {}", (enable) ? "START" : "STOP", stream);
+
         try {
             service.execute(new Runnable () {
                 public void run () {
