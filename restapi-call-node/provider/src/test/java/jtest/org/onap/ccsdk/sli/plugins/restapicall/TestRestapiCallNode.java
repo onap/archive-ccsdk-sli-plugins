@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class TestRestapiCallNode {
 
 
     @Test
-    public void testDelete() throws Exception {
+    public void testDelete() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
         Map<String, String> p = new HashMap<String, String>();
@@ -51,7 +52,7 @@ public class TestRestapiCallNode {
     }
 
     @Test
-    public void testJsonTemplate() throws Exception {
+    public void testJsonTemplate() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "3");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
@@ -85,6 +86,84 @@ public class TestRestapiCallNode {
         p.put("httpMethod", "post");
         p.put("responsePrefix", "response");
         p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testInvalidRepeatTimes() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "a");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/test-template.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testInvalidTemplatePath() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resourcess/test-template.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testWithoutSkipSending() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/test-template.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "false");
 
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);

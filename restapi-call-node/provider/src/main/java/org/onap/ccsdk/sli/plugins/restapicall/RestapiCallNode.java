@@ -21,7 +21,11 @@
 
 package org.onap.ccsdk.sli.plugins.restapicall;
 
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.SocketException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -45,6 +49,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
@@ -114,7 +119,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             throws SvcLogicException {
 
         RetryPolicy retryPolicy = null;
-        HttpResponse r = null;
+        HttpResponse r = new HttpResponse();
         try {
             Parameters p = getParameters(paramMap);
             if (p.partner != null) {
@@ -151,9 +156,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                             ctx.setAttribute(pp + entry.getKey(), entry.getValue());
                 }
             }
-        } catch (Exception e) {
+        } catch (SvcLogicException | JSONException e) {
             boolean shouldRetry = false;
-            if (e.getCause() instanceof java.net.SocketException) {
+            if (e.getCause().getCause() instanceof SocketException) {
                 shouldRetry = true;
             }
 
@@ -270,7 +275,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return value;
     }
 
-    protected String buildXmlJsonRequest(SvcLogicContext ctx, String template, Format format) {
+    protected String buildXmlJsonRequest(SvcLogicContext ctx, String template, Format format) throws SvcLogicException {
         log.info("Building " + format + " started");
         long t1 = System.currentTimeMillis();
 
@@ -291,7 +296,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             int i2 = template.indexOf('}', i1 + 2);
             if (i2 < 0)
-                throw new RuntimeException("Template error: Matching } not found");
+                throw new SvcLogicException("Template error: Matching } not found");
 
             String var1 = template.substring(i1 + 2, i2);
             String value1 = format == Format.XML ? XmlJsonUtil.getXml(mm, var1) : XmlJsonUtil.getJson(mm, var1);
@@ -326,7 +331,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return req;
     }
 
-    protected String expandRepeats(SvcLogicContext ctx, String template, int level) {
+    protected String expandRepeats(SvcLogicContext ctx, String template, int level) throws SvcLogicException {
         StringBuilder newTemplate = new StringBuilder();
         int k = 0;
         while (k < template.length()) {
@@ -338,7 +343,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             int i2 = template.indexOf(':', i1 + 9);
             if (i2 < 0)
-                throw new RuntimeException(
+                throw new SvcLogicException(
                         "Template error: Context variable name followed by : is required after repeat");
 
             // Find the closing }, store in i3
@@ -348,7 +353,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             while (nn > 0 && i < template.length()) {
                 i3 = template.indexOf('}', i);
                 if (i3 < 0)
-                    throw new RuntimeException("Template error: Matching } not found");
+                    throw new SvcLogicException("Template error: Matching } not found");
                 int i32 = template.indexOf('{', i);
                 if (i32 >= 0 && i32 < i3) {
                     nn++;
@@ -365,8 +370,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             int n = 0;
             try {
                 n = Integer.parseInt(value1);
-            } catch (Exception e) {
-                n = 0;
+            } catch (NumberFormatException e) {
+                throw new SvcLogicException("Invalid input of repeat interval, should be an integer value " +
+                    e.getLocalizedMessage(), e);
             }
 
             newTemplate.append(template.substring(k, i1));
@@ -392,12 +398,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return expandRepeats(ctx, newTemplate.toString(), level + 1);
     }
 
-    protected String readFile(String fileName) throws Exception {
-        byte[] encoded = Files.readAllBytes(Paths.get(fileName));
-        return new String(encoded, "UTF-8");
+    protected String readFile(String fileName) throws SvcLogicException {
+        try {
+            byte[] encoded = Files.readAllBytes(Paths.get(fileName));
+            return new String(encoded, "UTF-8");
+        } catch (IOException | SecurityException e) {
+            throw new SvcLogicException("Unable to read file " + fileName + e.getLocalizedMessage(), e);
+        }
     }
 
-    protected HttpResponse sendHttpRequest(String request, Parameters p) throws Exception {
+    protected HttpResponse sendHttpRequest(String request, Parameters p) throws SvcLogicException {
+
         ClientConfig config = new DefaultClientConfig();
         SSLContext ssl = null;
         if (p.ssl && p.restapiUrl.startsWith("https"))
@@ -451,7 +462,14 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             webResourceBuilder.header("X-ECOMP-RequestID",org.slf4j.MDC.get("X-ECOMP-RequestID"));
 
-            ClientResponse response = webResourceBuilder.method(p.httpMethod.toString(), ClientResponse.class, request);
+            ClientResponse response;
+
+            try {
+                response = webResourceBuilder.method(p.httpMethod.toString(), ClientResponse.class, request);
+            } catch (UniformInterfaceException | ClientHandlerException e) {
+                throw new SvcLogicException("Exception while sending http request to client "
+                    + e.getLocalizedMessage(), e);
+            }
 
             r.code = response.getStatus();
             r.headers = response.getHeaders();
@@ -501,8 +519,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return null;
     }
 
-    protected void setFailureResponseStatus(SvcLogicContext ctx, String prefix, String errorMessage, HttpResponse r) {
-        HttpResponse resp = new HttpResponse();
+    protected void setFailureResponseStatus(SvcLogicContext ctx, String prefix, String errorMessage, HttpResponse resp) {
         resp.code = 500;
         resp.message = errorMessage;
         String pp = prefix != null ? prefix + '.' : "";
@@ -525,7 +542,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             r = sendHttpData(data, p);
             setResponseStatus(ctx, p.responsePrefix, r);
 
-        } catch (Exception e) {
+        } catch (SvcLogicException | IOException e) {
             log.error("Error sending the request: " + e.getMessage(), e);
 
             r = new HttpResponse();
@@ -563,7 +580,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return p;
     }
 
-    protected HttpResponse sendHttpData(byte[] data, FileParam p) {
+    protected HttpResponse sendHttpData(byte[] data, FileParam p) throws SvcLogicException {
         Client client = Client.create();
         client.setConnectTimeout(5000);
         client.setFollowRedirects(true);
@@ -580,11 +597,18 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         if (!p.skipSending) {
             String tt = "application/octet-stream";
 
-            ClientResponse response = null;
-            if (p.httpMethod == HttpMethod.POST)
-                response = webResource.accept(tt).type(tt).post(ClientResponse.class, data);
-            else if (p.httpMethod == HttpMethod.PUT)
-                response = webResource.accept(tt).type(tt).put(ClientResponse.class, data);
+            ClientResponse response;
+            try {
+                if (p.httpMethod == HttpMethod.POST)
+                    response = webResource.accept(tt).type(tt).post(ClientResponse.class, data);
+                else if (p.httpMethod == HttpMethod.PUT)
+                    response = webResource.accept(tt).type(tt).put(ClientResponse.class, data);
+                else
+                    throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
+            } catch (UniformInterfaceException | ClientHandlerException e) {
+                throw new SvcLogicException("Exception while sending http request to client " +
+                    e.getLocalizedMessage(), e);
+            }
 
             r.code = response.getStatus();
             r.headers = response.getHeaders();
@@ -601,10 +625,16 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
                 webResource = client.resource(newUrl);
 
-                if (p.httpMethod == HttpMethod.POST)
-                    response = webResource.accept(tt).type(tt).post(ClientResponse.class, data);
-                else if (p.httpMethod == HttpMethod.PUT)
-                    response = webResource.accept(tt).type(tt).put(ClientResponse.class, data);
+                try {
+                    if (p.httpMethod == HttpMethod.POST)
+                        response = webResource.accept(tt).type(tt).post(ClientResponse.class, data);
+                    else if (p.httpMethod == HttpMethod.PUT)
+                        response = webResource.accept(tt).type(tt).put(ClientResponse.class, data);
+                    else
+                        throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
+                } catch (UniformInterfaceException | ClientHandlerException e) {
+                    throw new SvcLogicException("Exception while sending http request to client " + e.getLocalizedMessage(), e);
+                }
 
                 r.code = response.getStatus();
                 etag = response.getEntityTag();
@@ -648,7 +678,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (r.body != null)
                 ctx.setAttribute(pp + "httpResponse", r.body);
 
-        } catch (Exception e) {
+        } catch (SvcLogicException e) {
             log.error("Error sending the request: " + e.getMessage(), e);
 
             r = new HttpResponse();
@@ -682,7 +712,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return p;
     }
 
-    protected HttpResponse postOnUeb(String request, UebParam p) throws Exception {
+    protected HttpResponse postOnUeb(String request, UebParam p) throws SvcLogicException {
         String[] urls = uebServers.split(" ");
         for (int i = 0; i < urls.length; i++) {
             if (!urls[i].endsWith("/"))
@@ -706,7 +736,13 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             String tt = "application/json";
             String tt1 = tt + ";charset=UTF-8";
 
-            ClientResponse response = webResource.accept(tt).type(tt1).post(ClientResponse.class, request);
+            ClientResponse response;
+
+            try {
+                response = webResource.accept(tt).type(tt1).post(ClientResponse.class, request);
+            } catch (UniformInterfaceException | ClientHandlerException e) {
+                throw new SvcLogicException("Exception while posting http request to client " + e.getLocalizedMessage(), e);
+            }
 
             r.code = response.getStatus();
             r.headers = response.getHeaders();
