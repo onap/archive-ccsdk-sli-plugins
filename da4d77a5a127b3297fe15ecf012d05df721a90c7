@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_fe5f7ae3",
+        "filename": "fabric-discovery-plugin/provider/src/main/java/org/onap/ccsdk/sli/plugins/fabricdiscovery/FabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-19T12:30:19Z",
+      "side": 1,
+      "message": "i think need to set FB_DISCOVERY_STATUS to \"Failure\", check other error cases also below.",
+      "range": {
+        "startLine": 92,
+        "startChar": 32,
+        "endLine": 92,
+        "endChar": 35
+      },
+      "revId": "da4d77a5a127b3297fe15ecf012d05df721a90c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
