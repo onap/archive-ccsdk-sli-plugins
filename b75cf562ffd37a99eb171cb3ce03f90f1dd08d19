@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_7e426a3f",
+        "filename": "fabric-discovery-plugin/provider/src/test/java/jtest/org/onap/ccsdk/sli/plugins/fabricdiscovery/TestFabricDiscoveryPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-09-19T12:05:20Z",
+      "side": 1,
+      "message": "i think in ONAP we should not write author name in code.",
+      "range": {
+        "startLine": 13,
+        "startChar": 14,
+        "endLine": 13,
+        "endChar": 19
+      },
+      "revId": "b75cf562ffd37a99eb171cb3ce03f90f1dd08d19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
