@@ -21,6 +21,9 @@
 
 package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restapicall.XmlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +60,48 @@ public class TestXmlParser {
         listNameList.add("project.build.pluginManagement.plugins.plugin");
         listNameList.add("project.build.pluginManagement." +
                         "plugins.plugin.configuration.lifecycleMappingMetadata.pluginExecutions.pluginExecution");
+
+        Map<String, String> mm = XmlParser.convertToProperties(b.toString(), listNameList);
+        logProperties(mm);
+        in.close();
+    }
+
+    @Test
+    public void testValidLength() throws Exception {
+        BufferedReader in = new BufferedReader(
+            new InputStreamReader(ClassLoader.getSystemResourceAsStream("test3.xml"))
+        );
+        StringBuilder b = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null)
+            b.append(line).append('\n');
+
+        Set<String> listNameList = new HashSet<String>();
+        listNameList.add("ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport");
+        listNameList.add("ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport");
+
+        Map<String, String> mm = XmlParser.convertToProperties(b.toString(), listNameList);
+
+        assertThat(mm.get("ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[5]"), is("SET_RESET_LP"));
+        assertThat(mm.get("ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0]"), is("SET_BVOIP_IN"));
+
+        logProperties(mm);
+        in.close();
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testInvalidLength() throws Exception {
+        BufferedReader in = new BufferedReader(
+            new InputStreamReader(ClassLoader.getSystemResourceAsStream("invalidlength.xml"))
+        );
+        StringBuilder b = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null)
+            b.append(line).append('\n');
+
+        Set<String> listNameList = new HashSet<String>();
+        listNameList.add("ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport");
+        listNameList.add("ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport");
 
         Map<String, String> mm = XmlParser.convertToProperties(b.toString(), listNameList);
         logProperties(mm);
