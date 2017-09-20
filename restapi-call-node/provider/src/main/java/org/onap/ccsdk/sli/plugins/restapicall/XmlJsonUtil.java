@@ -132,23 +132,24 @@ public final class XmlJsonUtil {
         if (o instanceof Map) {
             StringBuilder ss = new StringBuilder();
             Map<String, Object> mm = (Map<String, Object>) o;
-            for (String k : mm.keySet()) {
-                Object v = mm.get(k);
+            for (Map.Entry<String, Object> entry: mm.entrySet()) {
+                Object v = entry.getValue();
+                String key = entry.getKey();
                 if (v instanceof String) {
                     String s = escape ? escapeXml((String) v) : (String) v;
-                    ss.append(pad(indent)).append('<').append(k).append('>');
+                    ss.append(pad(indent)).append('<').append(key).append('>');
                     ss.append(s);
-                    ss.append("</").append(k).append('>').append('\n');
+                    ss.append("</").append(key).append('>').append('\n');
                 } else if (v instanceof Map) {
-                    ss.append(pad(indent)).append('<').append(k).append('>').append('\n');
+                    ss.append(pad(indent)).append('<').append(key).append('>').append('\n');
                     ss.append(generateXml(v, indent + 1, escape));
-                    ss.append(pad(indent)).append("</").append(k).append('>').append('\n');
+                    ss.append(pad(indent)).append("</").append(key).append('>').append('\n');
                 } else if (v instanceof List) {
                     List<Object> ll = (List<Object>) v;
                     for (Object o1 : ll) {
-                        ss.append(pad(indent)).append('<').append(k).append('>').append('\n');
+                        ss.append(pad(indent)).append('<').append(key).append('>').append('\n');
                         ss.append(generateXml(o1, indent + 1, escape));
-                        ss.append(pad(indent)).append("</").append(k).append('>').append('\n');
+                        ss.append(pad(indent)).append("</").append(key).append('>').append('\n');
                     }
                 }
             }
@@ -185,13 +186,13 @@ public final class XmlJsonUtil {
             ss.append("{\n");
 
             boolean first = true;
-            for (String k : mm.keySet()) {
+            for (Map.Entry<String, Object> entry : mm.entrySet()) {
                 if (!first)
                     ss.append(",\n");
                 first = false;
-
-                Object v = mm.get(k);
-                ss.append(pad(indent + 1)).append('"').append(k).append("\": ");
+                Object v = entry.getValue();
+                String key = entry.getKey();
+                ss.append(pad(indent + 1)).append('"').append(key).append("\": ");
                 generateJson(ss, v, indent + 1, false, escape);
             }
 
