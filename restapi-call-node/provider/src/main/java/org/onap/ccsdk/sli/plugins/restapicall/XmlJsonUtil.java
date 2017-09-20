@@ -103,7 +103,7 @@ public final class XmlJsonUtil {
                 try {
                     length = Integer.parseInt(lengthStr);
                 } catch (Exception e) {
-                    log.warn("Invalid number for {}_length:{}", var, lengthStr);
+                    log.warn("Invalid number for {}_length:{}", var, lengthStr, e);
                 }
             }
 

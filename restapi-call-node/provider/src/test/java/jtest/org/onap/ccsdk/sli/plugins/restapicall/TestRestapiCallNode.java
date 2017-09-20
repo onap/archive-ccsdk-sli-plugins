@@ -168,4 +168,31 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
     }
+
+
+    @Test(expected = SvcLogicException.class)
+    public void testWithInvalidURI() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
+        ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/test-template.json");
+        p.put("restapiUrl", "http://echo.  getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "false");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
 }

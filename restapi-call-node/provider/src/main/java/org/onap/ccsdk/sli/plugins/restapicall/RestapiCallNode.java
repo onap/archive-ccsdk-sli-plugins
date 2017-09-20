@@ -183,10 +183,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         URI retryUri = UriBuilder.fromUri(uri).host(uriTwo.getHost()).port(uriTwo.getPort()).scheme(
                                 uriTwo.getScheme()).build();
                         paramMap.put("restapiUrl", retryUri.toString());
-                        log.debug("URL was set to " + retryUri.toString());
-                        log.debug("Failed to communicate with host " + hostname +
-                                ". Request will be re-attempted using the host " + retryString + ".");
-                        log.debug("This is retry attempt " + retryCount + " out of " + retryPolicy.getMaximumRetries());
+                        log.debug("URL was set to {}", retryUri.toString());
+                        log.debug("Failed to communicate with host {}. Request will be re-attempted using the host {}.",
+                            hostname, retryString);
+                        log.debug("This is retry attempt {} out of {}", retryCount, retryPolicy.getMaximumRetries());
                         sendRequest(paramMap, ctx, retryCount);
                     } else {
                         log.debug("Maximum retries reached, calling setFailureResponseStatus.");
@@ -210,6 +210,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         Parameters p = new Parameters();
         p.templateFileName = parseParam(paramMap, "templateFileName", false, null);
         p.restapiUrl = parseParam(paramMap, "restapiUrl", true, null);
+        validateUrl(p.restapiUrl);
         p.restapiUser = parseParam(paramMap, "restapiUser", false, null);
         p.restapiPassword = parseParam(paramMap, "restapiPassword", false, null);
         p.contentType = parseParam(paramMap, "contentType", false, null);
@@ -232,6 +233,14 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return p;
     }
 
+    private void validateUrl(String restapiUrl) throws SvcLogicException {
+        try {
+            URI.create(restapiUrl);
+        } catch (IllegalArgumentException e) {
+            throw new SvcLogicException("Invalid input of url " + e.getLocalizedMessage(), e);
+        }
+    }
+
     protected Set<String> getListNameList(Map<String, String> paramMap) {
         Set<String> ll = new HashSet<>();
         for (Map.Entry<String,String> entry : paramMap.entrySet())
@@ -251,7 +260,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         s = s.trim();
-        String value = "";
+        StringBuilder value = new StringBuilder();
         int i = 0;
         int i1 = s.indexOf('%');
         while (i1 >= 0) {
@@ -264,21 +273,21 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (varValue == null)
                 varValue = "%" + varName + "%";
 
-            value += s.substring(i, i1);
-            value += varValue;
+            value.append(s.substring(i, i1));
+            value.append(varValue);
 
             i = i2 + 1;
             i1 = s.indexOf('%', i);
         }
-        value += s.substring(i);
+        value.append(s.substring(i));
 
-        log.info("Parameter " + name + ": [" + value + "]");
-        return value;
+        log.info("Parameter {}: [{}]", name, value);
+        return value.toString();
     }
 
     protected String buildXmlJsonRequest(SvcLogicContext ctx, String template, Format format)
         throws SvcLogicException {
-        log.info("Building " + format + " started");
+        log.info("Building {} started", format);
         long t1 = System.currentTimeMillis();
 
         template = expandRepeats(ctx, template, 1);
@@ -328,7 +337,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             req = XmlJsonUtil.removeLastCommaJson(req);
 
         long t2 = System.currentTimeMillis();
-        log.info("Building " + format + " completed. Time: " + (t2 - t1));
+        log.info("Building {} completed. Time: {}", format, (t2 - t1));
 
         return req;
     }
@@ -368,7 +377,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             String var1 = template.substring(i1 + 9, i2);
             String value1 = ctx.getAttribute(var1);
-            log.info("     " + var1 + ": " + value1);
+            log.info("     {}:{}", var1, value1);
             int n = 0;
             try {
                 n = Integer.parseInt(value1);
@@ -477,11 +486,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: " + (t2 - t1));
-        log.info("HTTP response code: " + r.code);
-        log.info("HTTP response message: " + r.message);
+        log.info("Response received. Time: {}", (t2 - t1));
+        log.info("HTTP response code: {}", r.code);
+        log.info("HTTP response message: {}", r.message);
         logHeaders(r.headers);
-        log.info("HTTP response: " + r.body);
+        log.info("HTTP response: {}", r.body);
 
         return r;
     }
@@ -504,7 +513,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             ctx.init(kmf.getKeyManagers(), null, null);
             return ctx;
         } catch (Exception e) {
-            log.error("Error creating SSLContext: " + e.getMessage(), e);
+            log.error("Error creating SSLContext: {}", e.getMessage(), e);
         }
         return null;
     }
@@ -534,7 +543,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             setResponseStatus(ctx, p.responsePrefix, r);
 
         } catch (SvcLogicException | IOException e) {
-            log.error("Error sending the request: " + e.getMessage(), e);
+            log.error("Error sending the request: {}", e.getMessage(), e);
 
             r = new HttpResponse();
             r.code = 500;
@@ -612,7 +621,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (r.code == 301) {
                 String newUrl = response.getHeaders().getFirst("Location");
 
-                log.info("Got response code 301. Sending same request to URL: " + newUrl);
+                log.info("Got response code 301. Sending same request to URL: {}", newUrl);
 
                 webResource = client.resource(newUrl);
 
@@ -638,11 +647,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: " + (t2 - t1));
-        log.info("HTTP response code: " + r.code);
-        log.info("HTTP response message: " + r.message);
+        log.info("Response received. Time: {}", (t2 - t1));
+        log.info("HTTP response code: {}", r.code);
+        log.info("HTTP response message: {}", r.message);
         logHeaders(r.headers);
-        log.info("HTTP response: " + r.body);
+        log.info("HTTP response: {}", r.body);
 
         return r;
     }
@@ -657,7 +666,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             String req;
 
             if (p.templateFileName == null) {
-                log.info("No template file name specified. Using default UEB template: " + defaultUebTemplateFileName);
+                log.info("No template file name specified. Using default UEB template: {}", defaultUebTemplateFileName);
                 p.templateFileName = defaultUebTemplateFileName;
             }
 
@@ -671,7 +680,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 ctx.setAttribute(pp + "httpResponse", r.body);
 
         } catch (SvcLogicException e) {
-            log.error("Error sending the request: " + e.getMessage(), e);
+            log.error("Error sending the request: {}", e.getMessage(), e);
 
             r = new HttpResponse();
             r.code = 500;
@@ -716,7 +725,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         client.setConnectTimeout(5000);
         WebResource webResource = client.resource(urls[0]);
 
-        log.info("UEB URL: " + urls[0]);
+        log.info("UEB URL: {}", urls[0]);
         log.info("Sending request:");
         log.info(request);
         long t1 = System.currentTimeMillis();
@@ -744,10 +753,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: " + (t2 - t1));
-        log.info("HTTP response code: " + r.code);
+        log.info("Response received. Time: {}", (t2 - t1));
+        log.info("HTTP response code: {}", r.code);
         logHeaders(r.headers);
-        log.info("HTTP response:\n" + r.body);
+        log.info("HTTP response:\n {}", r.body);
 
         return r;
     }
@@ -760,7 +769,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         log.info("Properties:");
         for (String name : ll)
-            log.info("--- " + name + ": " + String.valueOf(mm.get(name)));
+            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
     }
 
     protected void logHeaders(MultivaluedMap<String, String> mm) {
@@ -775,7 +784,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         Collections.sort(ll);
 
         for (String name : ll)
-            log.info("--- " + name + ": " + String.valueOf(mm.get(name)));
+            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
     }
 
     public void setUebServers(String uebServers) {
