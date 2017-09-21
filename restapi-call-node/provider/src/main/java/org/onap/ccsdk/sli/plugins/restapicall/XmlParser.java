@@ -61,7 +61,7 @@ public final class XmlParser {
             SAXParser saxParser = factory.newSAXParser();
             InputStream in = new ByteArrayInputStream(s.getBytes());
             saxParser.parse(in, handler);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
+        } catch (ParserConfigurationException | IOException | SAXException | NumberFormatException e) {
             throw new SvcLogicException("Unable to convert XML to properties" + e.getLocalizedMessage(), e);
         }
         return handler.getProperties();
