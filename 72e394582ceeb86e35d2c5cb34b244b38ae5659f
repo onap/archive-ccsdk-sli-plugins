@@ -16,6 +16,24 @@
       "revId": "72e394582ceeb86e35d2c5cb34b244b38ae5659f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_134d8c9a",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/XmlParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-21T05:58:10Z",
+      "side": 1,
+      "message": "It can be caused by Integer.parseInt(s) which will be invoked from startElement() which will be invoked during saxParser.parse().\n\nI have added a testcase to test the same, if we remove the catch for NumberFormatException and run added testcases a NumberFormatException will be thrown with below call stack:\n\njava.lang.Exception: Unexpected exception, expected\u003corg.onap.ccsdk.sli.core.sli.SvcLogicException\u003e but was\u003cjava.lang.NumberFormatException\u003e\n\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:28)\n\tat \n..................\n\nCaused by: java.lang.NumberFormatException: For input string: \"a\"\n\tat java.lang.NumberFormatException.forInputString(NumberFormatException.java:65)\n\tat java.lang.Integer.parseInt(Integer.java:580)\n\tat java.lang.Integer.parseInt(Integer.java:615)\n\tat org.onap.ccsdk.sli.plugins.restapicall.XmlParser$Handler.getInt(XmlParser.java:154)\n\tat org.onap.ccsdk.sli.plugins.restapicall.XmlParser$Handler.startElement(XmlParser.java:110)\n\tat com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(AbstractSAXParser.java:509)\n\tat com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanStartElement(XMLDocumentFragmentScannerImpl.java:1359)\n\tat com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2784)\n\tat com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:602)\n\tat com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:505)\n\tat com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:841)\n\tat com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:770)\n\tat com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:141)\n\tat com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1213)\n\tat com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:643)\n\tat com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl.parse(SAXParserImpl.java:327)\n\tat javax.xml.parsers.SAXParser.parse(SAXParser.java:195)\n\tat org.onap.ccsdk.sli.plugins.restapicall.XmlParser.convertToProperties(XmlParser.java:63)\n\tat jtest.org.onap.ccsdk.sli.plugins.restapicall.TestXmlParser.testInvalidLength(TestXmlParser.java:106)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)\n\tat org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)\n\tat org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)\n\tat org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)\n\tat org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:19)\n\t... 14 more",
+      "parentUuid": "9a437d4f_a50f9a87",
+      "revId": "72e394582ceeb86e35d2c5cb34b244b38ae5659f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
