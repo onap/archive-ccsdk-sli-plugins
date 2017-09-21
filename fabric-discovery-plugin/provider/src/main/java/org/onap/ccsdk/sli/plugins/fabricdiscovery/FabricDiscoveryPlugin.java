@@ -44,7 +44,7 @@ public class FabricDiscoveryPlugin implements SvcLogicJavaPlugin, IFabricDiscove
 
     public FabricDiscoveryPlugin() {
         service = Executors.newFixedThreadPool(10);
-        streamMap = new ConcurrentHashMap<String, WebSocketClient> ();
+        streamMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class FabricDiscoveryPlugin implements SvcLogicJavaPlugin, IFabricDiscove
         }
 
         ctx.setAttribute(pfx + FB_DISCOVERY_STATUS, "Success");
-        LOG.info("{} monitoring notification stream: {}", (enable) ? "START" : "STOP", stream);
+        LOG.info("{} monitoring notification stream: {}", enable ? "START" : "STOP", stream);
 
         try {
             service.execute(new Runnable () {
