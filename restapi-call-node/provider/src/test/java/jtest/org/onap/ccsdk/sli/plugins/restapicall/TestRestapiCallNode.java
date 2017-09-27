@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -191,6 +191,66 @@ public class TestRestapiCallNode {
         p.put("httpMethod", "post");
         p.put("responsePrefix", "response");
         p.put("skipSending", "false");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testVpnJsonTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
+        ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/l3smvpntemplate.json");
+        p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vpn-services");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "restapi-result");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testSiteJsonTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
+        ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
+
+        ctx.setAttribute("prop.l3vpn.site1_name", "10000000-0000-0000-0000-000000000002");
+        ctx.setAttribute("prop.l3vpn.vpn-policy1-id", "10000000-0000-0000-0000-000000000003");
+        ctx.setAttribute("prop.l3vpn.entry1-id", "1");
+        ctx.setAttribute("prop.l3vpn.sna1_name", "10000000-0000-0000-0000-000000000004");
+        ctx.setAttribute("prop.l3vpn.pe1_id", "a8098c1a-f86e-11da-bd1a-00112444be1e");
+        ctx.setAttribute("prop.l3vpn.ac1_id", "a8098c1a-f86e-11da-bd1a-00112444be1b");
+        ctx.setAttribute("prop.l3vpn.ac1-peer-ip", "192.168.1.1");
+        ctx.setAttribute("prop.l3vpn.ac1-ip", "192.168.1.2");
+        ctx.setAttribute("prop.l3vpn.sna1-route", "192.168.1.4/24");
+
+        ctx.setAttribute("prop.l3vpn.site2_name", "10000000-0000-0000-0000-000000000005");
+        ctx.setAttribute("prop.l3vpn.vpn-policy2-id", "10000000-0000-0000-0000-000000000006");
+        ctx.setAttribute("prop.l3vpn.entry2-id", "1");
+        ctx.setAttribute("prop.l3vpn.sna2_name", "10000000-0000-0000-0000-000000000007");
+        ctx.setAttribute("prop.l3vpn.pe2_id", "a8098c1a-f86e-11da-bd1a-00112444be1a");
+        ctx.setAttribute("prop.l3vpn.ac2_id", "a8098c1a-f86e-11da-bd1a-00112444be1c");
+        ctx.setAttribute("prop.l3vpn.ac2-peer-ip", "192.168.1.5");
+        ctx.setAttribute("prop.l3vpn.ac2-ip", "192.168.1.5");
+        ctx.setAttribute("prop.l3vpn.sna2-route", "192.168.1.8/24");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/l3smsitetemplate.json");
+        p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/sites");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "restapi-result");
+        p.put("skipSending", "true");
 
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
