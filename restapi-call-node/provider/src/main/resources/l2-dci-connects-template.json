@@ -2,8 +2,6 @@
  * ============LICENSE_START=======================================================
  * ONAP : SDN-C
  * ================================================================================
- * Copyright (C) 2017 Intel Corp. All rights reserved.
- * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,16 +17,13 @@
  */
 
 {
-  "l3-dci-connect": {
+  "l2-dci-connect": {
     "id": ${prop.dci-connects.id},
     "name": ${prop.dci-connects.name},
     "description": ${prop.dci-connects.description},
-    "router_id": ${prop.dci-connects.router_id},
-    "firewall_enable": false,
-    "local_networks": ${prop.dci-connects.local_networks},
-    "local_network_all": false,
+    "network_id": ${prop.dci-connects.local_networks[0]},
     "evpn_irts": ${prop.dci-connects.evpn_irts},
     "evpn_erts": ${prop.dci-connects.evpn_erts},
-    "l3_vni": ${prop.dci-connects.vni}
+    "vni": ${prop.dci-connects.vni}
   }
 }
