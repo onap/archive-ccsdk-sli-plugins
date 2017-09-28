@@ -55,4 +55,25 @@ public class TestFabricDiscoveryPlugin {
         }
     }
 
+    @Test
+    public void validateParameterEnableFailure() throws Exception {
+        SvcLogicContext ctx = new SvcLogicContext();
+        String stream = C_STREAM;
+        final String W_ENABLE_STR = "bad enable parameter";
+
+        Map<String, String> p = new HashMap<>();
+        p.put("stream", stream);
+        p.put("enable", W_ENABLE_STR);
+
+        FabricDiscoveryPlugin fdp = new FabricDiscoveryPlugin();
+        try {
+            fdp.processDcNotificationStream(p, ctx);
+            LOG.info("Connection to Stream:{} succeeded.", stream);
+        } catch (Exception e) {
+            LOG.info("Received Exception while connecting to Fabric Discovery notification server: {}", e.getMessage());
+        } finally {
+            Assert.assertEquals("Failure", ctx.getAttribute(FB_DISCOVERY_STATUS));
+        }
+    }
+
 }
