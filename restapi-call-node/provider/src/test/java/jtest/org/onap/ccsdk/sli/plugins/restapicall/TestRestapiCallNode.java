@@ -23,7 +23,6 @@ package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -254,5 +253,61 @@ public class TestRestapiCallNode {
 
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testL2DciTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.dci-connects.id", "Id1");
+        ctx.setAttribute("prop.dci-connects.name", "Name1");
+        ctx.setAttribute("prop.dci-connects.local_networks[0]", "NetId1");
+        ctx.setAttribute("prop.dci-connects.local_networks[1]", "NetId2");
+        ctx.setAttribute("prop.dci-connects.evpn_irts[0]", "100:1");
+        ctx.setAttribute("prop.dci-connects.evpn_erts[0]", "100:2");
+        ctx.setAttribute("prop.dci-connects.evpn_irts[1]", "200:1");
+        ctx.setAttribute("prop.dci-connects.evpn_erts[1]", "200:2");
+        ctx.setAttribute("prop.dci-connects.vni", "1");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/l2-dci-connects-template.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testL3DciTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.dci-connects.id", "Id1");
+        ctx.setAttribute("prop.dci-connects.name", "Name1");
+        ctx.setAttribute("prop.dci-connects.local_networks_length", "2");
+        ctx.setAttribute("prop.dci-connects.local_networks[0]", "NetId1");
+        ctx.setAttribute("prop.dci-connects.local_networks[1]", "NetId2");
+        ctx.setAttribute("prop.dci-connects.evpn_irts[0]", "100:1");
+        ctx.setAttribute("prop.dci-connects.evpn_erts[0]", "100:2");
+        ctx.setAttribute("prop.dci-connects.evpn_irts[1]", "200:1");
+        ctx.setAttribute("prop.dci-connects.evpn_erts[1]", "200:2");
+        ctx.setAttribute("prop.dci-connects.vni", "1");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/l3-dci-connects-template.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+
     }
 }
