@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * openECOMP : SDN-C
+ * ONAP : SDN-C
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 						reserved.
@@ -20,9 +20,12 @@
  */
 
 {
-    "vpn-id": ${prop.l3vpn.name},
-    "customer-name": "huawei",
-    "vpn-service-topology": ${prop.l3vpn.topology},
-    "route-exchange-policy": "huawei-ac-net-l3vpn-svc:vpnv4-way"
+  "vpn-service": [
+    {
+      "vpn-id": ${prop.l3vpn.name,
+      "customer-name": "huawei",
+      "vpn-service-topology": ${prop.l3vpn.topology,
+      "route-exchange-policy": "huawei-ac-net-l3vpn-svc:vpnv4-way"
+    }
+  ]
 }
-

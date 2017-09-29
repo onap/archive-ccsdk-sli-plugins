@@ -1,6 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * openECOMP : SDN-C
+ * ONAP : SDN-C
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 						reserved.
@@ -68,19 +68,28 @@
         "routing-protocols": {
           "routing-protocol": [
             {
-              "type": "huawei-ac-net-l3vpn-svc:static",
+              "type": ${prop.l3vpn.ac1_protocol},
               "static": {
                 "cascaded-lan-prefixes": [
                   {
                     "ipv4-lan-prefixes": [
                       {
-                        "ip-prefix": ${prop.l3vpn.sna1-route},
-                        "next-hop": ${prop.l3vpn.sna1-route}
+                        "ip-prefix": ${prop.l3vpn.sna1-route.ip-prefix},
+                        "next-hop": ${prop.l3vpn.sna1-route.next-hop}
                       }
                     ]
                   }
                 ]
               }
+              "bgp": {
+                "peers": [
+                  {
+                    "peer-ip": ${prop.l3vpn.peer1-ip},
+                    "remote-as": ${prop.l3vpn.ac1_protocol_bgp_as}
+                  }
+                ]
+              }
+            }
             }
           ]
         },
@@ -138,16 +147,24 @@
       "routing-protocols": {
         "routing-protocol": [
           {
-            "type": "huawei-ac-net-l3vpn-svc:static",
+            "type": ${prop.l3vpn.ac2_protocol},
             "static": {
               "cascaded-lan-prefixes": [
                 {
                   "ipv4-lan-prefixes": [
                     {
-                      "ip-prefix": ${prop.l3vpn.sna2-route},
-                    "next-hop": ${prop.l3vpn.sna2-route}
+                      "ip-prefix": ${prop.l3vpn.sna2-route.ip-prefix},
+                      "next-hop": ${prop.l3vpn.sna2-route.next-hop}
                   }
                   ]
+                }
+              ]
+            }
+            "bgp": {
+              "peers": [
+                {
+                  "peer-ip": ${prop.l3vpn.peer2-ip},
+                  "remote-as": ${prop.l3vpn.ac2_protocol_bgp_as}
                 }
               ]
             }

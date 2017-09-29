@@ -23,6 +23,7 @@ package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -229,7 +230,9 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.ac1_id", "a8098c1a-f86e-11da-bd1a-00112444be1b");
         ctx.setAttribute("prop.l3vpn.ac1-peer-ip", "192.168.1.1");
         ctx.setAttribute("prop.l3vpn.ac1-ip", "192.168.1.2");
-        ctx.setAttribute("prop.l3vpn.sna1-route", "192.168.1.4/24");
+        ctx.setAttribute("prop.l3vpn.ac1_protocol", "static");
+        ctx.setAttribute("prop.l3vpn.sna1-route.ip-prefix", "192.168.1.1/24");
+        ctx.setAttribute("prop.l3vpn.sna1-route.next-hop", "192.168.1.4");
 
         ctx.setAttribute("prop.l3vpn.site2_name", "10000000-0000-0000-0000-000000000005");
         ctx.setAttribute("prop.l3vpn.vpn-policy2-id", "10000000-0000-0000-0000-000000000006");
@@ -239,7 +242,9 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.ac2_id", "a8098c1a-f86e-11da-bd1a-00112444be1c");
         ctx.setAttribute("prop.l3vpn.ac2-peer-ip", "192.168.1.5");
         ctx.setAttribute("prop.l3vpn.ac2-ip", "192.168.1.5");
-        ctx.setAttribute("prop.l3vpn.sna2-route", "192.168.1.8/24");
+        ctx.setAttribute("prop.l3vpn.ac2_protocol", "bgp");
+        ctx.setAttribute("prop.l3vpn.peer2-ip", "192.168.1.5");
+        ctx.setAttribute("prop.l3vpn.ac2_protocol_bgp_as", "200");
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("templateFileName", "src/test/resources/l3smsitetemplate.json");
@@ -255,6 +260,30 @@ public class TestRestapiCallNode {
         rcn.sendRequest(p, ctx);
     }
 
+    @Test
+    public void testVrfJsonTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.l3vpn.vrf1-id", "10000000-0000-0000-0000-000000000007");
+        ctx.setAttribute("prop.l3vpn.vpn-policy1-id", "10000000-0000-0000-0000-000000000003");
+        ctx.setAttribute("prop.l3vpn.pe1_id", "a8098c1a-f86e-11da-bd1a-00112444be1e");
+        ctx.setAttribute("prop.l3vpn.vrf2-id", "10000000-0000-0000-0000-000000000009");
+        ctx.setAttribute("prop.l3vpn.vpn-policy2-id", "10000000-0000-0000-0000-000000000006");
+        ctx.setAttribute("prop.l3vpn.pe2_id", "a8098c1a-f86e-11da-bd1a-00112444be1a");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/l3smvrftemplate.json");
+        p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vrf-attributes");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "restapi-result");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+	
     @Test
     public void testL2DciTemplate() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();

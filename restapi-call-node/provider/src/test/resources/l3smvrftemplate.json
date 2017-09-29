@@ -20,12 +20,16 @@
  */
 
 {
-  "vpn-service": [
-    {
-      "vpn-id": ${prop.l3vpn.name,
-      "customer-name": "huawei",
-      "vpn-service-topology": ${prop.l3vpn.topology,
-      "route-exchange-policy": "huawei-ac-net-l3vpn-svc:vpnv4-way"
-    }
-  ]
+    "vrf-attribute": [
+        {
+            "vrf-attribute-id": ${prop.l3vpn.vrf1-id},
+            "ne-id": ${prop.l3vpn.pe1_id},
+            "vpn-policy-id": ${prop.l3vpn.vpn-policy1-id}
+        },
+        {
+            "vrf-attribute-id": ${prop.l3vpn.vrf2-id},
+            "ne-id": ${prop.l3vpn.pe2_id},
+            "vpn-policy-id": ${prop.l3vpn.vpn-policy2-id}
+        }
+    ]
 }
