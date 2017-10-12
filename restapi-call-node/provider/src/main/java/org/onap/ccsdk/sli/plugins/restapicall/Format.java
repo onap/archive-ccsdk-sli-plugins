@@ -25,11 +25,9 @@ public enum Format {
     JSON, XML;
 
     public static Format fromString(String s) {
-        if (s == null)
-            return null;
-        if (s.equalsIgnoreCase("json"))
+        if ("json".equalsIgnoreCase(s))
             return JSON;
-        if (s.equalsIgnoreCase("xml"))
+        if ("xml".equalsIgnoreCase(s))
             return XML;
         throw new IllegalArgumentException("Invalid value for format: " + s);
     }
