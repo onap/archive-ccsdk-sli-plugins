@@ -283,7 +283,28 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
     }
-	
+
+    @Test
+    public void testDeleteVpnJsonTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
+        ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
+
+        Map<String, String> p = new HashMap<String, String>();
+        //p.put("templateFileName", "src/test/resources/l3smvpntemplate.json");
+        p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vpn-services"
+            + "/vpnservice=10000000-0000-0000-0000-000000000001");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("format", "json");
+        p.put("httpMethod", "delete");
+        p.put("responsePrefix", "restapi-result");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
     @Test
     public void testL2DciTemplate() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
