@@ -230,6 +230,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.ac1_id", "a8098c1a-f86e-11da-bd1a-00112444be1b");
         ctx.setAttribute("prop.l3vpn.ac1-peer-ip", "192.168.1.1");
         ctx.setAttribute("prop.l3vpn.ac1-ip", "192.168.1.2");
+        ctx.setAttribute("prop.l3vpn.sna1_svlan", "100");
         ctx.setAttribute("prop.l3vpn.ac1_protocol", "static");
         ctx.setAttribute("prop.l3vpn.sna1-route.ip-prefix", "192.168.1.1/24");
         ctx.setAttribute("prop.l3vpn.sna1-route.next-hop", "192.168.1.4");
@@ -240,10 +241,11 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.sna2_name", "10000000-0000-0000-0000-000000000007");
         ctx.setAttribute("prop.l3vpn.pe2_id", "a8098c1a-f86e-11da-bd1a-00112444be1a");
         ctx.setAttribute("prop.l3vpn.ac2_id", "a8098c1a-f86e-11da-bd1a-00112444be1c");
-        ctx.setAttribute("prop.l3vpn.ac2-peer-ip", "192.168.1.5");
+        ctx.setAttribute("prop.l3vpn.ac2-peer-ip", "192.168.1.6");
         ctx.setAttribute("prop.l3vpn.ac2-ip", "192.168.1.5");
+        ctx.setAttribute("prop.l3vpn.sna2_svlan", "200");
         ctx.setAttribute("prop.l3vpn.ac2_protocol", "bgp");
-        ctx.setAttribute("prop.l3vpn.peer2-ip", "192.168.1.5");
+        ctx.setAttribute("prop.l3vpn.peer2-ip", "192.168.1.7");
         ctx.setAttribute("prop.l3vpn.ac2_protocol_bgp_as", "200");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -359,5 +361,23 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
 
+    }
+
+    @Test
+    public void testControllerTokenTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("prop.sdncRestApi.thirdpartySdnc.user", "admin");
+        ctx.setAttribute("prop.sdncRestApi.thirdpartySdnc.password", "admin123");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/actokentemplate.json");
+        p.put("restapiUrl", "https://ipwan:18002/controller/v2/tokens");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "restapi-result");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
     }
 }
