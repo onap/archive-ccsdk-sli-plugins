@@ -107,7 +107,6 @@
     <modules>
         <module>properties-node</module>
         <module>restapi-call-node</module>
-        <module>fabric-discovery-plugin</module>
   </modules>
     <organization>
         <name>AT&amp;T</name>
