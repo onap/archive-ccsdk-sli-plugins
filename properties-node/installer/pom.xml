@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>properties-node</artifactId>
-        <groupId>org.onap.ccsdk.sli.plugins</groupId>
-        <version>0.2.0-SNAPSHOT</version>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>odlparent-lite</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
+
+    <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>properties-node-installer</artifactId>
-    <name>Properties node - Karaf  Installer</name>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>ccsdk-sli-plugins :: properties-node :: ${project.artifactId}</name>
+
     <properties>
-        <application.name>sdnc-properties-node</application.name>
-        <features.boot>sdnc-properties-node</features.boot>
-        <features.repositories>mvn:org.onap.ccsdk.sli.plugins/properties-node-features/${project.version}/xml/features</features.repositories>
+        <application.name>ccsdk-properties-node</application.name>
+        <features.boot>${application.name}</features.boot>
+        <features.repositories>mvn:org.onap.ccsdk.sli.plugins/${features.boot}/${project.version}/xml/features</features.repositories>
         <include.transitive.dependencies>false</include.transitive.dependencies>
     </properties>
 
@@ -22,10 +26,10 @@
 
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>
-            <artifactId>properties-node-features</artifactId>
+            <artifactId>${application.name}</artifactId>
             <version>${project.version}</version>
-            <classifier>features</classifier>
             <type>xml</type>
+            <classifier>features</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -99,8 +103,7 @@
                             <useRepositoryLayout>true</useRepositoryLayout>
                             <addParentPoms>false</addParentPoms>
                             <copyPom>false</copyPom>
-                            <includeGroupIds>org.onap.ccsdk.sli</includeGroupIds>
-                            <excludeArtifactIds>sli-common,sli-provider,dblib-provider</excludeArtifactIds>
+                            <includeGroupIds>org.onap.ccsdk.sli.plugins</includeGroupIds>
                             <scope>provided</scope>
                         </configuration>
                     </execution>
@@ -135,5 +138,4 @@
 
         </plugins>
     </build>
-
 </project>
