@@ -1,37 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.onap.ccsdk.sli.plugins</groupId>
-        <artifactId>ccsdk-sli-plugins</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
-    </parent>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>odlparent-lite</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
 
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>restapi-call-node</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>RESTAPI Call Node</name>
+    <name>ccsdk-sli-plugins :: restapi-call-node</name>
     <description>This is an implementation of DG Execute Node that makes a call to an external REST API</description>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.onap.ccsdk.sli.plugins</groupId>
-                <artifactId>restapi-call-node-features</artifactId>
-                <classifier>features</classifier>
-                <type>xml</type>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.onap.ccsdk.sli.plugins</groupId>
-                <artifactId>restapi-call-node-provider</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <modules>
         <module>provider</module>
@@ -39,4 +22,3 @@
         <module>installer</module>
     </modules>
 </project>
-
