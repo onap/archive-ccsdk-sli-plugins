@@ -91,7 +91,7 @@ public class TestRestapiCallNode {
         rcn.sendRequest(p, ctx);
     }
 
-    @Test(expected = SvcLogicException.class)
+    @Test
     public void testInvalidRepeatTimes() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "a");
