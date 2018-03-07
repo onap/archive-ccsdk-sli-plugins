@@ -382,8 +382,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             try {
                 n = Integer.parseInt(value1);
             } catch (NumberFormatException e) {
-                throw new SvcLogicException("Invalid input of repeat interval, should be an integer value " +
-                    e.getLocalizedMessage(), e);
+                log.info("value1 not set or not a number, n will remain set at zero");
             }
 
             newTemplate.append(template.substring(k, i1));
