@@ -43,4 +43,5 @@ public class Parameters {
     public String customHttpHeaders;
     public String partner;
     public Boolean dumpHeaders;
+    public String requestBody;
 }

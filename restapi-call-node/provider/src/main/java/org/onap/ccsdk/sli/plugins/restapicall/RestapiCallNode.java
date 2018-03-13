@@ -131,6 +131,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (p.templateFileName != null) {
                 String reqTemplate = readFile(p.templateFileName);
                 req = buildXmlJsonRequest(ctx, reqTemplate, p.format);
+            } else if (p.requestBody != null) {
+                req = p.requestBody;
             }
             r = sendHttpRequest(req, p);
             setResponseStatus(ctx, p.responsePrefix, r);
@@ -209,6 +211,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected Parameters getParameters(Map<String, String> paramMap) throws SvcLogicException {
         Parameters p = new Parameters();
         p.templateFileName = parseParam(paramMap, "templateFileName", false, null);
+        p.requestBody = parseParam(paramMap, "requestBody", false, null);
         p.restapiUrl = parseParam(paramMap, "restapiUrl", true, null);
         validateUrl(p.restapiUrl);
         p.restapiUser = parseParam(paramMap, "restapiUser", false, null);
