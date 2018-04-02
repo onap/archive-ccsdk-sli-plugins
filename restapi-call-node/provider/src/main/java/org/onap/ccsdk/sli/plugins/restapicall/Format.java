@@ -22,13 +22,15 @@
 package org.onap.ccsdk.sli.plugins.restapicall;
 
 public enum Format {
-    JSON, XML;
+    JSON, XML, NONE;
 
     public static Format fromString(String s) {
         if ("json".equalsIgnoreCase(s))
             return JSON;
         if ("xml".equalsIgnoreCase(s))
             return XML;
+        if ("none".equalsIgnoreCase(s))
+            return NONE;
         throw new IllegalArgumentException("Invalid value for format: " + s);
     }
 }

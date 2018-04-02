@@ -437,7 +437,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         Client client = Client.create(config);
         client.setConnectTimeout(5000);
-        if (p.restapiUser != null)
+        if (p.restapiUser != null && p.restapiPassword != null)
             client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
         WebResource webResource = client.resource(p.restapiUrl);
 
@@ -457,6 +457,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             }
 
             WebResource.Builder webResourceBuilder = webResource.accept(tt).type(tt1);
+            if(p.format == Format.NONE){
+                webResourceBuilder = webResource.header("","");
+            }
 
             if (p.customHttpHeaders != null && p.customHttpHeaders.length() > 0) {
                 String[] keyValuePairs = p.customHttpHeaders.split(",");
