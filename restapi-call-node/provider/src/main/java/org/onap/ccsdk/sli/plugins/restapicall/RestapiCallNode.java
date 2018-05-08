@@ -112,6 +112,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      *      <tr><td>customHttpHeaders</td><td>Optional</td><td>a list additional http headers to be passed in, follow the format in the example</td><td>X-CSI-MessageId=messageId,headerFieldName=headerFieldValue</td></tr>
      *      <tr><td>dumpHeaders</td><td>Optional</td><td>when true writes http header content to context memory</td><td>true or false</td></tr>
      *      <tr><td>partner</td><td>Optional</td><td>needed for DME2 calls</td><td>dme2proxy</td></tr>
+     *      <tr><td>returnRequestPayload</td><td>Optional</td><td>used to return payload built in the request</td><td>true or false</td></tr>
      *  </tbody>
      * </table>
      * @param ctx Reference to context memory
@@ -149,6 +150,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 for (Entry<String, List<String>> a : r.headers.entrySet()) {
                     ctx.setAttribute(pp + "header." + a.getKey(), StringUtils.join(a.getValue(), ","));
                 }
+            }
+            
+            if (p.returnRequestPayload && req != null) {
+            	ctx.setAttribute(pp + "httpRequest", req);
             }
 
             if (r.body != null && r.body.trim().length() > 0) {
@@ -246,6 +251,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.customHttpHeaders = parseParam(paramMap, "customHttpHeaders", false, null);
         p.partner = parseParam(paramMap, "partner", false, null);
         p.dumpHeaders = Boolean.valueOf(parseParam(paramMap, "dumpHeaders", false, null));
+        p.returnRequestPayload = Boolean.valueOf(parseParam(paramMap, "returnRequestPayload", false, null));
         return p;
     }
 
