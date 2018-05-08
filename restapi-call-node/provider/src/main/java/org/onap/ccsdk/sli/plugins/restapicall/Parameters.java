@@ -49,4 +49,5 @@ public class Parameters {
     public String oAuthSignatureMethod;
     public String oAuthVersion;
     public AuthType authtype;
+    public Boolean returnRequestPayload;
 }
