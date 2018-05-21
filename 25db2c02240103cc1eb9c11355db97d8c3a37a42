@@ -1,0 +1,8 @@
+Code-Review+2: Dan Timoney <dt5972@att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Jun (Nicolas) Hu <jh245g@att.com>
+Submitted-by: Dan Timoney <dt5972@att.com>
+Submitted-at: Mon, 21 May 2018 17:56:25 +0000
+Reviewed-on: https://gerrit.onap.org/r/48129
+Project: ccsdk/sli/plugins
+Branch: refs/heads/master
