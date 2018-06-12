@@ -44,4 +44,8 @@ public class Parameters {
     public String partner;
     public Boolean dumpHeaders;
     public String requestBody;
+    public String oAuthConsumerKey;
+    public String oAuthConsumerSecret;
+    public String oAuthSignatureMethod;
+    public String oAuthVersion;
 }
