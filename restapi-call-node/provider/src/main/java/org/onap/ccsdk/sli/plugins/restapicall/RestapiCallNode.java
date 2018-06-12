@@ -62,6 +62,9 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.oauth.client.OAuthClientFilter;
+import com.sun.jersey.oauth.signature.OAuthParameters;
+import com.sun.jersey.oauth.signature.OAuthSecrets;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 
 public class RestapiCallNode implements SvcLogicJavaPlugin {
@@ -94,6 +97,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      *      <tr><td>restapiUrl</td><td>Mandatory</td><td>url to send the request to</td><td>https://sdncodl:8543/restconf/operations/L3VNF-API:create-update-vnf-request</td></tr>
      *      <tr><td>restapiUser</td><td>Optional</td><td>user name to use for http basic authentication</td><td>sdnc_ws</td></tr>
      *      <tr><td>restapiPassword</td><td>Optional</td><td>unencrypted password to use for http basic authentication</td><td>plain_password</td></tr>
+     *      <tr><td>oAuthConsumerKey</td><td>Optional</td><td>Consumer key to use for http oAuth authentication</td><td>plain_key</td></tr>
+     *      <tr><td>oAuthConsumerSecret</td><td>Optional</td><td>Consumer secret to use for http oAuth authentication</td><td>plain_secret</td></tr>
+     *      <tr><td>oAuthSignatureMethod</td><td>Optional</td><td>Consumer method to use for http oAuth authentication</td><td>method</td></tr>
+     *      <tr><td>oAuthVersion</td><td>Optional</td><td>Version http oAuth authentication</td><td>version</td></tr>
      *      <tr><td>contentType</td><td>Optional</td><td>http content type to set in the http header</td><td>usually application/json or application/xml</td></tr>
      *      <tr><td>format</td><td>Optional</td><td>should match request body format</td><td>json or xml</td></tr>
      *      <tr><td>httpMethod</td><td>Optional</td><td>http method to use when sending the request</td><td>get post put delete patch</td></tr>
@@ -216,6 +223,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         validateUrl(p.restapiUrl);
         p.restapiUser = parseParam(paramMap, "restapiUser", false, null);
         p.restapiPassword = parseParam(paramMap, "restapiPassword", false, null);
+        p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey", false, null);
+        p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret", false, null);
+        p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod", false, null);
+        p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
         p.contentType = parseParam(paramMap, "contentType", false, null);
         p.format = Format.fromString(parseParam(paramMap, "format", false, "json"));
         p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod", false, "post"));
@@ -439,6 +450,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         client.setConnectTimeout(5000);
         if (p.restapiUser != null && p.restapiPassword != null)
             client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
+        else if(p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null && p.oAuthSignatureMethod != null && p.oAuthVersion != null)
+        {
+            OAuthParameters params = new OAuthParameters()
+                    .signatureMethod(p.oAuthSignatureMethod)
+                    .consumerKey(p.oAuthConsumerKey)
+                    .version(p.oAuthVersion);
+
+            OAuthSecrets secrets = new OAuthSecrets()
+                    .consumerSecret(p.oAuthConsumerSecret);
+            client.addFilter(new OAuthClientFilter(client.getProviders(), params, secrets));
+        }
         WebResource webResource = client.resource(p.restapiUrl);
 
         log.info("Sending request:");

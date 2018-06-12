@@ -417,4 +417,22 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
     }
+
+    @Test
+    public void testDeleteOAuthType() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
+        p.put("oAuthConsumerSecret", "secret");
+        p.put("oAuthSignatureMethod", "plainTEXT");
+        p.put("oAuthVersion", "1.0");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
 }
