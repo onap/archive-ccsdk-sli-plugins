@@ -48,4 +48,5 @@ public class Parameters {
     public String oAuthConsumerSecret;
     public String oAuthSignatureMethod;
     public String oAuthVersion;
+    public AuthType authtype;
 }

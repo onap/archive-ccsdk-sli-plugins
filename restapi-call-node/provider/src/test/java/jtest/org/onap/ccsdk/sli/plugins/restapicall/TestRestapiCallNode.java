@@ -435,4 +435,141 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
     }
+
+    @Test
+    public void testDeleteAuthTypeBasic() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("authType", "basic");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testDeleteAuthTypeDigest() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("authType", "digest");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testDeleteAuthTypeOAuth() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("authType", "oauth");
+        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
+        p.put("oAuthConsumerSecret", "secret");
+        p.put("oAuthSignatureMethod", "plainTEXT");
+        p.put("oAuthVersion", "1.0");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testDeleteAuthTypeNoneOAuth() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
+        p.put("oAuthConsumerSecret", "secret");
+        p.put("oAuthSignatureMethod", "plainTEXT");
+        p.put("oAuthVersion", "1.0");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+    @Test
+    public void testDeleteAuthTypeNoneBasic() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("restapiUser", "admin");
+        p.put("restapiPassword", "admin123");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testInvalidDeleteAuthTypeOAuth() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("authType", "oauth");
+        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
+        p.put("oAuthConsumerSecret", "secret");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testInvalidDeleteAuthTypeBasic() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("authType", "basic");
+        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
+        p.put("oAuthConsumerSecret", "secret");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testInvalidDeleteAuthTypeDigest() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("authType", "digest");
+        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
+        p.put("oAuthConsumerSecret", "secret");
+        p.put("httpMethod", "delete");
+        p.put("format", "none");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
 }

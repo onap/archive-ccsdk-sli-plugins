@@ -62,6 +62,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import com.sun.jersey.oauth.client.OAuthClientFilter;
 import com.sun.jersey.oauth.signature.OAuthParameters;
 import com.sun.jersey.oauth.signature.OAuthSecrets;
@@ -229,6 +230,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
         p.contentType = parseParam(paramMap, "contentType", false, null);
         p.format = Format.fromString(parseParam(paramMap, "format", false, "json"));
+        p.authtype = AuthType.fromString(parseParam(paramMap, "authType", false, "unspecified"));
         p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod", false, "post"));
         p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
         p.listNameList = getListNameList(paramMap);
@@ -431,6 +433,67 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
     }
 
+    protected Client addAuthType(Client c, FileParam fp) throws SvcLogicException {
+        Parameters p = new Parameters();
+        p.restapiUser = fp.user;
+        p.restapiPassword = fp.password;
+        p.oAuthConsumerKey = fp.oAuthConsumerKey;
+        p.oAuthVersion = fp.oAuthVersion;
+        p.oAuthConsumerSecret = fp.oAuthConsumerSecret;
+        p.oAuthSignatureMethod = fp.oAuthSignatureMethod;
+        p.authtype = fp.authtype;
+        return addAuthType(c,p);
+    }
+
+    protected Client addAuthType(Client client, Parameters p) throws SvcLogicException {
+        if (p.authtype == AuthType.Unspecified){
+            if (p.restapiUser != null && p.restapiPassword != null)
+                client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
+            else if(p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null
+                    && p.oAuthSignatureMethod != null) {
+                OAuthParameters params = new OAuthParameters()
+                        .signatureMethod(p.oAuthSignatureMethod)
+                        .consumerKey(p.oAuthConsumerKey)
+                        .version(p.oAuthVersion);
+
+                OAuthSecrets secrets = new OAuthSecrets()
+                        .consumerSecret(p.oAuthConsumerSecret);
+                client.addFilter(new OAuthClientFilter(client.getProviders(), params, secrets));
+            }
+        } else {
+            if (p.authtype == AuthType.DIGEST) {
+                if (p.restapiUser != null && p.restapiPassword != null) {
+                    client.addFilter(new HTTPDigestAuthFilter(p.restapiUser, p.restapiPassword));
+                } else {
+                    throw new SvcLogicException("oAUTH authentication type selected but all restapiUser and restapiPassword " +
+                                                        "parameters doesn't exist", new Throwable());
+                }
+            } else if (p.authtype == AuthType.BASIC){
+                if (p.restapiUser != null && p.restapiPassword != null) {
+                    client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
+                } else {
+                    throw new SvcLogicException("oAUTH authentication type selected but all restapiUser and restapiPassword " +
+                                                        "parameters doesn't exist", new Throwable());
+                }
+            } else if(p.authtype == AuthType.OAUTH ) {
+                if(p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null && p.oAuthSignatureMethod != null) {
+                    OAuthParameters params = new OAuthParameters()
+                            .signatureMethod(p.oAuthSignatureMethod)
+                            .consumerKey(p.oAuthConsumerKey)
+                            .version(p.oAuthVersion);
+
+                    OAuthSecrets secrets = new OAuthSecrets()
+                            .consumerSecret(p.oAuthConsumerSecret);
+                    client.addFilter(new OAuthClientFilter(client.getProviders(), params, secrets));
+                } else {
+                    throw new SvcLogicException("oAUTH authentication type selected but all oAuthConsumerKey, oAuthConsumerSecret " +
+                                                        "and oAuthSignatureMethod parameters doesn't exist", new Throwable());
+                }
+            }
+        }
+        return client;
+    }
+
     protected HttpResponse sendHttpRequest(String request, Parameters p) throws SvcLogicException {
 
         ClientConfig config = new DefaultClientConfig();
@@ -448,20 +511,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         Client client = Client.create(config);
         client.setConnectTimeout(5000);
-        if (p.restapiUser != null && p.restapiPassword != null)
-            client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
-        else if(p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null && p.oAuthSignatureMethod != null && p.oAuthVersion != null)
-        {
-            OAuthParameters params = new OAuthParameters()
-                    .signatureMethod(p.oAuthSignatureMethod)
-                    .consumerKey(p.oAuthConsumerKey)
-                    .version(p.oAuthVersion);
-
-            OAuthSecrets secrets = new OAuthSecrets()
-                    .consumerSecret(p.oAuthConsumerSecret);
-            client.addFilter(new OAuthClientFilter(client.getProviders(), params, secrets));
-        }
-        WebResource webResource = client.resource(p.restapiUrl);
+        WebResource webResource = addAuthType(client,p).resource(p.restapiUrl);
 
         log.info("Sending request:");
         log.info(request);
@@ -592,6 +642,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         public HttpMethod httpMethod;
         public String responsePrefix;
         public boolean skipSending;
+        public String oAuthConsumerKey;
+        public String oAuthConsumerSecret;
+        public String oAuthSignatureMethod;
+        public String oAuthVersion;
+        public AuthType authtype;
     }
 
     private FileParam getFileParameters(Map<String, String> paramMap) throws SvcLogicException {
@@ -604,6 +659,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
         String skipSendingStr = paramMap.get("skipSending");
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
+        p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey", false, null);
+        p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
+        p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret", false, null);
+        p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod", false, null);
+        p.authtype = AuthType.fromString(parseParam(paramMap, "authType", false, "unspecified"));
         return p;
     }
 
@@ -611,9 +671,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         Client client = Client.create();
         client.setConnectTimeout(5000);
         client.setFollowRedirects(true);
-        if (p.user != null)
-            client.addFilter(new HTTPBasicAuthFilter(p.user, p.password));
-        WebResource webResource = client.resource(p.url);
+        WebResource webResource = addAuthType(client,p).resource(p.url);
 
         log.info("Sending file");
         long t1 = System.currentTimeMillis();
