@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Dan Timoney <dt5972@att.com>
+Submitted-by: Dan Timoney <dt5972@att.com>
+Submitted-at: Wed, 13 Jun 2018 12:47:31 +0000
+Reviewed-on: https://gerrit.onap.org/r/51195
+Project: ccsdk/sli/plugins
+Branch: refs/heads/master
