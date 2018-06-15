@@ -55,8 +55,14 @@ public final class XmlJsonUtil {
             escape = false;
         }
 
+        boolean quotes = true;
+        if (var.startsWith("\"")) {
+            var = var.substring(1);
+            quotes = false;
+        }
+
         Object o = createStructure(varmap, var);
-        return generateJson(o, escape);
+        return generateJson(o, escape, quotes);
     }
 
     private static Object createStructure(Map<String, String> flatmap, String var) {
@@ -159,22 +165,26 @@ public final class XmlJsonUtil {
         return null;
     }
 
-    private static String generateJson(Object o, boolean escape) {
+    private static String generateJson(Object o, boolean escape, boolean quotes) {
         if (o == null)
             return null;
 
         StringBuilder ss = new StringBuilder();
-        generateJson(ss, o, 0, false, escape);
+        generateJson(ss, o, 0, false, escape, quotes);
         return ss.toString();
     }
 
     @SuppressWarnings("unchecked")
-    private static void generateJson(StringBuilder ss, Object o, int indent, boolean padFirst, boolean escape) {
+    private static void generateJson(StringBuilder ss, Object o, int indent, boolean padFirst, boolean escape, boolean quotes) {
         if (o instanceof String) {
             String s = escape ? escapeJson((String) o) : (String) o;
             if (padFirst)
                 ss.append(pad(indent));
-            ss.append('"').append(s).append('"');
+            if (quotes) {
+                ss.append('"').append(s).append('"');
+            } else {
+                ss.append(s);
+            }
             return;
         }
 
@@ -193,7 +203,7 @@ public final class XmlJsonUtil {
                 Object v = entry.getValue();
                 String key = entry.getKey();
                 ss.append(pad(indent + 1)).append('"').append(key).append("\": ");
-                generateJson(ss, v, indent + 1, false, escape);
+                generateJson(ss, v, indent + 1, false, escape, true);
             }
 
             ss.append("\n");
@@ -215,7 +225,7 @@ public final class XmlJsonUtil {
                     ss.append(",\n");
                 first = false;
 
-                generateJson(ss, o1, indent + 1, true, escape);
+                generateJson(ss, o1, indent + 1, true, escape, quotes);
             }
 
             ss.append("\n");

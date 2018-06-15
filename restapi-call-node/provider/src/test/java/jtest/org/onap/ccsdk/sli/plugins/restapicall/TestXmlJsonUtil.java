@@ -144,6 +144,12 @@ public class TestXmlJsonUtil {
 
         ss = XmlJsonUtil.getJson(mm, "service-data.vnf-config-information");
         log.info(ss);
+
+        ss = XmlJsonUtil.getJson(mm, "service-data.vnf-config-information.vnf-host-ip-address");
+        log.info(ss);
+
+        ss = XmlJsonUtil.getJson(mm, "\"service-data.vnf-config-information.vnf-host-ip-address");
+        log.info(ss);
     }
 
     @Test
