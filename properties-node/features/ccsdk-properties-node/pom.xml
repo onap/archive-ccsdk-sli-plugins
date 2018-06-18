@@ -16,17 +16,28 @@
 
     <name>ccsdk-sli-plugins :: properties-node :: ${project.artifactId}</name>
 
-    <properties>
-        <skip.karaf.featureTest>true</skip.karaf.featureTest>
-    </properties>
 
+	<dependencyManagement>
+		<dependencies>
+		     <dependency>
+                <groupId>org.opendaylight.mdsal.model</groupId>
+                <artifactId>mdsal-model-artifacts</artifactId>
+                <version>${odl.mdsal.model.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.controller</groupId>
+                <artifactId>mdsal-artifacts</artifactId>
+                <version>${odl.mdsal.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+		</dependencies>
+	</dependencyManagement>
+	
     <dependencies>
-        <dependency>
-            <groupId>org.opendaylight.controller</groupId>
-            <artifactId>odl-mdsal-broker</artifactId>
-            <type>xml</type>
-            <classifier>features</classifier>
-        </dependency>
+
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>ccsdk-sli</artifactId>
