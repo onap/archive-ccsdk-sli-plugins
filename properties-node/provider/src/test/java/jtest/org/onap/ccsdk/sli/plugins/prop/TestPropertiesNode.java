@@ -1,7 +1,9 @@
 package jtest.org.onap.ccsdk.sli.plugins.prop;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -22,6 +24,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
         p.put("contextPrefix", "test-json");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -37,6 +40,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
         p.put("contextPrefix", "test-json");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -54,6 +58,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
         p.put("contextPrefix", "");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -72,6 +77,7 @@ public class TestPropertiesNode {
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -91,6 +97,7 @@ public class TestPropertiesNode {
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -112,6 +119,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test-invalid.json");
         p.put("contextPrefix", "invalid");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -126,6 +134,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
         p.put("contextPrefix", "test-txt");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -147,6 +156,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
         p.put("contextPrefix", "");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -167,6 +177,7 @@ public class TestPropertiesNode {
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -188,6 +199,7 @@ public class TestPropertiesNode {
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -211,6 +223,7 @@ public class TestPropertiesNode {
         Map<String, String> p = new HashMap<String, String>();
         p.put("responsePrefix", "response");
         p.put("skipSending", "true");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -224,6 +237,7 @@ public class TestPropertiesNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
@@ -238,10 +252,348 @@ public class TestPropertiesNode {
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/tests/resources/test.txt");
+        p.put("fileBasedParsing","true");
 
         PropertiesNode rcn = new PropertiesNode();
         rcn.readProperties(p, ctx);
 
         assertEquals(ctx.getAttribute("tmp.sdn-circuit-req-row_length"),"1");
+    }
+
+    @Test
+    public void testXMLFileParsing() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("contextPrefix", "test-xml");
+        p.put("listName", "project.build");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("test-xml.project.modelVersion"),"4.0.0");
+    }
+
+    @Test
+    public void testXMLFileInnerParsing() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("contextPrefix", "test-xml");
+        p.put("listName", "project.modelVersion");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("test-xml.project.properties.project.build.sourceEncoding"),"UTF-8");
+        assertEquals(ctx.getAttribute("test-xml.project.dependencies.dependency.scope"),"provided");
+        assertEquals(ctx.getAttribute("test-xml.project.build.pluginManagement.plugins.plugin.configuration" +
+                                              ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+        assertEquals(ctx.getAttribute("test-xml.project.build.plugins.plugin.configuration." +
+                                              "instructions.Import-Package"),"*");
+    }
+
+    @Test
+    public void testXMLFileParsingPrefixCheck() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("contextPrefix", "");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("project.properties.project.build.sourceEncoding"),"UTF-8");
+        assertEquals(ctx.getAttribute("project.dependencies.dependency.scope"),"provided");
+        assertEquals(ctx.getAttribute("project.build.pluginManagement.plugins.plugin.configuration" +
+                                              ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+        assertEquals(ctx.getAttribute("project.build.plugins.plugin.configuration." +
+                                              "instructions.Import-Package"),"*");
+    }
+
+    @Test
+    public void testXMLFileParsingNoPrefix() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("project.properties.project.build.sourceEncoding"),"UTF-8");
+        assertEquals(ctx.getAttribute("project.dependencies.dependency.scope"),"provided");
+        assertEquals(ctx.getAttribute("project.build.pluginManagement.plugins.plugin.configuration" +
+                                              ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+        assertEquals(ctx.getAttribute("project.build.plugins.plugin.configuration." +
+                                              "instructions.Import-Package"),"*");
+    }
+
+    @Test
+    public void testXMLFileParsingCtxCheck() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("project.properties.project.build.sourceEncoding"),"UTF-8");
+        assertEquals(ctx.getAttribute("project.dependencies.dependency.scope"),"provided");
+        assertEquals(ctx.getAttribute("project.build.pluginManagement.plugins.plugin.configuration" +
+                                              ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+        assertEquals(ctx.getAttribute("project.build.plugins.plugin.configuration." +
+                                              "instructions.Import-Package"),"*");
+        assertEquals(ctx.getAttribute("tmp.sdn-circuit-req-row_length"),"1");
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testToPropertiesInvalidXML() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test-invalid.xml");
+        p.put("contextPrefix", "invalid");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("tmp.sdn-circuit-req-row_length"),"1");
+    }
+
+    @Test
+    public void testXMLFileParsingListName() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("contextPrefix", "test-xml-listName");
+        p.put("fileBasedParsing","true");
+        p.put("listName", "project.build.pluginManagement");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("test-xml-listName.project.build." +
+                                              "pluginManagement.plugins.plugin.version"),null);
+        assertEquals(ctx.getAttribute("test-xml-listName.project.build." +
+                                              "plugins.plugin.groupId"),"org.apache.felix");
+    }
+
+    @Test
+    public void testXMLFileParsingListNameAnother() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("contextPrefix", "test-xml-listName");
+        p.put("fileBasedParsing","true");
+        p.put("listName", "project.modelVersion");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("test-xml-listName.project.modelVersion"),null);
+        assertEquals(ctx.getAttribute("test-xml-listName.project.build." +
+                                              "plugins.plugin.groupId"),"org.apache.felix");
+    }
+
+    @Test
+    public void testTXTFileParsingNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.txt");
+        p.put("contextPrefix", "test-txt");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("test-txt.service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("test-txt.service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("test-txt.operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("test-txt.service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("test-txt.service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
+    }
+
+    @Test
+    public void testTXTFileParsingPrefixCheckNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.txt");
+        p.put("contextPrefix", "");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
+    }
+
+    @Test
+    public void testTXTFileParsingNoPrefixNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.txt");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
+    }
+
+    @Test
+    public void testTXTFileParsingCtxCheckNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.txt");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
+        assertEquals(ctx.getAttribute("tmp.sdn-circuit-req-row_length"),"1");
+    }
+
+    @Test
+    public void testJSONFileArrayParsingNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.json");
+        p.put("contextPrefix", "NotFileBased");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("NotFileBased.\"limit-value\""),"\"1920000\"");
+        assertEquals(ctx.getAttribute("NotFileBased.\"hard-limit-expression\""),"\"max-server-speed * number-primary-servers\",");
+        assertEquals(ctx.getAttribute("NotFileBased.\"test-inner-node\""),"\"Test-Value\"");
+    }
+
+    @Test
+    public void testXMLFileInnerParsingNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test.xml");
+        p.put("contextPrefix", "NotFileBased");
+        p.put("listName", "project.modelVersion");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("NotFileBased.<name>RESTAPI"),"Call Node - Provider</name>");
+        assertEquals(ctx.getAttribute("NotFileBased.<project"),
+                     "xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+                             " xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">");
+        assertEquals(ctx.getAttribute("NotFileBased.openECOMP"),"SDN-C");
+        assertEquals(ctx.getAttribute("NotFileBased.<ignore"),"/>");
+    }
+
+    @Test
+    public void testNoFileTypeNoPrefixNotFileBased() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testNoFileTypeParseReqError() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("file Name", "src/test/resources/test");
+        p.put("fileBasedParsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
+    }
+
+    @Test
+    public void testNoFileTypeParseError() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("fileName", "src/test/resources/test");
+        p.put("file Based % Parsing","true");
+
+        PropertiesNode rcn = new PropertiesNode();
+        rcn.readProperties(p, ctx);
+
+        assertEquals(ctx.getAttribute("service-data.service-information.service-type"),"AVPN");
+        assertEquals(ctx.getAttribute("service-configuration-notification-input.response-code"),"0");
+        assertEquals(ctx.getAttribute("operational-data.avpn-ip-port-information.port-" +
+                                              "level-cos.queueing.pe-per-class-queueing-behaviors.cos3-queueing"),"WRED");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.l1-customer-handoff"),"_1000BASELX");
+        assertEquals(ctx.getAttribute("service-data.avpn-ip-port-information.avpn-" +
+                                              "access-information.vlan-tag-control"),"_1Q");
     }
 }

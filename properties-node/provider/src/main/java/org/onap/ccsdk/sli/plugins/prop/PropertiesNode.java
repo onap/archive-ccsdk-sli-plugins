@@ -25,8 +25,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -46,12 +48,33 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
             InputStream in = new FileInputStream(file);
             Map<String, String> mm = null;
             String pfx = param.contextPrefix != null ? param.contextPrefix + '.' : "";
-            if ("json".equalsIgnoreCase(getFileExtension(param.fileName))){
+            if(param.fileBasedParsing){
                 byte[] data = new byte[(int) file.length()];
-                in.read(data);
-                in.close();
-                String str = new String(data, "UTF-8");
-                mm = JsonParser.convertToProperties(str);
+                if ("json".equalsIgnoreCase(getFileExtension(param.fileName))) {
+                    in.read(data);
+                    String str = new String(data, "UTF-8");
+                    mm = JsonParser.convertToProperties(str);
+                } else if ("xml".equalsIgnoreCase(getFileExtension(param.fileName))) {
+                    in.read(data);
+                    String str = new String(data, "UTF-8");
+                    mm = XmlParser.convertToProperties(str, param.listNameList);
+                } else {
+                    prop.load(in);
+                    for (Object key : prop.keySet()) {
+                        String name = (String) key;
+                        String value = prop.getProperty(name);
+                        if (value != null && value.trim().length() > 0) {
+                            ctx.setAttribute(pfx + name, value.trim());
+                            log.info("+++ " + pfx + name + ": [" + value + "]");
+                        }
+                    }
+                }
+                if (mm != null){
+                    for (Map.Entry<String,String> entry : mm.entrySet()){
+                        ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
+                        log.info("+++ " + pfx + entry.getKey() + ": [" + entry.getValue() + "]");
+                    }
+                }
             } else {
                 prop.load(in);
                 for (Object key : prop.keySet()) {
@@ -63,13 +86,7 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                     }
                 }
             }
-            if (mm != null){
-                for (Map.Entry<String,String> entry : mm.entrySet()){
-                    ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
-                    log.info("+++ " + pfx + entry.getKey() + ": [" + entry.getValue() + "]");
-                }
-            }
-
+            in.close();
         } catch (IOException e) {
             throw new SvcLogicException("Cannot read property file: " + param.fileName + ": " + e.getMessage(), e);
         }
@@ -92,7 +109,18 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         Parameters p = new Parameters();
         p.fileName = parseParam(paramMap, "fileName", true, null);
         p.contextPrefix = parseParam(paramMap, "contextPrefix", false, null);
+        p.listNameList = getListNameList(paramMap);
+        String fileBasedParsingStr = paramMap.get("fileBasedParsing");
+        p.fileBasedParsing = "true".equalsIgnoreCase(fileBasedParsingStr);
         return p;
+    }
+
+    protected Set<String> getListNameList(Map<String, String> paramMap) {
+        Set<String> ll = new HashSet<>();
+        for (Map.Entry<String,String> entry : paramMap.entrySet())
+            if (entry.getKey().startsWith("listName"))
+                ll.add(entry.getValue());
+        return ll;
     }
 
     private String parseParam(Map<String, String> paramMap, String name, boolean required, String def)
