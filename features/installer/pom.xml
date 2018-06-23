@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
 		<artifactId>odlparent-lite</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
+		<relativePath />
 	</parent>
 
 	<groupId>org.onap.ccsdk.sli.plugins</groupId>
-	<artifactId>restapi-call-node-installer</artifactId>
+	<artifactId>sliplugins-features-installer</artifactId>
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>ccsdk-sli-plugins :: restapi-call-node :: ${project.artifactId}</name>
+	<name>ccsdk-sli-plugins :: features :: ${project.artifactId}</name>
 
 	<properties>
-		<application.name>ccsdk-restapi-call-node</application.name>
+		<application.name>ccsdk-sli-plugins-all</application.name>
 		<features.boot>${application.name}</features.boot>
-        <features.repositories>mvn:org.onap.ccsdk.sli.plugins/${features.boot}/${project.version}/xml/features</features.repositories>
+		<features.repositories>mvn:org.onap.ccsdk.sli.plugins/${features.boot}/${project.version}/xml/features</features.repositories>
 		<include.transitive.dependencies>false</include.transitive.dependencies>
 	</properties>
 
@@ -38,26 +40,13 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>org.onap.ccsdk.sli.plugins</groupId>
-			<artifactId>restapi-call-node-provider</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
+
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
 				<executions>
 					<execution>
 						<id>maven-repo-zip</id>
@@ -110,7 +99,7 @@
 							<useRepositoryLayout>true</useRepositoryLayout>
 							<addParentPoms>false</addParentPoms>
 							<copyPom>false</copyPom>
-							<excludeGroupIds>org.onap.ccsdk.sli.core</excludeGroupIds>
+                             <includeGroupIds>org.onap.ccsdk.sli.plugins</includeGroupIds>
 							<scope>provided</scope>
 						</configuration>
 					</execution>
