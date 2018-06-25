@@ -21,7 +21,11 @@
 
 package org.onap.ccsdk.sli.plugins.prop;
 
+import java.util.Set;
+
 public class Parameters {
     public String fileName;
     public String contextPrefix;
+    public Set<String> listNameList;
+    public boolean fileBasedParsing;
 }
