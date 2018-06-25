@@ -21,6 +21,7 @@
 
 package org.onap.ccsdk.sli.plugins.prop;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,25 +39,60 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
     private static final Logger log = LoggerFactory.getLogger(PropertiesNode.class);
 
     public void readProperties(Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException {
-        String fileName = parseParam(paramMap, "fileName", true, null);
-        String contextPrefix = parseParam(paramMap, "contextPrefix", false, null);
-
+        Parameters param = getParameters(paramMap);
+        Properties prop = new Properties();
         try {
-            Properties pp = new Properties();
-            InputStream in = new FileInputStream(fileName);
-            pp.load(in);
-            for (Object key : pp.keySet()) {
-                String pfx = contextPrefix != null ? contextPrefix + '.' : "";
-                String name = (String) key;
-                String value = pp.getProperty(name);
-                if (value != null && value.trim().length() > 0) {
-                    ctx.setAttribute(pfx + name, value.trim());
-                    log.info("+++ " + pfx + name + ": [" + value + "]");
+            File file = new File(param.fileName);
+            InputStream in = new FileInputStream(file);
+            Map<String, String> mm = null;
+            String pfx = param.contextPrefix != null ? param.contextPrefix + '.' : "";
+            if ("json".equalsIgnoreCase(getFileExtension(param.fileName))){
+                byte[] data = new byte[(int) file.length()];
+                in.read(data);
+                in.close();
+                String str = new String(data, "UTF-8");
+                mm = JsonParser.convertToProperties(str);
+            } else {
+                prop.load(in);
+                for (Object key : prop.keySet()) {
+                    String name = (String) key;
+                    String value = prop.getProperty(name);
+                    if (value != null && value.trim().length() > 0) {
+                        ctx.setAttribute(pfx + name, value.trim());
+                        log.info("+++ " + pfx + name + ": [" + value + "]");
+                    }
                 }
             }
+            if (mm != null){
+                for (Map.Entry<String,String> entry : mm.entrySet()){
+                    ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
+                    log.info("+++ " + pfx + entry.getKey() + ": [" + entry.getValue() + "]");
+                }
+            }
+
         } catch (IOException e) {
-            throw new SvcLogicException("Cannot read property file: " + fileName + ": " + e.getMessage(), e);
+            throw new SvcLogicException("Cannot read property file: " + param.fileName + ": " + e.getMessage(), e);
         }
+    }
+
+    /* Getting extension has to do the following
+    * ""                            -->   ""
+    * "name"                        -->   ""
+    * "name.txt"                    -->   "txt"
+    * ".htpasswd"                   -->   ""
+    * "name.with.many.dots.myext"   -->   "myext"
+    */
+    private static String getFileExtension(String fileName) {
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+            return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
+    }
+
+    protected Parameters getParameters(Map<String, String> paramMap) throws SvcLogicException {
+        Parameters p = new Parameters();
+        p.fileName = parseParam(paramMap, "fileName", true, null);
+        p.contextPrefix = parseParam(paramMap, "contextPrefix", false, null);
+        return p;
     }
 
     private String parseParam(Map<String, String> paramMap, String name, boolean required, String def)
