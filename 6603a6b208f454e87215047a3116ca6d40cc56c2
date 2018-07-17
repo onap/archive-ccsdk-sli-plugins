@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_a7e2a5d3",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/Parameters.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1517
+      },
+      "writtenOn": "2018-07-17T14:26:09Z",
+      "side": 1,
+      "message": "Is there a reason you are using the Object wrapper rather than a primitive?  The methods seem inconsistent since \"ssl\" is boolean while \"dumpHeaders\" is Boolean.  In general, if we can rely on primitives, it will be cheaper.",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 18
+      },
+      "revId": "6603a6b208f454e87215047a3116ca6d40cc56c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_67ec9dc8",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1517
+      },
+      "writtenOn": "2018-07-17T14:26:09Z",
+      "side": 1,
+      "message": "So why don\u0027t we actually use an Optional?",
+      "range": {
+        "startLine": 115,
+        "startChar": 49,
+        "endLine": 115,
+        "endChar": 57
+      },
+      "revId": "6603a6b208f454e87215047a3116ca6d40cc56c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_47e721e5",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1517
+      },
+      "writtenOn": "2018-07-17T14:26:09Z",
+      "side": 1,
+      "message": "Please remove this spacing",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 12
+      },
+      "revId": "6603a6b208f454e87215047a3116ca6d40cc56c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_07d119fb",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1517
+      },
+      "writtenOn": "2018-07-17T14:26:09Z",
+      "side": 1,
+      "message": "Please replace tabs with spaces.",
+      "revId": "6603a6b208f454e87215047a3116ca6d40cc56c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
