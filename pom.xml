@@ -23,6 +23,7 @@
     <modules>
         <module>properties-node</module>
         <module>restapi-call-node</module>
+        <module>restconf-client</module>
         <module>features</module>
     </modules>
 
