@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_b973bf14",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/SshApiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T05:30:21Z",
+      "side": 1,
+      "message": "If I understand correctly this plugin is for execute node.  The execute node can only invoke methods that take Map\u003cString, String\u003e, SvcLogicContext as arguments (in which case it passes a map containing \u003cparam\u003e tags  passed in the node in that Map object",
+      "range": {
+        "startLine": 38,
+        "startChar": 21,
+        "endLine": 38,
+        "endChar": 67
+      },
+      "revId": "81c6a8ac2108f2641d37735b0f8102bc2472dbcf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_59606335",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/SshApiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T05:30:21Z",
+      "side": 1,
+      "message": "ditto, also it throws SvcLogicException in general.",
+      "range": {
+        "startLine": 48,
+        "startChar": 28,
+        "endLine": 48,
+        "endChar": 56
+      },
+      "revId": "81c6a8ac2108f2641d37735b0f8102bc2472dbcf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_79652744",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/impl/Format.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T05:30:21Z",
+      "side": 1,
+      "message": "in my understanding this enum is already defined in restapicallnode, so rather then redifining, it might be better to refer the existing one.",
+      "range": {
+        "startLine": 27,
+        "startChar": 12,
+        "endLine": 27,
+        "endChar": 18
+      },
+      "revId": "81c6a8ac2108f2641d37735b0f8102bc2472dbcf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_f9505760",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/impl/Parameters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T05:30:21Z",
+      "side": 1,
+      "message": "It would be helpful, if you can add these parameter description in ssdapicallnode as a javadocs, to understand this.",
+      "range": {
+        "startLine": 28,
+        "startChar": 13,
+        "endLine": 28,
+        "endChar": 23
+      },
+      "revId": "81c6a8ac2108f2641d37735b0f8102bc2472dbcf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_395faf74",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/impl/Parameters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T05:30:21Z",
+      "side": 1,
+      "message": "is this of any concern to ssh connection?",
+      "range": {
+        "startLine": 44,
+        "startChar": 18,
+        "endLine": 44,
+        "endChar": 35
+      },
+      "revId": "81c6a8ac2108f2641d37735b0f8102bc2472dbcf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_994d9bc7",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/model/JsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T05:30:21Z",
+      "side": 1,
+      "message": "it might be better to refer then redifining, in case you don\u0027t plan any changes to it.\n\nsame suggestion i have for other classes of restapicallnode.",
+      "range": {
+        "startLine": 40,
+        "startChar": 19,
+        "endLine": 40,
+        "endChar": 29
+      },
+      "revId": "81c6a8ac2108f2641d37735b0f8102bc2472dbcf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
