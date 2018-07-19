@@ -23,6 +23,7 @@
     <modules>
         <module>properties-node</module>
         <module>restapi-call-node</module>
+        <module>sshapi-call-node</module>
         <module>features</module>
     </modules>
 
