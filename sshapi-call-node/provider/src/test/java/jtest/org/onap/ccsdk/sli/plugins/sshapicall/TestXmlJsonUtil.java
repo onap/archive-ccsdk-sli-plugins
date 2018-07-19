@@ -2,7 +2,9 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights
+ * * Copyright (C) 2017 AT&T Intellectual Property.
+ * ================================================================================
+ * Copyright (C) 2018 Samsung Electronics. All rights
  * 			reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,14 +21,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.restapicall;
+package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.ccsdk.sli.plugins.restapicall.XmlJsonUtil;
+import org.onap.ccsdk.sli.plugins.sshapicall.model.XmlJsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.restapicall;
+package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
 
 import java.util.HashMap;
 import java.util.Map;
