@@ -90,7 +90,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
      /**
      * Allows Directed Graphs  the ability to interact with REST APIs.
-     * @param parameters HashMap<String,String> of parameters passed by the DG to this function
+     * @param paramMap HashMap<String,String> of parameters passed by the DG to this function
      * <table border="1">
      *  <thead><th>parameter</th><th>Mandatory/Optional</th><th>description</th><th>example values</th></thead>
      *  <tbody>

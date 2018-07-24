@@ -23,34 +23,23 @@
 
 package org.onap.ccsdk.sli.plugins.sshapicall.model;
 
-import java.util.HashMap;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class Parameters {
+    public String sshapiUrl;
+    public int sshapiPort;
+    public String sshapiUser;
+    public String sshapiPassword;
+    public String sshKey;
+    public long sshExecTimeout;
+    public String sshFileParameters;
+    public String sshEnvParameters;
+    public boolean sshWithRetry;
+    public String cmd;
+    public String responsePrefix;
+    public Format responseType;
 
-public class RetryPolicyStore {
-    private static final Logger log = LoggerFactory.getLogger(RetryPolicyStore.class);
-
-    HashMap<String, RetryPolicy> retryPolicies;
-    public String proxyServers;
-
-    public String getProxyServers() {
-        return proxyServers;
-    }
-
-    public void setProxyServers(String admServers) {
-        this.proxyServers = admServers;
-        String[] adminServersArray = admServers.split(",");
-        RetryPolicy adminPortalRetry = new RetryPolicy(adminServersArray, adminServersArray.length);
-        retryPolicies.put("dme2proxy", adminPortalRetry);
-    }
-
-    public RetryPolicyStore() {
-        retryPolicies = new HashMap<>();
-    }
-    
-    public RetryPolicy getRetryPolicy(String policyName) {
-        return (this.retryPolicies.get(policyName));
-    }
-
+    public Set<String> listNameList;
+    public boolean convertResponse;
+    public AuthType authtype;
 }

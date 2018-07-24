@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.sshapicall.model.JsonParser;
@@ -42,7 +43,7 @@ public class TestJsonParser {
     private static final Logger log = LoggerFactory.getLogger(TestJsonParser.class);
 
     @Test
-    public void test() throws SvcLogicException, IOException {
+    public void test() throws JSONException, IOException {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(ClassLoader.getSystemResourceAsStream("test.json"))
         );
@@ -59,7 +60,7 @@ public class TestJsonParser {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNullString() throws SvcLogicException {
+    public void testNullString() throws JSONException {
         JsonParser.convertToProperties(null);
     }
 

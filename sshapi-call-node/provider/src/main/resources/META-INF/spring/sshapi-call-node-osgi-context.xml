@@ -29,6 +29,6 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <service ref="sshapiCallNode" interface="org.onap.ccsdk.sli.plugins.sshapicall.impl.SshapiCallNodeImpl" />
+    <service ref="sshapiCallNode" interface="org.onap.ccsdk.sli.plugins.sshapicall.SshApiCallNode" />
 
 </beans:beans>
