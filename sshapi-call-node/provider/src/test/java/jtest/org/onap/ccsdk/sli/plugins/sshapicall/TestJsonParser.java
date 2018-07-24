@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.sshapicall.model.JsonParser;
@@ -50,17 +51,26 @@ public class TestJsonParser {
         String line;
         while ((line = in.readLine()) != null)
             b.append(line).append('\n');
-
-        Map<String, String> mm = JsonParser.convertToProperties(b.toString());
+        Map<String, String> mm = null;
+        try {
+            mm = JsonParser.convertToProperties(b.toString());
+        } catch (JSONException e){
+            throw new SvcLogicException(e.getMessage());
+        }
 
         logProperties(mm);
 
         in.close();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = SvcLogicException.class)
     public void testNullString() throws SvcLogicException {
-        JsonParser.convertToProperties(null);
+        Map<String, String> mm = null;
+        try {
+            mm = JsonParser.convertToProperties(null);
+        } catch (JSONException e){
+            throw new SvcLogicException(e.getMessage());
+        }
     }
 
     private void logProperties(Map<String, String> mm) {

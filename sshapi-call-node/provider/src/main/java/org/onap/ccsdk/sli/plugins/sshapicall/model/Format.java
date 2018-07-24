@@ -22,7 +22,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.sshapicall.impl;
+package org.onap.ccsdk.sli.plugins.sshapicall.model;
 
 public enum Format {
     JSON, XML, NONE;
