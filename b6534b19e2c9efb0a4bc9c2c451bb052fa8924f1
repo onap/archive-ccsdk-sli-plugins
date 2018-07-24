@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_3bb6ba8b",
+        "filename": "sshapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/sshapicall/model/AuthType.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 219
+      },
+      "writtenOn": "2018-07-24T09:02:52Z",
+      "side": 1,
+      "message": "add copyright header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "b6534b19e2c9efb0a4bc9c2c451bb052fa8924f1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
