@@ -47,11 +47,10 @@ public final class JsonParser {
 
     @SuppressWarnings("unchecked")
     public static Map<String, String> convertToProperties(String s)
-        throws SvcLogicException {
+        throws JSONException {
 
         checkNotNull(s, "Input should not be null.");
 
-        try {
             JSONObject json = new JSONObject(s);
             Map<String, Object> wm = new HashMap<>();
             Iterator<String> ii = json.keys();
@@ -89,8 +88,5 @@ public final class JsonParser {
                     }
                 }
             return mm;
-        } catch (JSONException e) {
-            throw new SvcLogicException("Unable to convert JSON to properties" + e.getLocalizedMessage(), e);
-        }
     }
 }
