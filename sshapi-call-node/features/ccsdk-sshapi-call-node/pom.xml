@@ -36,7 +36,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+<!--
     <dependencies>
 
         <dependency>
@@ -52,4 +52,5 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    -->
 </project>
