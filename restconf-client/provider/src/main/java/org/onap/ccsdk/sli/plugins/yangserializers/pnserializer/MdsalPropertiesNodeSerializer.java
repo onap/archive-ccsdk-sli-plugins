@@ -18,32 +18,42 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.yangserializers;
+package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
-import java.util.List;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Representation of XML serializer.
+ * Representation of mdsal based properties node serializer implementation.
  */
-public class XmlSerializer extends DataFormatSerializer {
+public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<SchemaNode, SchemaContext> {
+
+    private SchemaNode curSchema;
+    private PropertiesNode node;
+    private static final Logger LOG = getLogger(MdsalPropertiesNodeSerializer.class);
 
     /**
-     * Creates an instance of XML serializer.
+     * Creates the properties node serializer.
      *
-     * @param serializerContext data format serializer context
+     * @param schemaNode schema node.
+     * @param schemaCtx  schema context
+     * @param uri        URL of the request
      */
-    protected XmlSerializer(DataFormatSerializerContext serializerContext) {
-        super(DataFormat.XML, serializerContext);
+    public MdsalPropertiesNodeSerializer(SchemaNode schemaNode, SchemaContext schemaCtx, String uri) {
+        super(schemaNode, schemaCtx, uri);
     }
 
     @Override
-    public String encode(Map<String, String> param, Map<String, List<Annotation>> annotations) {
+    public PropertiesNode encode(Map<String, String> paramMap) {
         return null;
     }
 
     @Override
-    public Map<String, String> decode(String dataFormatBody) {
+    public Map<String, String> decode(PropertiesNode propertiesNode) {
         return null;
     }
+
 }

@@ -18,23 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.yangserializers;
+package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Representation of JSON serializer.
+ * Representation of XML serializer.
  */
-public class JsonSerializer extends DataFormatSerializer {
+public class XmlSerializer extends DataFormatSerializer {
 
     /**
-     * Creates an instance of data format serializer.
+     * Creates an instance of XML serializer.
      *
      * @param serializerContext data format serializer context
      */
-    protected JsonSerializer(DataFormatSerializerContext serializerContext) {
-        super(DataFormat.JSON, serializerContext);
+    protected XmlSerializer(DataFormatSerializerContext serializerContext) {
+        super(DataFormat.XML, serializerContext);
     }
 
     @Override

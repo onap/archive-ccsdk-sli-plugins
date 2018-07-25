@@ -18,17 +18,42 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.yangserializers;
+package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 /**
- * Abstraction of listener.
+ * Representation of an entity that represents annotated attribute.
  */
-public interface Listener {
+public class Annotation {
+
+    private String name;
+    private String value;
 
     /**
-     * Returns serializer helper for this listener.
+     * Creates an instance of annotation.
      *
-     * @return serializer helper
+     * @param n annotation name
+     * @param v annotation value
      */
-    SerializerHelper serializerHelper();
+    public Annotation(String n, String v) {
+        name = n;
+        value = v;
+    }
+
+    /**
+     * Returns name of annotation.
+     *
+     * @return name of annotation
+     */
+    public String name() {
+        return name;
+    }
+
+    /**
+     * Returns value of annotation.
+     *
+     * @return value of annotation
+     */
+    public String value() {
+        return value;
+    }
 }

@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.yangserializers;
+package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import java.util.List;
 import java.util.Map;

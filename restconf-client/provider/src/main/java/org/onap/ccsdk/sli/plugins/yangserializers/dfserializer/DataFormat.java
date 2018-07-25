@@ -18,14 +18,12 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.yangserializers;
+package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 /**
- * Representation of type of data node.
+ * Representation of data format.
  */
-public enum NodeType {
-    SINGLE_INSTANCE,
-    MULTI_INSTANCE,
-    SINGLE_INSTANCE_LEAF,
-    MULTI_INSTANCE_LEAF
+public enum DataFormat {
+    XML,
+    JSON
 }
