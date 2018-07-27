@@ -40,12 +40,8 @@
 
     <!-- context:property-placeholder location="file:${SDNC_CONFIG_DIR}/ueb.properties" /-->
 
-    <bean id="sshapiCallNode" class="org.onap.ccsdk.sli.plugins.sshapicall.impl.SshapiCallNodeImpl">
+    <bean id="sshapiCallNode" class="org.onap.ccsdk.sli.plugins.sshapicall.SshApiCallNode">
         <property name="uebServers" value="${servers}" />
-        <property name="retryPolicyStore" ref="retryPolicyStore"/>
     </bean>
 
-    <bean id="retryPolicyStore" class="org.onap.ccsdk.sli.plugins.sshapicall.model.RetryPolicyStore">
-        <property name="proxyServers" value="${proxyUrl}" />
-    </bean>
 </beans>

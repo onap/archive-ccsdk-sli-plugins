@@ -7,7 +7,6 @@
  * Copyright (C) 2018 Samsung Electronics. All rights
  * 			reserved.
  * ================================================================================
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,18 +21,25 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.sshapicall.impl;
+package org.onap.ccsdk.sli.plugins.sshapicall.model;
 
-public enum Format {
-    JSON, XML, NONE;
+import java.util.Set;
 
-    public static Format fromString(String s) {
-        if ("json".equalsIgnoreCase(s))
-            return JSON;
-        if ("xml".equalsIgnoreCase(s))
-            return XML;
-        if ("none".equalsIgnoreCase(s))
-            return NONE;
-        throw new IllegalArgumentException("Invalid value for format: " + s);
-    }
+public class Parameters {
+    public String sshapiUrl;
+    public int sshapiPort;
+    public String sshapiUser;
+    public String sshapiPassword;
+    public String sshKey;
+    public long sshExecTimeout;
+    public String sshFileParameters;
+    public String sshEnvParameters;
+    public boolean sshWithRetry;
+    public String cmd;
+    public String responsePrefix;
+    public Format responseType;
+
+    public Set<String> listNameList;
+    public boolean convertResponse;
+    public AuthType authtype;
 }
