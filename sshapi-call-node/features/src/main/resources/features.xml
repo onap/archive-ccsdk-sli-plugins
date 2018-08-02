@@ -35,17 +35,11 @@
         <feature>sdnc-sli</feature>
         <feature>spring</feature>
         <feature>spring-dm</feature>
-        <bundle>mvn:com.sun.jersey/jersey-client/${jersey.version}</bundle>
-        <bundle>
-            mvn:com.sun.jersey.contribs.jersey-oauth/oauth-signature/${jersey.version}
-        </bundle>
-        <bundle>
-            mvn:com.sun.jersey.contribs.jersey-oauth/oauth-client/${jersey.version}
-        </bundle>
         <bundle>mvn:org.codehaus.jettison/jettison/${jettison.version}</bundle>
-        <bundle>
-            mvn:org.onap.ccsdk.sli.plugins/sshapi-call-node-provider/${project.version}
-        </bundle>
+        <bundle>mvn:org.onap.ccsdk.sli.core/sli-common/${project.version}</bundle>
+        <bundle>mvn:org.onap.ccsdk.sli.core/sli-provider/${project.version}</bundle>
+        <bundle dependency="true">mvn:org.onap.appc/appc-ssh-adapter-api/1.3.0</bundle>
+        <bundle>mvn:org.onap.ccsdk.sli.plugins/sshapi-call-node-provider/${project.version}</bundle>
     </feature>
 
 </features>

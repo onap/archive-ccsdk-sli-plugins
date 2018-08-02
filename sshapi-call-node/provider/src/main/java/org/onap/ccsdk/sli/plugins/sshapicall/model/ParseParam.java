@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * * Copyright (C) 2017 AT&T Intellectual Property.
+ * Copyright (C) 2017-2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Copyright (C) 2018 Samsung Electronics. All rights
  * 			reserved.
@@ -59,6 +59,7 @@ public class ParseParam {
      * Default SSH command timeout
      */
     private final String FILE_PARAMETERS_OPT_KEY = "FileParameters";
+    public final String SSH_ResponsePrefix = "ResponsePrefix";
     /**
      * Default SSH connection port.
      */
@@ -74,13 +75,17 @@ public class ParseParam {
         p.sshExecTimeout = Long.parseLong(parseParam(paramMap, "ExecTimeout", false, Long.toString(dEF_timeout)));
         p.sshWithRetry = Boolean.valueOf(parseParam(paramMap, "Retry", false, "false"));
         p.cmd = parseParam(paramMap, "Cmd", true, null);
-        p.responsePrefix = parseParam(paramMap, "ResponsePrefix", false, null);
+        p.responsePrefix = parseParam(paramMap, SSH_ResponsePrefix, false, null);
         p.responseType = Format.fromString(parseParam(paramMap, "ResponseType", false, "none"));
         p.listNameList = getListNameList(paramMap);
         p.convertResponse = Boolean.valueOf(parseParam(paramMap, "ConvertResponse", false, "true"));
         p.authtype = AuthType.fromString(parseParam(paramMap, "AuthType", false, "unspecified"));
 
         return p;
+    }
+
+    public String getStringParameters(Map<String, String> paramMap, String paramName) throws SvcLogicException {
+        return parseParam(paramMap, SSH_ResponsePrefix, false, null);
     }
 
     public void parseOutput (SvcLogicContext ctx, String outMessage) throws SvcLogicException {
