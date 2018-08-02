@@ -3,9 +3,10 @@
  * ONAP : APPC
  * ================================================================================
  * Copyright (C) 2017-2018 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Copyright (C) 2017 Amdocs
  * =============================================================================
+ * Copyright (C) 2018 Samsung Electronics. All rights
+  			reserved.
+*  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,17 +53,17 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
     /**
      * Output parameter - SSH command execution status.
      */
-    String PARAM_OUT_status = "status";
+    String PARAM_OUT_status = "sshApi.call.node.status";
 
     /**
      * Output parameter - content of SSH command stdout.
      */
-    String PARAM_OUT_stdout = "stdout";
+    String PARAM_OUT_stdout = "sshApi.call.node.stdout";
 
     /**
      * Output parameter - content of SSH command stderr.
      */
-    String PARAM_OUT_stderr = "stderr";
+    String PARAM_OUT_stderr = "sshApi.call.node.stderr";
 
     /**
      * Default success status.
@@ -81,7 +82,6 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      * <table border="1">
      *  <thead><th>parameter</th><th>Mandatory/Optional</th><th>description</th><th>example values</th></thead>
      *  <tbody>
-     *      <tr><td>templateFileName</td><td>Optional</td><td>full path to template file that can be used to build a request</td><td>/sdncopt/bvc/sshapi/templates/vnf_service-configuration-operation_minimal.json</td></tr>
      *      <tr><td>Url</td><td>Mandatory</td><td>url to make the SSH connection request to.</td></tr>
      *      <tr><td>Port</td><td>Mandatory</td><td>port to make the SSH connection request to.</td></tr>
      *      <tr><td>User</td><td>Optional</td><td>user name to use for ssh basic authentication</td><td>sdnc_ws</td></tr>
@@ -90,8 +90,8 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      *      <tr><td>ExecTimeout</td><td>Optional</td><td>SSH command execution timeout</td><td>plain_key</td></tr>
      *      <tr><td>Retry</td><td>Optional</td><td>Make ssh connection with default retry policy</td><td>plain_key</td></tr>
      *      <tr><td>Cmd</td><td>Mandatory</td><td>ssh command to be executed on the server.</td><td>get post put delete patch</td></tr>
-     *      <tr><td>ResponsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td><td>tmp.sshapi.result</td></tr>
-     *      <tr><td>ResponseType</td><td>Optional</td><td>If we know the response is to be in a specific format (supported are JSON, XML and NONE) </td><td>tmp.sshapi.result</td></tr>
+     *      <tr><td>ResponsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td></tr>
+     *      <tr><td>ResponseType</td><td>Optional</td><td>If we know the response is to be in a specific format (supported are JSON, XML and NONE) </td></tr>
      *      <tr><td>listName[i]</td><td>Optional</td><td>Used for processing XML responses with repeating elements.</td>vpn-information.vrf-details<td></td></tr>
      *      <tr><td>ConvertResponse </td><td>Optional</td><td>whether the response should be converted</td><td>true or false</td></tr>
      *      <tr><td>AuthType</td><td>Optional</td><td>Type of authentiation to be used BASIC or sshKey based</td><td>true or false</td></tr>
@@ -109,18 +109,29 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      */
 
     public void execCommand(Map<String, String> params, SvcLogicContext ctx) throws SvcLogicException {
+        execSshCommand(params, ctx, false);
+    }
+
+    private void execSshCommand(Map<String, String> params, SvcLogicContext ctx, boolean withPty) throws SvcLogicException {
         ParseParam parser = new ParseParam();
         Parameters p = parser.getParameters(params);
         logger.debug("=> Connecting to SSH server...");
-        SshConnection sshConnection = getSshConnection(p);
-        sshConnection.connect();
+        SshConnection sshConnection = null;
         try {
+            sshConnection = getSshConnection(p);
+            sshConnection.connect();
             logger.debug("=> Connected to SSH server...");
             logger.debug("=> Running SSH command...");
             sshConnection.setExecTimeout(p.sshExecTimeout);
             ByteArrayOutputStream stdout = new ByteArrayOutputStream();
             ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-            int status = sshConnection.execCommand(parser.makeCommand(params), stdout, stderr);
+            int status;
+            if (withPty) {
+                status = sshConnection.execCommandWithPty(parser.makeCommand(params), stdout);
+                stderr = stdout;
+            }
+            else
+                status = sshConnection.execCommand(parser.makeCommand(params), stdout, stderr);
             String stdoutRes = stdout.toString();
             String stderrRes = stderr.toString();
             logger.debug("=> executed SSH command");
@@ -131,12 +142,15 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
             ctx.setAttribute(PARAM_OUT_status, String.format("%01d", status));
             ctx.setAttribute(PARAM_OUT_stdout, stdoutRes);
             ctx.setAttribute(PARAM_OUT_stderr, stderrRes);
+        } catch (Exception e){
+            throw new SvcLogicException("Exception in SSH adaptor : " + e.getMessage());
         } finally {
-            sshConnection.disconnect();
+            if (sshConnection != null)
+               sshConnection.disconnect();
         }
     }
 
-    private SshConnection getSshConnection(Parameters p) throws SvcLogicException{
+    private SshConnection getSshConnection(Parameters p) throws SvcLogicException {
         if (p.authtype == AuthType.BASIC)
             return sshAdapter.getConnection(p.sshapiUrl, p.sshapiPort, p.sshapiUser, p.sshapiPassword);
         // This is not supported yet in the API, patch has already been added to APPC
@@ -164,7 +178,6 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      * <table border="1">
      *  <thead><th>parameter</th><th>Mandatory/Optional</th><th>description</th><th>example values</th></thead>
      *  <tbody>
-     *      <tr><td>templateFileName</td><td>Optional</td><td>full path to template file that can be used to build a request</td><td>/sdncopt/bvc/sshapi/templates/vnf_service-configuration-operation_minimal.json</td></tr>
      *      <tr><td>Url</td><td>Mandatory</td><td>url to make the SSH connection request to.</td></tr>
      *      <tr><td>Port</td><td>Mandatory</td><td>port to make the SSH connection request to.</td></tr>
      *      <tr><td>User</td><td>Optional</td><td>user name to use for ssh basic authentication</td><td>sdnc_ws</td></tr>
@@ -173,8 +186,8 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      *      <tr><td>ExecTimeout</td><td>Optional</td><td>SSH command execution timeout</td><td>plain_key</td></tr>
      *      <tr><td>Retry</td><td>Optional</td><td>Make ssh connection with default retry policy</td><td>plain_key</td></tr>
      *      <tr><td>Cmd</td><td>Mandatory</td><td>ssh command to be executed on the server.</td><td>get post put delete patch</td></tr>
-     *      <tr><td>ResponsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td><td>tmp.sshapi.result</td></tr>
-     *      <tr><td>ResponseType</td><td>Optional</td><td>If we know the response is to be in a specific format (supported are JSON, XML and NONE) </td><td>tmp.sshapi.result</td></tr>
+     *      <tr><td>ResponsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td></tr>
+     *      <tr><td>ResponseType</td><td>Optional</td><td>If we know the response is to be in a specific format (supported are JSON, XML and NONE) </td></tr>
      *      <tr><td>listName[i]</td><td>Optional</td><td>Used for processing XML responses with repeating elements.</td>vpn-information.vrf-details<td></td></tr>
      *      <tr><td>ConvertResponse </td><td>Optional</td><td>whether the response should be converted</td><td>true or false</td></tr>
      *      <tr><td>AuthType</td><td>Optional</td><td>Type of authentiation to be used BASIC or sshKey based</td><td>true or false</td></tr>
@@ -193,16 +206,19 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
 
     public void execWithStatusCheck(Map<String, String> params, SvcLogicContext ctx) throws SvcLogicException {
         execCommand(params, ctx);
+        ParseParam parser = new ParseParam();
+        String responsePrefix = parser.getStringParameters(params, parser.SSH_ResponsePrefix);
+        parseResponse(ctx, responsePrefix);
+    }
+
+    private void parseResponse (SvcLogicContext ctx, String responsePrefix) throws SvcLogicException {
         int status = Integer.parseInt(ctx.getAttribute(PARAM_OUT_status));
         if(status != DEF_SUCCESS_STATUS) {
             StringBuilder errmsg = new StringBuilder();
             errmsg.append("SSH command returned error status [").append(status).append(']');
-            String stderrRes = ctx.getAttribute(PARAM_OUT_stderr);
-            String stdoutRes = ctx.getAttribute(PARAM_OUT_stdout);
-            if((stderrRes != null) && !stderrRes.isEmpty()) {
-                errmsg.append(". Error: [").append(stderrRes).append(']');
-            } else if ((stdoutRes != null) && !stdoutRes.isEmpty()) {
-                errmsg.append(". Error: [").append(stdoutRes).append(']');
+            String stderr = ctx.getAttribute(PARAM_OUT_stderr);
+            if((stderr != null) && !stderr.isEmpty()) {
+                errmsg.append(". Error: [").append(stderr).append(']');
             }
             throw new SvcLogicException(errmsg.toString());
         }
@@ -214,7 +230,6 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      * <table border="1">
      *  <thead><th>parameter</th><th>Mandatory/Optional</th><th>description</th><th>example values</th></thead>
      *  <tbody>
-     *      <tr><td>templateFileName</td><td>Optional</td><td>full path to template file that can be used to build a request</td><td>/sdncopt/bvc/sshapi/templates/vnf_service-configuration-operation_minimal.json</td></tr>
      *      <tr><td>Url</td><td>Mandatory</td><td>url to make the SSH connection request to.</td></tr>
      *      <tr><td>Port</td><td>Mandatory</td><td>port to make the SSH connection request to.</td></tr>
      *      <tr><td>User</td><td>Optional</td><td>user name to use for ssh basic authentication</td><td>sdnc_ws</td></tr>
@@ -223,8 +238,8 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      *      <tr><td>ExecTimeout</td><td>Optional</td><td>SSH command execution timeout</td><td>plain_key</td></tr>
      *      <tr><td>Retry</td><td>Optional</td><td>Make ssh connection with default retry policy</td><td>plain_key</td></tr>
      *      <tr><td>Cmd</td><td>Mandatory</td><td>ssh command to be executed on the server.</td><td>get post put delete patch</td></tr>
-     *      <tr><td>ResponsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td><td>tmp.sshapi.result</td></tr>
-     *      <tr><td>ResponseType</td><td>Optional</td><td>If we know the response is to be in a specific format (supported are JSON, XML and NONE) </td><td>tmp.sshapi.result</td></tr>
+     *      <tr><td>ResponsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td></tr>
+     *      <tr><td>ResponseType</td><td>Optional</td><td>If we know the response is to be in a specific format (supported are JSON, XML and NONE) </td></tr>
      *      <tr><td>listName[i]</td><td>Optional</td><td>Used for processing XML responses with repeating elements.</td>vpn-information.vrf-details<td></td></tr>
      *      <tr><td>ConvertResponse </td><td>Optional</td><td>whether the response should be converted</td><td>true or false</td></tr>
      *      <tr><td>AuthType</td><td>Optional</td><td>Type of authentiation to be used BASIC or sshKey based</td><td>true or false</td></tr>
@@ -241,6 +256,6 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      * @param ctx Reference to context memory
      */
     public void execCommandWithPty(Map<String, String> params, SvcLogicContext ctx) throws SvcLogicException {
-
+        execSshCommand(params, ctx, true);
     }
 }
