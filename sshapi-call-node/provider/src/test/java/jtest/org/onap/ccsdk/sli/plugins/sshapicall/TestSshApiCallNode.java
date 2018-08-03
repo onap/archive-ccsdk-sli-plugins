@@ -225,4 +225,107 @@ public class TestSshApiCallNode {
         params.put("ResponseType", "json");
         adapter.execWithStatusCheck(params, svcContext);
     }
+
+    @Test
+    public void testExecCommandResponse_validJSON() throws SvcLogicException,
+            IllegalStateException, IllegalArgumentException {
+
+        params.put("Url", "test");
+        params.put("Port", "10");
+        params.put("User", "test");
+        params.put("Password", "test");
+        params.put("Cmd", "test");
+        params.put("AuthType", "basic");
+        params.put("ResponseType", "json");
+        params.put("TestOut", "{\"equipment-data\":\"boo\"}");
+        adapter = new SshApiCallNode(true);
+        adapter.execWithStatusCheck(params, svcContext);
+        assertEquals("boo", svcContext.getAttribute("equipment-data"));
+    }
+
+    @Test
+    public void testExecCommandResponse_validXML() throws SvcLogicException,
+            IllegalStateException, IllegalArgumentException {
+
+        params.put("Url", "test");
+        params.put("Port", "10");
+        params.put("User", "test");
+        params.put("Password", "test");
+        params.put("Cmd", "test");
+        params.put("AuthType", "basic");
+        params.put("ResponseType", "xml");
+        params.put("TestOut", "<modelVersion>4.0.0</modelVersion>");
+        adapter = new SshApiCallNode(true);
+        adapter.execWithStatusCheck(params, svcContext);
+        assertEquals("4.0.0", svcContext.getAttribute("modelVersion"));
+    }
+
+    @Test
+    public void testExecCommandResponse_validJSONPrefix() throws SvcLogicException,
+            IllegalStateException, IllegalArgumentException {
+
+        params.put("Url", "test");
+        params.put("Port", "10");
+        params.put("User", "test");
+        params.put("Password", "test");
+        params.put("Cmd", "test");
+        params.put("AuthType", "basic");
+        params.put("ResponseType", "json");
+        params.put("TestOut", "{\"equipment-data\":\"boo\"}");
+        params.put("ResponsePrefix", "test");
+        adapter = new SshApiCallNode(true);
+        adapter.execWithStatusCheck(params, svcContext);
+        assertEquals("boo", svcContext.getAttribute("test.equipment-data"));
+    }
+
+    @Test
+    public void testExecCommandResponse_validXMLPrefix() throws SvcLogicException,
+            IllegalStateException, IllegalArgumentException {
+
+        params.put("Url", "test");
+        params.put("Port", "10");
+        params.put("User", "test");
+        params.put("Password", "test");
+        params.put("Cmd", "test");
+        params.put("AuthType", "basic");
+        params.put("ResponseType", "xml");
+        params.put("TestOut", "<modelVersion>4.0.0</modelVersion>");
+        params.put("ResponsePrefix", "test");
+        adapter = new SshApiCallNode(true);
+        adapter.execWithStatusCheck(params, svcContext);
+        assertEquals("4.0.0", svcContext.getAttribute("test.modelVersion"));
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testExecCommandResponse_validXMLFail() throws SvcLogicException,
+            IllegalStateException, IllegalArgumentException {
+
+        params.put("Url", "test");
+        params.put("Port", "10");
+        params.put("User", "test");
+        params.put("Password", "test");
+        params.put("Cmd", "test");
+        params.put("AuthType", "basic");
+        params.put("ResponseType", "xml");
+        params.put("TestOut", "<modelVersion>4.0.0</modelVersion>");
+        params.put("TestFail", "true");
+        params.put("ResponsePrefix", "test");
+        adapter = new SshApiCallNode(true);
+        adapter.execWithStatusCheck(params, svcContext);
+    }
+
+    @Test(expected = SvcLogicException.class)
+    public void testExecCommandResponse_validXMLPrefixKey() throws SvcLogicException,
+            IllegalStateException, IllegalArgumentException {
+        params = new HashMap<>();
+        params.put("Url", "test");
+        params.put("Port", "10");
+        params.put("SshKey", "test");
+        params.put("Cmd", "test");
+        params.put("ResponseType", "xml");
+        params.put("TestOut", "<modelVersion>4.0.0</modelVersion>");
+        params.put("ResponsePrefix", "test");
+        adapter.execWithStatusCheck(params, svcContext);
+        assertEquals("4.0.0", svcContext.getAttribute("test.modelVersion"));
+    }
 }

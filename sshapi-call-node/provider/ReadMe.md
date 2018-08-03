@@ -20,9 +20,9 @@ ResponsePrefix    ->    Optional    ->    location the response will be written 
 listName[i]    ->    Optional    ->    Used for processing XML responses with repeating elements.</td>vpn-information.vrf-details
 
 Output:
-"'ResponsePrefix'.sshApi.call.node.status"   ->    SSH Exit status code is set in here.
-"'ResponsePrefix'.sshApi.call.node.stdout"   ->    SSH command execution result is put in here. 
-"'ResponsePrefix'.sshApi.call.node.stderr"   ->    SSH execution failure message is put in here. 
+"sshApi.call.node.status"   ->    SSH Exit status code is set in here.
+"sshApi.call.node.stdout"   ->    SSH command execution result is put in here. 
+"sshApi.call.node.stderr"   ->    SSH execution failure message is put in here. 
 
 
 
