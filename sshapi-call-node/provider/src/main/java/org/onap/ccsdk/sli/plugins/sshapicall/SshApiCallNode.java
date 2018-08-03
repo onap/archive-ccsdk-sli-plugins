@@ -66,9 +66,27 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
     private String PARAM_OUT_stderr = "sshApi.call.node.stderr";
 
     /**
+     * Testing parameter - content of mocked SSH.
+     */
+    private boolean PARAM_TEST_MODE = false;
+    private String PARAM_OUT_MESSAGE = "TestOut";
+
+
+    /**
      * Default success status.
      */
     private int DEF_SUCCESS_STATUS = 0;
+
+    /**
+     * Used for jUnit test and testing interface
+     */
+    public SshApiCallNode(boolean mode) {
+        PARAM_TEST_MODE = mode;
+    }
+
+    public SshApiCallNode() {
+        PARAM_TEST_MODE = false;
+    }
 
     private SshAdapter sshAdapter;
 
@@ -117,23 +135,33 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
         Parameters p = parser.getParameters(params);
         logger.debug("=> Connecting to SSH server...");
         SshConnection sshConnection = null;
+        int status = -1;
+        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        String stdoutRes = "", stderrRes = "";
         try {
-            sshConnection = getSshConnection(p);
-            sshConnection.connect();
-            logger.debug("=> Connected to SSH server...");
-            logger.debug("=> Running SSH command...");
-            sshConnection.setExecTimeout(p.sshExecTimeout);
-            ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-            ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-            int status;
-            if (withPty) {
-                status = sshConnection.execCommandWithPty(parser.makeCommand(params), stdout);
-                stderr = stdout;
+            if (!PARAM_TEST_MODE) {
+                sshConnection = getSshConnection(p);
+                sshConnection.connect();
+                logger.debug("=> Connected to SSH server...");
+                logger.debug("=> Running SSH command...");
+                sshConnection.setExecTimeout(p.sshExecTimeout);
+                if (withPty) {
+                    status = sshConnection.execCommandWithPty(parser.makeCommand(params), stdout);
+                    stderr = stdout;
+                }
+                else
+                    status = sshConnection.execCommand(parser.makeCommand(params), stdout, stderr);
+                stdoutRes = stdout.toString();
+                stderrRes = stderr.toString();
+
+            } else {
+                if (params.get("TestFail").equalsIgnoreCase("true"))
+                    status = 202;
+                else
+                    status = DEF_SUCCESS_STATUS;
+                stdoutRes = params.get(PARAM_OUT_MESSAGE);
             }
-            else
-                status = sshConnection.execCommand(parser.makeCommand(params), stdout, stderr);
-            String stdoutRes = stdout.toString();
-            String stderrRes = stderr.toString();
             logger.debug("=> executed SSH command");
 
             if(status == DEF_SUCCESS_STATUS) {
@@ -206,12 +234,10 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
 
     public void execWithStatusCheck(Map<String, String> params, SvcLogicContext ctx) throws SvcLogicException {
         execCommand(params, ctx);
-        ParseParam parser = new ParseParam();
-        String responsePrefix = parser.getStringParameters(params, parser.SSH_ResponsePrefix);
-        parseResponse(ctx, responsePrefix);
+        parseResponse(ctx);
     }
 
-    private void parseResponse (SvcLogicContext ctx, String responsePrefix) throws SvcLogicException {
+    private void parseResponse (SvcLogicContext ctx) throws SvcLogicException {
         int status = Integer.parseInt(ctx.getAttribute(PARAM_OUT_status));
         if(status != DEF_SUCCESS_STATUS) {
             StringBuilder errmsg = new StringBuilder();
