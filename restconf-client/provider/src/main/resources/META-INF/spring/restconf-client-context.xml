@@ -42,7 +42,7 @@
     </bean>
 
     <bean id="restconfDiscoveryNode" class="org.onap.ccsdk.sli.plugins.restconfdiscovery.RestconfDiscoveryNode">
-        <property name="uebServers" value="${servers}" />
+        <property name="restconfapiCallNode" ref="restconfapiCallNode" />
     </bean>
 
 </beans>
