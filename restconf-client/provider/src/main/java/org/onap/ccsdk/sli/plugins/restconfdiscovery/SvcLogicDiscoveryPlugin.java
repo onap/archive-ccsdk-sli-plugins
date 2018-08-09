@@ -59,7 +59,7 @@ public interface SvcLogicDiscoveryPlugin extends SvcLogicJavaPlugin {
      * @since 11.0.2
      * @see String#split(String, int)
      */
-    void establishSubscription(Map<String, String> paramMap, SvcLogicContext ctx);
+    void establishSubscription(Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException;
 
     /**
      * Allows directed graphs to modify a discovery subscription for a given subscriber.
