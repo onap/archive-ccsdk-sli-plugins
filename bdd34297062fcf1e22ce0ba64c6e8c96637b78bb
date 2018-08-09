@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_c0e8d87e",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/restconfdiscovery/RestconfDiscoveryNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-09T11:47:07Z",
+      "side": 1,
+      "message": "maybe we can merge subscriptionInfo and subscriptionInfoMap by keeping the subscription-id as part of SubscriptionInfo.",
+      "range": {
+        "startLine": 53,
+        "startChar": 32,
+        "endLine": 53,
+        "endChar": 48
+      },
+      "revId": "bdd34297062fcf1e22ce0ba64c6e8c96637b78bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_40e5a8a6",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/restconfdiscovery/RestconfDiscoveryNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-09T11:47:07Z",
+      "side": 1,
+      "message": "I think we should make them as an instance variable and can have it as a volatile variable for synchronization, as it will be accessed by multiple threads.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 80
+      },
+      "revId": "bdd34297062fcf1e22ce0ba64c6e8c96637b78bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_00efb088",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/restconfdiscovery/RestconfDiscoveryNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-09T11:47:07Z",
+      "side": 1,
+      "message": "not much value to define them as string constants, can use directly as string.",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 50
+      },
+      "revId": "bdd34297062fcf1e22ce0ba64c6e8c96637b78bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_209bcc19",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/restconfdiscovery/RestconfDiscoveryNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-09T11:47:07Z",
+      "side": 1,
+      "message": "instead try to see if we can use the spring framework to initialize RestconfDiscoveryNode with service reference of RestconfApiCallNode.",
+      "range": {
+        "startLine": 152,
+        "startChar": 32,
+        "endLine": 152,
+        "endChar": 50
+      },
+      "revId": "bdd34297062fcf1e22ce0ba64c6e8c96637b78bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_409368fa",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/restconfdiscovery/RestconfDiscoveryNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-09T11:47:07Z",
+      "side": 1,
+      "message": "this can be package local, as its only required by testcases.",
+      "range": {
+        "startLine": 177,
+        "startChar": 4,
+        "endLine": 177,
+        "endChar": 10
+      },
+      "revId": "bdd34297062fcf1e22ce0ba64c6e8c96637b78bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c0b6988a",
+        "filename": "restconf-client/provider/src/test/java/org/onap/ccsdk/sli/plugins/restconfdiscovery/SseResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-09T11:47:07Z",
+      "side": 1,
+      "message": "RestconfServerMock maybe more apt.",
+      "range": {
+        "startLine": 32,
+        "startChar": 13,
+        "endLine": 32,
+        "endChar": 24
+      },
+      "revId": "bdd34297062fcf1e22ce0ba64c6e8c96637b78bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
