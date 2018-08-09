@@ -31,11 +31,8 @@
 		<feature>sdnc-sli</feature>
 		<feature>spring</feature>
 		<feature>spring-dm</feature>
-		<bundle>mvn:com.sun.jersey/jersey-client/${jersey.version}</bundle>
-		<bundle>mvn:com.sun.jersey.contribs.jersey-oauth/oauth-signature/${jersey.version}</bundle>
-		<bundle>mvn:com.sun.jersey.contribs.jersey-oauth/oauth-client/${jersey.version}</bundle>
-		<bundle>mvn:org.codehaus.jettison/jettison/${jettison.version}</bundle>
-		<bundle>mvn:org.onap.ccsdk.sli.plugins/restconf-client-provider/${project.version}</bundle>
+		<bundle>mvn:org.onap.ccsdk.sli.plugins/properties-node-provider/0.3.0-SNAPSHOT</bundle>
+		<bundle>mvn:org.onap.ccsdk.sli.plugins/restconf-client-provider/0.3.0-SNAPSHOT</bundle>
 	</feature>
 
 </features>

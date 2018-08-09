@@ -28,23 +28,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>sli-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>sli-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
         <dependency>
@@ -52,22 +35,40 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-sse</artifactId>
+            <version>2.27</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
-            <artifactId>oauth-signature</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
-            <artifactId>oauth-client</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.27</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>jettison</artifactId>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>2.27</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+            <version>2.27</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.ccsdk.sli.core</groupId>
+            <artifactId>sli-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.ccsdk.sli.plugins</groupId>
+            <artifactId>properties-node-provider</artifactId>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
