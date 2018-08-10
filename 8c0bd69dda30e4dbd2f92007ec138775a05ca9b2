@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_803e5bb7",
+        "filename": "restconf-api-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restconfapicall/MdsalSerializerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-10T11:40:15Z",
+      "side": 1,
+      "message": "kindly place all serializer classes to correct package.",
+      "range": {
+        "startLine": 30,
+        "startChar": 13,
+        "endLine": 30,
+        "endChar": 34
+      },
+      "revId": "8c0bd69dda30e4dbd2f92007ec138775a05ca9b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
