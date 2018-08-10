@@ -27,6 +27,7 @@
         <module>restconf-client</module>
         <module>features</module>
         <module>template-node</module>
+        <module>restconf-api-call-node</module>
     </modules>
 
     <scm>
