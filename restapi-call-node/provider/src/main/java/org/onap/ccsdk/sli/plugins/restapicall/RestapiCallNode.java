@@ -75,6 +75,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     private String uebServers;
     private String defaultUebTemplateFileName = "/opt/bvc/restapi/templates/default-ueb-message.json";
     protected RetryPolicyStore retryPolicyStore;
+    protected static final String DME2_PROPERTIES_FILE_NAME = "dme2.properties";
+    protected static final String UEB_PROPERTIES_FILE_NAME = "ueb.properties";
+    protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
+    protected static final String PROPERTIES_DIR_KEY = "SDNC_CONFIG_DIR";
 
     protected RetryPolicyStore getRetryPolicyStore() {
         return retryPolicyStore;
@@ -85,7 +89,26 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     public RestapiCallNode() {
+        String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
 
+        try (FileInputStream in = new FileInputStream(configDir + "/" + DME2_PROPERTIES_FILE_NAME)) {
+            Properties props = new Properties();
+            props.load(in);
+            this.retryPolicyStore = new RetryPolicyStore();
+            this.retryPolicyStore.setProxyServers(props.getProperty("proxyUrl"));
+            log.info("DME2 support enabled");
+        } catch (Exception e) {
+            log.warn("DME2 properties could not be read, DME2 support will not be enabled.", e);
+        }
+
+        try (FileInputStream in = new FileInputStream(configDir + "/" + UEB_PROPERTIES_FILE_NAME)) {
+            Properties props = new Properties();
+            props.load(in);
+            this.uebServers = props.getProperty("servers");
+            log.info("UEB support enabled");
+        } catch (Exception e) {
+            log.warn("UEB properties could not be read, UEB support will not be enabled.", e);
+        }
     }
 
      /**
