@@ -20,13 +20,25 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.slf4j.Logger;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 import java.util.Map;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getChildSchemaNode;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getIndex;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getListName;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNamespace;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNodeType;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getRevision;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.resolveName;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_LEAF_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_NODE;
 
 /**
  * Representation of mdsal based properties node serializer implementation.
@@ -35,7 +47,6 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
 
     private SchemaNode curSchema;
     private PropertiesNode node;
-    private static final Logger LOG = getLogger(MdsalPropertiesNodeSerializer.class);
 
     /**
      * Creates the properties node serializer.
@@ -44,13 +55,33 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
      * @param schemaCtx  schema context
      * @param uri        URL of the request
      */
-    public MdsalPropertiesNodeSerializer(SchemaNode schemaNode, SchemaContext schemaCtx, String uri) {
+    public MdsalPropertiesNodeSerializer(SchemaNode schemaNode,
+                                         SchemaContext schemaCtx, String uri) {
         super(schemaNode, schemaCtx, uri);
     }
 
     @Override
-    public PropertiesNode encode(Map<String, String> paramMap) {
-        return null;
+    public PropertiesNode encode(Map<String, String> paramMap) throws SvcLogicException {
+        curSchema = schemaNode();
+        String nodeInUri[] = uri().split("\\/");
+        String lastNodeName = nodeInUri[nodeInUri.length - 1];
+        String rootUri = uri().replaceAll("\\/", "\\.");
+        node = createRootNode(lastNodeName, rootUri);
+
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            String[] names = entry.getKey().split("\\.");
+            for (int i = 0; i < names.length; i++) {
+                if (i < nodeInUri.length) {
+                    if (!(nodeInUri[i].equals(names[i]))) {
+                        break;
+                    }
+                } else {
+                    createPropertyNode(i, names.length, names[i],
+                                       entry.getValue());
+                }
+            }
+        }
+        return node;
     }
 
     @Override
@@ -58,4 +89,45 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
         return null;
     }
 
+    private RootNode createRootNode(String lastNodeName, String rootUri) {
+        Module m = SchemaContextUtil.findParentModule(schemaCtx(), curSchema);
+        Namespace ns = new Namespace(m.getName(), m.getNamespace(),
+                                     getRevision(m.getRevision()));
+        return new RootNode(lastNodeName, ns, schemaNode(), rootUri);
+    }
+
+    private void createPropertyNode(int index, int length, String name,
+                                    String value) throws SvcLogicException {
+        String localName = resolveName(name);
+        Namespace ns = getNamespace(getListName(name), schemaCtx(), node);
+        SchemaNode schema = getChildSchemaNode(curSchema, localName, ns);
+        if (schema == null) {
+            return;
+        }
+
+        switch (getNodeType(index, length, name)) {
+            case SINGLE_INSTANCE_NODE:
+                node = node.addChild(localName, ns,
+                                     SINGLE_INSTANCE_NODE, schema);
+                curSchema = schema;
+                break;
+            case MULTI_INSTANCE_NODE:
+                node = node.addChild(getIndex(name), localName, ns,
+                                     MULTI_INSTANCE_NODE, schema);
+                curSchema = schema;
+                break;
+            case SINGLE_INSTANCE_LEAF_NODE:
+                node = node.addChild(localName, ns, SINGLE_INSTANCE_LEAF_NODE,
+                                     value, null, schema);
+                node = node.endNode();
+                curSchema = ((SchemaNode) node.appInfo());
+                break;
+            case MULTI_INSTANCE_LEAF_NODE:
+                node = node.addChild(getIndex(name), localName, ns,
+                                     MULTI_INSTANCE_LEAF_NODE, value, null, schema);
+                node = node.endNode();
+                curSchema = ((SchemaNode) node.appInfo());
+                break;
+        }
+    }
 }

@@ -75,7 +75,14 @@ public class LeafListHolderNode extends HolderNode<LeafListHolderChild> implemen
                                    Namespace namespace, NodeType type,
                                    String value, Namespace valueNs,
                                    Object appInfo) throws SvcLogicException {
-        // TODO : to be implemented
-        return null;
+        LeafNode node = ((LeafNode) children().get(index));
+        if (index == null) {
+            index = String.valueOf(children().size());
+        }
+        String uri = this.uri() + "[" + index + "]";
+        node = (node != null) ? node : new LeafNode(name, namespace, uri,
+                                                    this, appInfo, type, value);
+        children().put(index, node);
+        return node;
     }
 }

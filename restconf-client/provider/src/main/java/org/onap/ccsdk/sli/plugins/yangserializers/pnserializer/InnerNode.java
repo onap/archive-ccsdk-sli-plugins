@@ -21,9 +21,21 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.addToAugmentations;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.createNode;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getAugmentationNode;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getUri;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.isNamespaceAsParent;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.resolveName;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_HOLDER_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_HOLDER_NODE;
+import static org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils.findCorrespondingAugment;
 
 /**
  * Abstraction of an entity that represents an inner node to properties data
@@ -62,8 +74,31 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
     public PropertiesNode addChild(String name, Namespace namespace,
                                    NodeType type,
                                    Object appInfo) throws SvcLogicException {
-        // TODO : to be implemented
-        return null;
+        PropertiesNode node = ((PropertiesNode) children.get(name));
+        if (node != null) {
+            return node;
+        }
+
+        // get augment schema, if it is augmented node
+        AugmentationSchemaNode augSchema = null;
+        if (((DataSchemaNode) appInfo).isAugmenting()) {
+            augSchema = findCorrespondingAugment(((DataSchemaNode) this.appInfo()), ((DataSchemaNode) appInfo));
+            node = getAugmentationNode(augSchema, this, name);
+        }
+
+        // create node based on type
+        if (node == null) {
+            String uri = getUri(this, name, namespace);
+            node = createNode(name, namespace, uri, this, appInfo, type);
+        }
+
+        // If namespace is not same as parent then it is augmented node
+        if (augSchema != null && !isNamespaceAsParent(this, node)) {
+            addToAugmentations(augSchema, this, node);
+        } else {
+            children.put(name, ((T) node));
+        }
+        return node;
     }
 
     @Override
@@ -71,16 +106,65 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
                                    NodeType type, String value,
                                    Namespace valuens,
                                    Object appInfo) throws SvcLogicException {
-        // TODO : to be implemented
-        return null;
+        LeafNode node = ((LeafNode) children.get(name));
+        if (node != null) {
+            return  node;
+        }
+
+        AugmentationSchemaNode augSchema = null;
+        if (((DataSchemaNode) appInfo).isAugmenting()) {
+            augSchema = findCorrespondingAugment(((DataSchemaNode) this.appInfo()),
+                                                 ((DataSchemaNode) appInfo));
+        }
+
+        String uri = getUri(this, name, namespace);
+        node = new LeafNode(name, namespace, uri, this,
+                            appInfo, type, value);
+
+        if (augSchema != null && !isNamespaceAsParent(this, node)) {
+            addToAugmentations(augSchema, this, node);
+        } else {
+            children.put(name, ((T) node));
+        }
+        return node;
     }
 
     @Override
     public PropertiesNode addChild(String index, String name,
                                    Namespace namespace, NodeType type,
                                    Object appInfo) throws SvcLogicException {
-        // TODO : to be implemented
-        return null;
+        String localname = resolveName(name);
+        PropertiesNode node = ((PropertiesNode) children.get(localname));
+
+        if (node == null) {
+            AugmentationSchemaNode augSchema = null;
+            if (((DataSchemaNode) appInfo).isAugmenting()) {
+                augSchema = findCorrespondingAugment(((DataSchemaNode) this.appInfo()),
+                                                     ((DataSchemaNode) appInfo));
+                node = getAugmentationNode(augSchema, this, localname);
+            }
+
+            if (node == null) {
+                String uri = getUri(this, name, namespace);
+                node = new ListHolderNode(localname, namespace, uri,
+                                          this, appInfo, MULTI_INSTANCE_HOLDER_NODE);
+            }
+
+            if (augSchema != null && !isNamespaceAsParent(this, node)) {
+                addToAugmentations(augSchema, this, node);
+            } else {
+                children.put(localname, ((T) node));
+            }
+
+            node = node.addChild(index, localname, namespace, type, appInfo);
+        } else if (node instanceof ListHolderNode) {
+            ListHolderChild child = ((ListHolderNode) node).child(index);
+            node = (child != null ? ((MultiInstanceNode) child) :
+                    node.addChild(index, localname, namespace, type, appInfo));
+        } else {
+            throw new SvcLogicException("Duplicate node exist with same node");
+        }
+        return node;
     }
 
     @Override
@@ -88,7 +172,40 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
                                    Namespace namespace, NodeType type,
                                    String value, Namespace valueNs,
                                    Object appInfo) throws SvcLogicException {
-        // TODO : to be implemented
-        return null;
+        String localName = resolveName(name);
+        PropertiesNode node = ((PropertiesNode) children.get(localName));
+
+        if (node == null) {
+
+            AugmentationSchemaNode augSchema = null;
+            if (((DataSchemaNode) appInfo).isAugmenting()) {
+                augSchema = findCorrespondingAugment(((DataSchemaNode) this.appInfo()),
+                                                     ((DataSchemaNode) appInfo));
+                node = getAugmentationNode(augSchema, this, localName);
+            }
+
+            if (node == null) {
+                String uri = getUri(this, name, namespace);
+                node = new LeafListHolderNode(localName, namespace, uri, this,
+                                              appInfo, MULTI_INSTANCE_LEAF_HOLDER_NODE);
+            }
+
+            if (augSchema != null && !isNamespaceAsParent(this, node)) {
+                addToAugmentations(augSchema, this, node);
+            } else {
+                children.put(localName, ((T) node));
+            }
+
+            node = node.addChild(index, localName, namespace, type, value, null, appInfo);
+        } else if (node instanceof LeafListHolderNode) {
+            LeafNode child = ((LeafNode) ((HolderNode) node).child(index));
+            node = (child != null ? child : node.addChild(index, localName,
+                                                          namespace, type,
+                                                          value, null,
+                                                          appInfo));
+        } else {
+            throw new SvcLogicException("Duplicate node exist with same node");
+        }
+        return node;
     }
 }

@@ -52,8 +52,15 @@ public class ListHolderNode extends HolderNode<ListHolderChild> implements DataN
     public PropertiesNode addChild(String index, String name,
                                    Namespace namespace, NodeType type,
                                    Object appInfo) throws SvcLogicException {
-        // TODO : to be implemented
-        return null;
+        MultiInstanceNode node = ((MultiInstanceNode) children().get(index));
+        if (index == null) {
+            index = String.valueOf(children().size());
+        }
+        String uri = this.uri() + "[" + index + "]";
+        node = (node != null) ? node : new MultiInstanceNode(name, namespace, uri,
+                                                             this, appInfo, type);
+        children().put(index, node);
+        return node;
     }
 
     @Override
