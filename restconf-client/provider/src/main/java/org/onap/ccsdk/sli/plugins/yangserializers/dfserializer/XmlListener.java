@@ -20,12 +20,30 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.dom4j.Element;
+
 /**
- * Representation of type of data node.
+ * Abstraction of an entity which provides call back methods, which in turn
+ * are called by XML walker while walking the XML tree. This interface needs
+ * to be implemented by protocol implementing listener based call while doing
+ * XML walk.
  */
-public enum NodeType {
-    SINGLE_INSTANCE,
-    MULTI_INSTANCE,
-    SINGLE_INSTANCE_LEAF,
-    MULTI_INSTANCE_LEAF
+public interface XmlListener extends Listener {
+
+    /**
+     * Callback invoked during a node entry. All the related information
+     * about the node can be obtained from the element.
+     *
+     * @param element  current XML element
+     * @param nodeType node type of the element
+     */
+    void enterXmlElement(Element element, XmlNodeType nodeType);
+
+    /**
+     * Callback invoked during a node exit. All the related information about
+     * the node can be obtained from the element.
+     *
+     * @param element current xml element.
+     */
+    void exitXmlElement(Element element);
 }

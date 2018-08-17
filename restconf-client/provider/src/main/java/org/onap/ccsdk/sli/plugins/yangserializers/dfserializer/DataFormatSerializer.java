@@ -29,19 +29,26 @@ import java.util.Map;
  */
 public abstract class DataFormatSerializer {
 
+    /**
+     * Data format type of the serializer.
+     */
     private DataFormat dataFormat;
+
+    /**
+     * Data format serializer context.
+     */
     private DataFormatSerializerContext serializerContext;
 
     /**
      * Creates an instance of data format serializer.
      *
-     * @param dataFormat type of data format
-     * @param serializerContext data format serializer context
+     * @param d type of data format
+     * @param s data format serializer context
      */
-    protected DataFormatSerializer(DataFormat dataFormat,
-        DataFormatSerializerContext serializerContext) {
-        this.dataFormat = dataFormat;
-        this.serializerContext = serializerContext;
+    protected DataFormatSerializer(DataFormat d,
+                                   DataFormatSerializerContext s) {
+        this.dataFormat = d;
+        this.serializerContext = s;
     }
 
     /**

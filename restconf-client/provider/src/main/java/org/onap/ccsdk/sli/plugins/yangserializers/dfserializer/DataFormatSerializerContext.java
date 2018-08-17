@@ -20,6 +20,8 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeSerializer;
+
 import java.util.Map;
 
 /**
@@ -27,26 +29,45 @@ import java.util.Map;
  */
 public class DataFormatSerializerContext {
 
+    /**
+     * Data format listener.
+     */
     private Listener listener;
+
+    /**
+     * URI corresponding to the instance identifier.
+     */
     private String uri;
+
+    /**
+     * Protocol annotation.
+     */
     private Map<String, String> protocolAnnotation;
+
+    /**
+     * Properties node serializer.
+     */
+    private PropertiesNodeSerializer propNodeSerializer;
 
     /**
      * Creates an instance of data format serializer context.
      *
-     * @param listener data format listener
-     * @param uri URI corresponding to instance identifier
-     * @param protocolAnnotation protocol annotations
+     * @param l data format listener
+     * @param u URI corresponding to instance identifier
+     * @param p protocol annotations
+     * @param s properties node serializer
      */
-    public DataFormatSerializerContext(Listener listener, String uri,
-        Map<String, String> protocolAnnotation) {
-        this.listener = listener;
-        this.uri = uri;
-        this.protocolAnnotation = protocolAnnotation;
+    public DataFormatSerializerContext(Listener l, String u,
+                                       Map<String, String> p,
+                                       PropertiesNodeSerializer s) {
+        listener = l;
+        uri = u;
+        protocolAnnotation = p;
+        propNodeSerializer = s;
     }
 
     /**
-     * Retruns data format listener.
+     * Returns the data format listener.
      *
      * @return data format listener
      */
@@ -55,7 +76,7 @@ public class DataFormatSerializerContext {
     }
 
     /**
-     * Returns URI.
+     * Returns the URI.
      *
      * @return URI
      */
@@ -64,11 +85,20 @@ public class DataFormatSerializerContext {
     }
 
     /**
-     * Returns protocol annotations.
+     * Returns the protocol annotations.
      *
      * @return protocol annotations
      */
     public Map<String, String> getProtocolAnnotation() {
         return protocolAnnotation;
+    }
+
+    /**
+     * Returns the properties node serializer.
+     *
+     * @return properties node serializer
+     */
+    public PropertiesNodeSerializer getPropNodeSerializer() {
+        return propNodeSerializer;
     }
 }

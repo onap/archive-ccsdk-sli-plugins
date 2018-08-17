@@ -20,47 +20,22 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Abstraction of an entity which provides interface for JSON walk. This
+ * interface serves as a common tool for anyone who needs to parse the JSON
+ * node with depth-first algorithm.
  */
-public class Annotation {
+public interface JsonWalker {
 
     /**
-     * Name of the annotation.
-     */
-    private String name;
-
-    /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
+     * Walks the JSON data tree. Protocols implement JSON listener service
+     * and walks the JSON tree with input as implemented object. JSON walker
+     * provides call back to the implemented methods.
      *
-     * @param n annotation name
-     * @param v annotation value
+     * @param listener JSON listener implemented by the protocol
+     * @param jsonNode root node of the JSON data tree
      */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
-    }
-
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
-    }
+    void walk(JsonListener listener, JsonNode jsonNode);
 }

@@ -23,8 +23,11 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 import java.util.List;
 import java.util.Map;
 
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat.JSON;
+
 /**
- * Representation of JSON serializer.
+ * Representation of JSON serializer which encodes properties to JSON and
+ * decodes properties from JSON with the data format serializer.
  */
 public class JsonSerializer extends DataFormatSerializer {
 
@@ -34,16 +37,19 @@ public class JsonSerializer extends DataFormatSerializer {
      * @param serializerContext data format serializer context
      */
     protected JsonSerializer(DataFormatSerializerContext serializerContext) {
-        super(DataFormat.JSON, serializerContext);
+        super(JSON, serializerContext);
     }
 
     @Override
-    public String encode(Map<String, String> param, Map<String, List<Annotation>> annotations) {
+    public String encode(Map<String, String> param,
+                         Map<String, List<Annotation>> annotations) {
+        //TODO: Implementation code.
         return null;
     }
 
     @Override
     public Map<String, String> decode(String dataFormatBody) {
+        //TODO: Implementation code.
         return null;
     }
 }

@@ -20,47 +20,52 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
+
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Representation of default implementation of JSON listener.
  */
-public class Annotation {
+public class DefaultJsonListener implements JsonListener {
 
     /**
-     * Name of the annotation.
+     * Serializer helper to convert to properties node.
+     */
+    private SerializerHelper serializerHelper;
+
+    /**
+     * Name of the current JSON node.
      */
     private String name;
 
     /**
-     * Value of the annotation.
+     * Module name of the current JSON node.
      */
-    private String value;
+    private String modName;
 
     /**
-     * Creates an instance of annotation.
+     * Creates an instance of default json listener with its serializer helper.
      *
-     * @param n annotation name
-     * @param v annotation value
+     * @param serializerHelper serializer helper
      */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
+    public DefaultJsonListener(SerializerHelper serializerHelper) {
+        this.serializerHelper = serializerHelper;
     }
 
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
+    @Override
+    public void enterJsonNode(String nodeName, JsonNode node, NodeType nodeType) {
+        //TODO: Implementation code.
     }
 
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
+    @Override
+    public void exitJsonNode(JsonNode node) {
+        //TODO: Implementation code.
     }
+
+    @Override
+    public SerializerHelper serializerHelper() {
+        return serializerHelper;
+    }
+
 }

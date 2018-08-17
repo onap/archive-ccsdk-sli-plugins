@@ -20,47 +20,15 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.dom4j.Element;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Implementation of XML walker to walk through the nodes and process it.
  */
-public class Annotation {
+public class DefaultXmlWalker implements XmlWalker {
 
-    /**
-     * Name of the annotation.
-     */
-    private String name;
-
-    /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
-     *
-     * @param n annotation name
-     * @param v annotation value
-     */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
-    }
-
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
+    @Override
+    public void walk(XmlListener listener, Element xmlElement) {
+        //TODO: Implementation code.
     }
 }

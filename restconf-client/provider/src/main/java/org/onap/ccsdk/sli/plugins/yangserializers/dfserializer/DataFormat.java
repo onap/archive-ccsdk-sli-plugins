@@ -24,6 +24,14 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
  * Representation of data format.
  */
 public enum DataFormat {
+
+    /**
+     * XML data format.
+     */
     XML,
+
+    /**
+     * JSON data format.
+     */
     JSON
 }

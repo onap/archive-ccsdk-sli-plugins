@@ -20,47 +20,51 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import com.google.gson.stream.JsonWriter;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeListener;
+
+import java.io.Writer;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Representation of JSON implementation of properties node listener.
  */
-public class Annotation {
+public class PropertiesNodeJsonListener implements PropertiesNodeListener{
 
     /**
-     * Name of the annotation.
+     * JSON writer to write the JSON data format.
      */
-    private String name;
+    private JsonWriter jsonWriter;
 
     /**
-     * Value of the annotation.
+     * Writer to write the JSON.
      */
-    private String value;
+    private Writer writer;
 
     /**
-     * Creates an instance of annotation.
-     *
-     * @param n annotation name
-     * @param v annotation value
+     * Creates the properties node JSON listener by instantiating and
+     * indenting the writer.
      */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
+    public PropertiesNodeJsonListener() {
     }
 
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
+    @Override
+    public void start(PropertiesNode node) {
+        //TODO: Implementation code.
     }
 
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
+    @Override
+    public void end(PropertiesNode node) {
+        //TODO: Implementation code.
+    }
+
+    @Override
+    public void enterPropertiesNode(PropertiesNode node) {
+        //TODO: Implementation code.
+    }
+
+    @Override
+    public void exitPropertiesNode(PropertiesNode node) {
+        //TODO: Implementation code.
     }
 }

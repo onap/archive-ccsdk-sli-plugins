@@ -20,70 +20,61 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
-import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
+import org.dom4j.Element;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeListener;
+
+import java.io.Writer;
+import java.util.Stack;
 
 /**
- * Representation of MDSAL based serializer helper, which adds properties
- * node to the properties tree based on its types.
+ * Representation of XML implementation of properties node listener.
  */
-public class MdsalSerializerHelper extends SerializerHelper<SchemaNode, SchemaContext> {
+public class PropertiesNodeXmlListener implements PropertiesNodeListener {
 
     /**
-     * Current properties node.
+     * XML data from the element.
      */
-    private PropertiesNode propNode;
+    private String xmlData;
 
     /**
-     * Current schema node.
+     * Root element of the XML document.
      */
-    private SchemaNode curSchemaNode;
-
+    private Element rootElement;
 
     /**
-     * Creates MDSAL serializer helper with root schema node, schema context
-     * and URI.
-     *
-     * @param n schema node of the URI's last node
-     * @param c schema context
-     * @param u URI of the request
+     * Writer to write the XML.
      */
-    protected MdsalSerializerHelper(SchemaNode n, SchemaContext c,
-                                    String u) {
-        super(n, c, u);
+    private Writer writer;
+
+    /**
+     * XML element stack to store the elements.
+     */
+    private final Stack<Element> elementStack = new Stack<>();
+
+    /**
+     * Creates the properties node XML listener.
+     */
+    public PropertiesNodeXmlListener() {
     }
 
     @Override
-    protected SchemaNode getSchemaNode() {
-        return schemaNode;
-    }
-
-    @Override
-    protected SchemaContext getSchemaCtx() {
-        return schemaCtx;
-    }
-
-    @Override
-    protected SchemaNode getCurSchema() {
-        return curSchemaNode;
-    }
-
-    @Override
-    protected void addNode(String name, String nameSpace, String value,
-                           String valNameSpace, NodeType type) {
+    public void start(PropertiesNode node) {
         //TODO: Implementation code.
     }
 
     @Override
-    protected void exitNode() {
+    public void end(PropertiesNode node) {
         //TODO: Implementation code.
     }
 
     @Override
-    protected PropertiesNode getPropertiesNode() {
+    public void enterPropertiesNode(PropertiesNode node) {
         //TODO: Implementation code.
-        return null;
+    }
+
+    @Override
+    public void exitPropertiesNode(PropertiesNode node) {
+        //TODO: Implementation code.
     }
 }

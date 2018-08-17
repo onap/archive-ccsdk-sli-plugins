@@ -21,46 +21,17 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 /**
- * Representation of an entity that represents annotated attribute.
+ * Represents the XML node type.
  */
-public class Annotation {
+public enum XmlNodeType {
 
     /**
-     * Name of the annotation.
+     * Object XML node type.
      */
-    private String name;
+    OBJECT_NODE,
 
     /**
-     * Value of the annotation.
+     * Text XML node type.
      */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
-     *
-     * @param n annotation name
-     * @param v annotation value
-     */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
-    }
-
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
-    }
+    TEXT_NODE
 }

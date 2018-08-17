@@ -23,8 +23,11 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 import java.util.List;
 import java.util.Map;
 
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat.XML;
+
 /**
- * Representation of XML serializer.
+ * Representation of XML serializer which encodes properties to XML and
+ * decodes properties from XML with the data format serializer.
  */
 public class XmlSerializer extends DataFormatSerializer {
 
@@ -34,16 +37,19 @@ public class XmlSerializer extends DataFormatSerializer {
      * @param serializerContext data format serializer context
      */
     protected XmlSerializer(DataFormatSerializerContext serializerContext) {
-        super(DataFormat.XML, serializerContext);
+        super(XML, serializerContext);
     }
 
     @Override
-    public String encode(Map<String, String> param, Map<String, List<Annotation>> annotations) {
+    public String encode(Map<String, String> param,
+                         Map<String, List<Annotation>> annotations) {
+        //TODO: Implementation code.
         return null;
     }
 
     @Override
     public Map<String, String> decode(String dataFormatBody) {
+        //TODO: Implementation code.
         return null;
     }
 }

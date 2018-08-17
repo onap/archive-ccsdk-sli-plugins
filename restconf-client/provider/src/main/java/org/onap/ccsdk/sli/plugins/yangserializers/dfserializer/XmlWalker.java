@@ -20,47 +20,22 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.dom4j.Element;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Abstraction of an entity which provides interface for XML walk. This
+ * interface serves as a common tool for anyone who needs to parse the XML
+ * node with depth-first algorithm.
  */
-public class Annotation {
+public interface XmlWalker {
 
     /**
-     * Name of the annotation.
-     */
-    private String name;
-
-    /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
+     * Walks the XML data tree. Protocols implement XML listener service and
+     * walks the XML tree with input as implemented object. XML walker
+     * provides call back to the implemented methods.
      *
-     * @param n annotation name
-     * @param v annotation value
+     * @param listener   XML listener implemented by the protocol
+     * @param xmlElement root element of the XML data tree
      */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
-    }
-
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
-    }
+    void walk(XmlListener listener, Element xmlElement);
 }

@@ -18,49 +18,18 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
+package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
 /**
- * Representation of an entity that represents annotated attribute.
+ * Abstraction of properties node walker
  */
-public class Annotation {
+public interface PropertiesNodeWalker {
 
     /**
-     * Name of the annotation.
-     */
-    private String name;
-
-    /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
+     * Walks the properties node with the listener.
      *
-     * @param n annotation name
-     * @param v annotation value
+     * @param listener properties node listener.
+     * @param propertiesNode properties node
      */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
-    }
-
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
-    }
+    void walk(PropertiesNodeListener listener, PropertiesNode propertiesNode);
 }

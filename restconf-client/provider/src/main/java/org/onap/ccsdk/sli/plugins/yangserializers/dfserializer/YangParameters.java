@@ -20,47 +20,22 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.onap.ccsdk.sli.plugins.restapicall.Parameters;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Representation of the YANG parameters for the restconf api call node.
  */
-public class Annotation {
+public class YangParameters extends Parameters {
 
     /**
-     * Name of the annotation.
+     * Creates an instance of the YANG parameters.
      */
-    private String name;
-
-    /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
-     *
-     * @param n annotation name
-     * @param v annotation value
-     */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
+    public YangParameters() {
+        super();
     }
 
     /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
+     * Directory path of the YANG file.
      */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
-    }
+    public String dirPath;
 }

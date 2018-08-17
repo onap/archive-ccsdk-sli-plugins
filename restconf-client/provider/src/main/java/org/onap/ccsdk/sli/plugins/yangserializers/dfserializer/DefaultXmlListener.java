@@ -20,47 +20,39 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.dom4j.Element;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Representation of default implementation of XML listener.
  */
-public class Annotation {
+public class DefaultXmlListener implements XmlListener {
 
     /**
-     * Name of the annotation.
+     * Serializer helper to convert to properties node.
      */
-    private String name;
+    private SerializerHelper serializerHelper;
 
     /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
+     * Creates an instance of default XML listener with its serializer helper.
      *
-     * @param n annotation name
-     * @param v annotation value
+     * @param serializerHelper serializer helper
      */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
+    public DefaultXmlListener(SerializerHelper serializerHelper) {
+        this.serializerHelper = serializerHelper;
     }
 
-    /**
-     * Returns name of annotation.
-     *
-     * @return name of annotation
-     */
-    public String name() {
-        return name;
+    @Override
+    public void enterXmlElement(Element element, XmlNodeType nodeType) {
+        //TODO: Implementation code.
     }
 
-    /**
-     * Returns value of annotation.
-     *
-     * @return value of annotation
-     */
-    public String value() {
-        return value;
+    @Override
+    public void exitXmlElement(Element element) {
+        //TODO: Implementation code.
     }
-}
+
+    @Override
+    public SerializerHelper serializerHelper() {
+        return serializerHelper;
+    }
+    }

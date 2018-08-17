@@ -20,74 +20,92 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
-import java.util.Map;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 
 /**
  * Abstraction of an entity which helps the data format serializers to obtain
  * schema context details and to build properties from data.
  *
  * @param <T> type of schema node
+ * @param <P> type of schema context
  */
-public abstract class SerializerHelper<T> {
+public abstract class SerializerHelper<T, P> {
 
-    private T rootSchema;
-    private String rootURI;
+    /**
+     * Schema node of the last element in the URI.
+     */
+    protected T schemaNode;
 
-    protected SerializerHelper(T t, String uri) {
-        rootSchema = t;
+    /**
+     * Root schema context.
+     */
+    protected P schemaCtx;
+
+    /**
+     * Root URI.
+     */
+    protected String rootUri;
+
+    /**
+     * Creates an instance of the serializer helper with the schema node,
+     * schema context and the URI.
+     *
+     * @param t schema node
+     * @param p schema context
+     * @param u root URI
+     */
+    protected SerializerHelper(T t, P p, String u) {
+        schemaNode = t;
+        schemaCtx = p;
+        rootUri = u;
     }
 
     /**
-     * Returns root schema context node.
+     * Returns schema node of the last element in the URI.
      *
-     * @return root schema context node
+     * @return schema node
      */
-    protected abstract T getRootContext();
+    protected abstract T getSchemaNode();
 
     /**
-     * Returns current schema context node.
+     * Returns the root schema context.
+     *
+     * @return schema context
+     */
+    protected abstract P getSchemaCtx();
+
+    /**
+     * Returns the current schema context node.
      *
      * @return current schema context node
      */
-    protected abstract T getCurContext();
+    protected abstract T getCurSchema();
 
     /**
-     * Returns child schema context node.
+     * Adds a node to the properties node tree.
      *
-     * @return child schema context node
+     * @param name         name of the node
+     * @param nameSpace    name space of the node, it can be either module
+     *                     name or namespace; null indicates parent namespace
+     * @param value        value of the node; applicable for leaf/leaf-list node
+     * @param valNameSpace value namespace for identityref, could be module
+     *                     name or namespace
+     * @param type         type of node if known like in case of JSON
      */
-    protected abstract T getChildContext(T t, String name, String namespace);
+    protected abstract void addNode(String name, String nameSpace, String value,
+                                    String valNameSpace, NodeType type);
 
     /**
-     * Returns type of node
-     * @param t node
-     * @return node type
-     */
-    protected abstract NodeType getNodeType(T t);
-
-    /**
-     * Adds a node to current tree.
-     *
-     * @param name name of node
-     * @param namespace namespace of node, it can be either module name or
-     * namespace, null indicates parent namespace
-     * @param value value of node, in case it's leaf/leaf-list node
-     * @param valNamespace value namespace for identityref, could be module
-     * name or namespace
-     * @param type type of node if known like in case of JSON
-     */
-    protected abstract void addNode(String name, String namespace, String value,
-        String valNamespace, NodeType type);
-
-    /**
-     * Exits the node, in case if it's leaf node add to properties map.
+     * Exits the node, in case if it's leaf node then it adds to the properties
+     * map.
      */
     protected abstract void exitNode();
 
     /**
-     * Returns the properties built corresponding to data.
+     * Returns the built properties corresponding to the data.
      *
-     * @return properties map
+     * @return properties node.
      */
-    protected abstract Map<String, String> getProperties();
+    protected abstract PropertiesNode getPropertiesNode();
 }

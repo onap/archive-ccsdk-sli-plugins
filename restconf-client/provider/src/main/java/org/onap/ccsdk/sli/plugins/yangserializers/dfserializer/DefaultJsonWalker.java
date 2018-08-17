@@ -20,47 +20,41 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
- * Representation of an entity that represents annotated attribute.
+ * Implementation of JSON walker to walk through the nodes and process it.
  */
-public class Annotation {
+public class DefaultJsonWalker implements JsonWalker {
 
-    /**
-     * Name of the annotation.
-     */
-    private String name;
-
-    /**
-     * Value of the annotation.
-     */
-    private String value;
-
-    /**
-     * Creates an instance of annotation.
-     *
-     * @param n annotation name
-     * @param v annotation value
-     */
-    public Annotation(String n, String v) {
-        name = n;
-        value = v;
+    @Override
+    public void walk(JsonListener listener, JsonNode jsonNode) {
+        //TODO: Implementation code.
     }
 
     /**
-     * Returns name of annotation.
+     * Processes single instance node or leaf, by adding the node to from
+     * JSON and walking through all its children recursively.
      *
-     * @return name of annotation
+     * @param key      JSON name
+     * @param value    JSON node
+     * @param listener JSON listener
      */
-    public String name() {
-        return name;
+    private void processSingleNode(String key, JsonNode value,
+                                   JsonListener listener) {
+        //TODO: Implementation code.
     }
 
     /**
-     * Returns value of annotation.
+     * Processes multi instance node or leaf, by adding the node to from JSON
+     * and walking through all its instance recursively.
      *
-     * @return value of annotation
+     * @param key      JSON name
+     * @param value    JSON node
+     * @param listener JSON listener
      */
-    public String value() {
-        return value;
+    private void processMultiNodes(String key, JsonNode value,
+                                   JsonListener listener) {
+        //TODO: Implementation code.
     }
 }
