@@ -20,42 +20,40 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.slf4j.Logger;
-import static org.slf4j.LoggerFactory.getLogger;
-
 /**
- * Representation of mdsal based properties node serializer implementation.
+ * Abstraction of an entity that represents holder node to multi instance node
+ * in properties data tree.
+ *
+ * @param <T> type of child
  */
-public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<SchemaNode, SchemaContext> {
+public abstract class HolderNode<T extends NodeChild> extends PropertiesNode {
 
-    private SchemaNode curSchema;
-    private PropertiesNode node;
-    private static final Logger LOG = getLogger(MdsalPropertiesNodeSerializer.class);
+    private Map<String, T> children = new HashMap<>();
+
+    protected HolderNode(String name, Namespace namespace, String uri,
+                         PropertiesNode parent, Object appInfo,
+                         NodeType nodeType) {
+        super(name, namespace, uri, parent, appInfo, nodeType);
+    }
 
     /**
-     * Creates the properties node serializer.
+     * Returns children.
      *
-     * @param schemaNode schema node.
-     * @param schemaCtx  schema context
-     * @param uri        URL of the request
+     * @return children
      */
-    public MdsalPropertiesNodeSerializer(SchemaNode schemaNode, SchemaContext schemaCtx, String uri) {
-        super(schemaNode, schemaCtx, uri);
+    public Map<String, T> children() {
+        return children;
     }
 
-    @Override
-    public PropertiesNode encode(Map<String, String> paramMap) {
-        return null;
+    /**
+     * Returns child based on index.
+     *
+     * @return child based on index
+     */
+    public T child(String index) {
+        return children.get(index);
     }
-
-    @Override
-    public Map<String, String> decode(PropertiesNode propertiesNode) {
-        return null;
-    }
-
 }

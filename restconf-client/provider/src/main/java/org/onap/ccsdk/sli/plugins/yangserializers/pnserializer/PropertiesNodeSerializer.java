@@ -20,6 +20,8 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
 import java.util.Map;
 
 /**
@@ -62,29 +64,30 @@ public abstract class PropertiesNodeSerializer<T, P> {
         this.uri = uri;
     }
 
-
     /**
      * Encodes from properties to properties-node tree.
      *
      * @param paramMap parameter map
+     * @throws SvcLogicException fails to encode properties to properties node
      * @return properties node
      */
-    public abstract PropertiesNode encode(Map<String, String> paramMap);
+    public abstract PropertiesNode encode(Map<String, String> paramMap) throws SvcLogicException;
 
     /**
      * Decodes from properties-node to properties map.
      *
      * @param propertiesNode properties-node
+     * @throws SvcLogicException fails to decode properties node to properties
      * @return parameter map
      */
-    public abstract Map<String, String> decode(PropertiesNode propertiesNode);
+    public abstract Map<String, String> decode(PropertiesNode propertiesNode) throws SvcLogicException;
 
     /**
      * Returns the schema node of the property
      *
      * @return schema node
      */
-    public T getSchemaNode(){
+    public T schemaNode(){
         return schemaNode;
     }
 
@@ -93,7 +96,7 @@ public abstract class PropertiesNodeSerializer<T, P> {
      *
      * @return schema node
      */
-    public P getSchemaCtx() {
+    public P schemaCtx() {
         return schemaCtx;
     }
 
@@ -102,7 +105,7 @@ public abstract class PropertiesNodeSerializer<T, P> {
      *
      * @return uri
      */
-    public String getUri() {
+    public String uri() {
         return uri;
     }
 }
