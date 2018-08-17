@@ -104,7 +104,7 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
     @Override
     public PropertiesNode addChild(String name, Namespace namespace,
                                    NodeType type, String value,
-                                   Namespace valuens,
+                                   Namespace valueNs,
                                    Object appInfo) throws SvcLogicException {
         LeafNode node = ((LeafNode) children.get(name));
         if (node != null) {
@@ -120,6 +120,7 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
         String uri = getUri(this, name, namespace);
         node = new LeafNode(name, namespace, uri, this,
                             appInfo, type, value);
+        node.valueNs(valueNs);
 
         if (augSchema != null && !isNamespaceAsParent(this, node)) {
             addToAugmentations(augSchema, this, node);
@@ -196,12 +197,12 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
                 children.put(localName, ((T) node));
             }
 
-            node = node.addChild(index, localName, namespace, type, value, null, appInfo);
+            node = node.addChild(index, localName, namespace, type, value, valueNs, appInfo);
         } else if (node instanceof LeafListHolderNode) {
             LeafNode child = ((LeafNode) ((HolderNode) node).child(index));
             node = (child != null ? child : node.addChild(index, localName,
                                                           namespace, type,
-                                                          value, null,
+                                                          value, valueNs,
                                                           appInfo));
         } else {
             throw new SvcLogicException("Duplicate node exist with same node");

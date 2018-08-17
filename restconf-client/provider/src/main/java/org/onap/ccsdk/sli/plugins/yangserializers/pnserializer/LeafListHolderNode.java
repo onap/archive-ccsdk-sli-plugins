@@ -82,6 +82,7 @@ public class LeafListHolderNode extends HolderNode<LeafListHolderChild> implemen
         String uri = this.uri() + "[" + index + "]";
         node = (node != null) ? node : new LeafNode(name, namespace, uri,
                                                     this, appInfo, type, value);
+        node.valueNs(valueNs);
         children().put(index, node);
         return node;
     }

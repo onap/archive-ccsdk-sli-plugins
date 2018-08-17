@@ -86,7 +86,10 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
 
     @Override
     public Map<String, String> decode(PropertiesNode propertiesNode) {
-        return null;
+        PropertiesNodeWalker walker = new DefaultPropertiesNodeWalker<>();
+        DefaultPropertiesNodeListener listener = new DefaultPropertiesNodeListener();
+        walker.walk(listener, propertiesNode);
+        return listener.params();
     }
 
     private RootNode createRootNode(String lastNodeName, String rootUri) {
@@ -128,6 +131,8 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
                 node = node.endNode();
                 curSchema = ((SchemaNode) node.appInfo());
                 break;
+            default:
+                throw new SvcLogicException("Invalid node type");
         }
     }
 }
