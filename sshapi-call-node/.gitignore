@@ -28,6 +28,7 @@ classes
 out/
 .DS_STORE
 .metadata
+*.log
 
 ## Folders which contain auto generated source code ##
 yang-gen-config
