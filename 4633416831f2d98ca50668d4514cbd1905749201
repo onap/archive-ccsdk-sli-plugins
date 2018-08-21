@@ -1,0 +1,8 @@
+Code-Review+1: Rama SubbaReddy <rama.subba.reddy.s@huawei.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Dan Timoney <dt5972@att.com>
+Submitted-by: Dan Timoney <dt5972@att.com>
+Submitted-at: Tue, 21 Aug 2018 20:38:56 +0000
+Reviewed-on: https://gerrit.onap.org/r/61499
+Project: ccsdk/sli/plugins
+Branch: refs/heads/master
