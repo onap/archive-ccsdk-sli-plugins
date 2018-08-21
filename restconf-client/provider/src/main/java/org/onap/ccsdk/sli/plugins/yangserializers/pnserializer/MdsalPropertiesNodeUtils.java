@@ -20,13 +20,16 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
+import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -35,6 +38,8 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Represents utilities for properties node tree.
@@ -293,5 +298,56 @@ public final class MdsalPropertiesNodeUtils {
      */
     public static String getRevision(Optional<Revision> r) {
         return (r.isPresent()) ? r.get().toString() : null;
+    }
+
+    /**
+     * Returns value namespace for leaf value.
+     *
+     * @param value value of the leaf
+     * @param ctx schema context
+     * @return value namespace
+     * @throws SvcLogicException if identity/module could not be found
+     */
+    static Namespace getValueNamespace(String value,
+                                              SchemaContext ctx)
+            throws SvcLogicException {
+        String prefix = getPrefixFromValue(value);
+        if (prefix == null) {
+            return null;
+        }
+
+        IdentitySchemaNode id = IdentityCodecUtil.parseIdentity(value,
+                                                                ctx,
+                                                                prefixToModule -> {
+            final Iterator<Module> modules = ctx.findModules(prefix).iterator();
+            checkArgument(modules.hasNext(), "Could not find " +
+                                  "module %s", prefix);
+            return modules.next().getQNameModule();
+        });
+
+        if (id == null) {
+            throw new SvcLogicException("Could not find identity");
+        }
+
+        return getModuleNamespace(id.getQName(), ctx);
+    }
+
+    private static String getPrefixFromValue(String value) {
+        int lastIndexOfColon = value.lastIndexOf(":");
+        if (lastIndexOfColon != -1) {
+            return value.substring(0, lastIndexOfColon);
+        }
+        return null;
+    }
+
+    private static Namespace getModuleNamespace(QName qName, SchemaContext ctx)
+            throws SvcLogicException {
+        Optional<Module> module = ctx.findModule(qName.getModule());
+        if (!module.isPresent()) {
+            throw new SvcLogicException("Could not find module node");
+        }
+        Module m = module.get();
+        return new Namespace(m.getName(), m.getQNameModule().getNamespace(),
+                             getRevision(m.getRevision()));
     }
 }
