@@ -34,6 +34,7 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPrope
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNodeType;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getRevision;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getValueNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.resolveName;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_NODE;
@@ -121,13 +122,16 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
                 break;
             case SINGLE_INSTANCE_LEAF_NODE:
                 node = node.addChild(localName, ns, SINGLE_INSTANCE_LEAF_NODE,
-                                     value, null, schema);
+                                     value, getValueNamespace(value, schemaCtx()),
+                                     schema);
                 node = node.endNode();
                 curSchema = ((SchemaNode) node.appInfo());
                 break;
             case MULTI_INSTANCE_LEAF_NODE:
                 node = node.addChild(getIndex(name), localName, ns,
-                                     MULTI_INSTANCE_LEAF_NODE, value, null, schema);
+                                     MULTI_INSTANCE_LEAF_NODE, value,
+                                     getValueNamespace(value, schemaCtx()),
+                                     schema);
                 node = node.endNode();
                 curSchema = ((SchemaNode) node.appInfo());
                 break;

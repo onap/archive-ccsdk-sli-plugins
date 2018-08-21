@@ -1071,6 +1071,60 @@ public final class PropertiesSerializerTest {
         assertThat(node.uri(), is("test-yang:cont18.leaf40"));
     }
 
+    @Test
+    public void testIdentityRef() throws SvcLogicException {
+        String uri = "identity-test:test";
+        Map<String, String> params = new HashMap<>();
+        params.put("identity-test:test.con1.interface", "identity-types:physical");
+        params.put("identity-test:test.con1.interfaces.int-list[0].iden", "identity-test:Giga");
+        params.put("identity-test:test.con1.interfaces.int-list[0].available.ll[0]", "identity-types:Loopback");
+        params.put("identity-test:test.con1.interfaces.int-list[0].available.leaf1", "identity-types-second:Ethernet");
+        params.put("identity-test:test.con1.interfaces.int-list[0].available.leaf2", "identity-types-second:iden2");
+        InstanceIdentifierContext<?> iCtx = ParserIdentifier
+                .toInstanceIdentifier(uri, context, null);
+
+        PropertiesNodeSerializer ser = new MdsalPropertiesNodeSerializer(
+                iCtx.getSchemaNode(), context, uri);
+        PropertiesNode node = ser.encode(params);
+        Map<String, PropertiesNode> childNodes = ((RootNode) node).children();
+        assertThat(childNodes.containsKey("con1"), is(true));
+        node = childNodes.get("con1");
+        assertThat(node.uri(), is("identity-test:test.con1"));
+        LeafNode l = ((LeafNode) ((SingleInstanceNode) node).children().get("interface"));
+        assertThat(l.uri(), is("identity-test:test.con1.interface"));
+        assertThat(l.valueNs().moduleName(), is("identity-types"));
+        assertThat(l.valueNs().moduleNs().toString(), is("identity:list:ns:test:json:ser"));
+
+        // identity type inside union
+        node = ((SingleInstanceNode) ((SingleInstanceNode) node).children().get("interfaces"));
+        node = ((ListHolderNode) ((SingleInstanceNode) node).children().get("int-list"));
+        node = ((MultiInstanceNode) ((ListHolderNode) node).children().get("0"));
+        l = ((LeafNode) ((MultiInstanceNode) node).children().get("iden"));
+        assertThat(l.uri(), is("identity-test:test.con1.interfaces.int-list[0].iden"));
+        assertThat(l.valueNs().moduleName(), is("identity-test"));
+        assertThat(l.valueNs().moduleNs().toString(), is("identity:ns:test:json:ser"));
+
+        // leaf-list test
+        node = (SingleInstanceNode) ((MultiInstanceNode) node).children().get("available");
+        LeafListHolderNode holder = (LeafListHolderNode) ((SingleInstanceNode) node).children().get("ll");
+        l = ((LeafNode) holder.children().get("0"));
+        assertThat(l.uri(), is("identity-test:test.con1.interfaces.int-list[0].available.ll[0]"));
+        assertThat(l.valueNs().moduleName(), is("identity-types"));
+        assertThat(l.valueNs().moduleNs().toString(), is("identity:list:ns:test:json:ser"));
+
+        // leaf-ref test
+        l = ((LeafNode) ((SingleInstanceNode) node).children().get("leaf1"));
+        assertThat(l.uri(), is("identity-test:test.con1.interfaces.int-list[0].available.leaf1"));
+        assertThat(l.valueNs().moduleName(), is("identity-types-second"));
+        assertThat(l.valueNs().moduleNs().toString(), is("identity:list:second:ns:test:json:ser"));
+
+        // list of base identity test
+        l = ((LeafNode) ((SingleInstanceNode) node).children().get("leaf2"));
+        assertThat(l.uri(), is("identity-test:test.con1.interfaces.int-list[0].available.leaf2"));
+        assertThat(l.valueNs().moduleName(), is("identity-types-second"));
+        assertThat(l.valueNs().moduleNs().toString(), is("identity:list:second:ns:test:json:ser"));
+    }
+
     public static SchemaContext compileYangFile() throws FileNotFoundException {
         String path = PropertiesSerializerTest.class.getResource("/yang").getPath();
         File dir = new File(path);
