@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_568780d7",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/yangserializers/pnserializer/MdsalPropertiesNodeUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 311,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-21T08:47:23Z",
+      "side": 1,
+      "message": "access can be package local",
+      "range": {
+        "startLine": 311,
+        "startChar": 4,
+        "endLine": 311,
+        "endChar": 10
+      },
+      "revId": "9a9ea2447663941ba66e00dd42d6613b1af79aa1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
