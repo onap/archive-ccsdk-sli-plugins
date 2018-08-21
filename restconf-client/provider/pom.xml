@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-sse</artifactId>
-            <version>2.27</version>
+            <version>${glassfish.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -48,17 +48,17 @@
         <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
-            <version>2.27</version>
+            <version>${glassfish.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>2.27</version>
+            <version>${glassfish.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
-            <version>2.27</version>
+            <version>${glassfish.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.7</version>
+            <version>${gson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>

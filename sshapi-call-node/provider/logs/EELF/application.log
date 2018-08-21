@@ -1,0 +1,710 @@
+2018-08-21 12:05:47,906|||main||||INFO||||||| EELF0005I Searching path "${user.home};etc;../etc" for log configuration file "logback-test.xml"
+2018-08-21 12:05:47,906|||main||||INFO||||||| EELF0001I Loading default logging configuration from system resource file "com/att/eelf/logback.xml"
+2018-08-21 12:05:47,913|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,914|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,914|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,914|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,915|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,915|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,915|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,915|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,915|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,915|||main||||INFO||||||| Parameter ResponseType: [txt]
+2018-08-21 12:05:47,917|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,918|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,918|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,918|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,918|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,919|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,919|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,919|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,919|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,919|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 12:05:47,919|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 12:05:47,921|||main||||INFO||||||| Added property: equipment-data : boo
+2018-08-21 12:05:47,921|||main||||INFO||||||| +++ equipment-data: [boo]
+2018-08-21 12:05:47,922|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 12:05:47,923|||main||||INFO||||||| Added property: equipment-data : boo
+2018-08-21 12:05:47,923|||main||||INFO||||||| +++ test.equipment-data: [boo]
+2018-08-21 12:05:47,924|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 12:05:47,925|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 12:05:47,931|||main||||INFO||||||| Added property: modelVersion : 4.0.0
+2018-08-21 12:05:47,931|||main||||INFO||||||| +++ test.modelVersion: [4.0.0]
+2018-08-21 12:05:47,932|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,932|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,932|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,932|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,932|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,932|||main||||INFO||||||| Parameter AuthType: [key]
+2018-08-21 12:05:47,933|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,933|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,933|||main||||INFO||||||| Parameter SshKey: [test]
+2018-08-21 12:05:47,933|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,933|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 12:05:47,933|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 12:05:47,934|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,934|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,934|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,935|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,935|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,935|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,935|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 12:05:47,935|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 12:05:47,936|||main||||INFO||||||| Added property: modelVersion : 4.0.0
+2018-08-21 12:05:47,936|||main||||INFO||||||| +++ modelVersion: [4.0.0]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 12:05:47,937|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 12:05:47,938|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 12:05:47,940|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,940|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,940|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,941|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,941|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,942|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 12:05:47,942|||main||||INFO||||||| Parameter AuthType: [none]
+2018-08-21 12:05:47,943|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,944|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,944|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,945|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,945|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,945|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,945|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 12:05:47,947|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,947|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,947|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,947|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,948|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,948|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 12:05:47,948|||main||||INFO||||||| Parameter AuthType: [spring]
+2018-08-21 12:05:47,948|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,949|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,949|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,949|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,949|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 12:05:47,949|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 12:05:47,949|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 12:05:47,950|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 12:05:47,950|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 12:05:47,950|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 12:05:47,956|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId : ICOREPVC-81114561
+2018-08-21 12:05:47,956|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey : VPNL811182
+2018-08-21 12:05:47,956|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId : 811182
+2018-08-21 12:05:47,956|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName : 21302:811182
+2018-08-21 12:05:47,956|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport : SET_BVOIP_IN
+2018-08-21 12:05:47,957|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport : SET6_BVOIP_IN
+2018-08-21 12:05:47,957|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET6_DSU
+2018-08-21 12:05:47,957|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_DSU
+2018-08-21 12:05:47,957|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET6_MANAGED
+2018-08-21 12:05:47,957|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_MANAGED
+2018-08-21 12:05:47,957|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_LOVRF_COMMUNITY
+2018-08-21 12:05:47,958|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_RESET_LP
+2018-08-21 12:05:47,958|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup : AG_MAX_MCASTROUTES
+2018-08-21 12:05:47,958|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 12:05:47,958|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v4
+2018-08-21 12:05:47,958|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp_21302:811182
+2018-08-21 12:05:47,959|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_L3VPN_EBGP
+2018-08-21 12:05:47,959|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_MAX_PREFIX
+2018-08-21 12:05:47,959|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BGP_UNMANAGED
+2018-08-21 12:05:47,959|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BFD_BGP_3000
+2018-08-21 12:05:47,959|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 12:05:47,959|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v6
+2018-08-21 12:05:47,960|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp6_21302:811182
+2018-08-21 12:05:47,960|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_L3VPN_EBGP
+2018-08-21 12:05:47,960|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_MAX_PREFIX
+2018-08-21 12:05:47,960|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BGP_UNMANAGED
+2018-08-21 12:05:47,960|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BFD_BGP_3000
+2018-08-21 12:05:47,970|||main||||INFO||||||| Added property: ApplyGroupResponse.response-code : 200
+2018-08-21 12:05:47,970|||main||||INFO||||||| Added property: ApplyGroupResponse.response-message : Success
+2018-08-21 12:05:47,971|||main||||INFO||||||| Added property: ApplyGroupResponse.ack-final-indicator : Y
+2018-08-21 12:05:47,971|||main||||INFO||||||| Properties:
+2018-08-21 12:05:47,972|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup: AG6_BFD_BGP_3000
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup: AG6_MAX_PREFIX
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family: v6
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName: gp6_21302:811182
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol: BGP4_PROTOCOL
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId: ICOREPVC-81114561
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup: AG_MAX_MCASTROUTES
+2018-08-21 12:05:47,973|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey: VPNL811182
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId: 811182
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport: SET_RESET_LP
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport: SET6_BVOIP_IN
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName: 21302:811182
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.ack-final-indicator: Y
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.response-code: 200
+2018-08-21 12:05:47,974|||main||||INFO||||||| --- ApplyGroupResponse.response-message: Success
+2018-08-21 12:05:47,977|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId : ICOREPVC-81114561
+2018-08-21 12:05:47,978|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey : VPNL811182
+2018-08-21 12:05:47,978|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId : 811182
+2018-08-21 12:05:47,978|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName : 21302:811182
+2018-08-21 12:05:47,979|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0] : SET_BVOIP_IN
+2018-08-21 12:05:47,979|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[1] : SET6_BVOIP_IN
+2018-08-21 12:05:47,979|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport_length : a
+2018-08-21 12:05:47,982|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId : ICOREPVC-81114561
+2018-08-21 12:05:47,983|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey : VPNL811182
+2018-08-21 12:05:47,983|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId : 811182
+2018-08-21 12:05:47,984|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName : 21302:811182
+2018-08-21 12:05:47,984|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0] : SET_BVOIP_IN
+2018-08-21 12:05:47,985|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[1] : SET6_BVOIP_IN
+2018-08-21 12:05:47,985|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[0] : SET6_DSU
+2018-08-21 12:05:47,986|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[1] : SET_DSU
+2018-08-21 12:05:47,986|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[2] : SET6_MANAGED
+2018-08-21 12:05:47,987|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[3] : SET_MANAGED
+2018-08-21 12:05:47,988|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[4] : SET_LOVRF_COMMUNITY
+2018-08-21 12:05:47,988|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[5] : SET_RESET_LP
+2018-08-21 12:05:47,989|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup : AG_MAX_MCASTROUTES
+2018-08-21 12:05:47,989|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 12:05:47,989|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v4
+2018-08-21 12:05:47,990|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp_21302:811182
+2018-08-21 12:05:47,990|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_L3VPN_EBGP
+2018-08-21 12:05:47,990|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_MAX_PREFIX
+2018-08-21 12:05:47,991|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BGP_UNMANAGED
+2018-08-21 12:05:47,991|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BFD_BGP_3000
+2018-08-21 12:05:47,991|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 12:05:47,991|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v6
+2018-08-21 12:05:47,992|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp6_21302:811182
+2018-08-21 12:05:47,992|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_L3VPN_EBGP
+2018-08-21 12:05:47,992|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_MAX_PREFIX
+2018-08-21 12:05:47,992|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BGP_UNMANAGED
+2018-08-21 12:05:47,993|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BFD_BGP_3000
+2018-08-21 12:05:47,993|||main||||INFO||||||| Added property: ApplyGroupResponse.response-code : 200
+2018-08-21 12:05:47,993|||main||||INFO||||||| Added property: ApplyGroupResponse.response-message : Success
+2018-08-21 12:05:47,993|||main||||INFO||||||| Added property: ApplyGroupResponse.ack-final-indicator : Y
+2018-08-21 12:05:47,999|||main||||INFO||||||| Properties:
+2018-08-21 12:05:47,999|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup: AG6_BFD_BGP_3000
+2018-08-21 12:05:47,999|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup: AG6_MAX_PREFIX
+2018-08-21 12:05:48,000|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family: v6
+2018-08-21 12:05:48,000|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName: gp6_21302:811182
+2018-08-21 12:05:48,000|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol: BGP4_PROTOCOL
+2018-08-21 12:05:48,000|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId: ICOREPVC-81114561
+2018-08-21 12:05:48,000|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup: AG_MAX_MCASTROUTES
+2018-08-21 12:05:48,000|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey: VPNL811182
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId: 811182
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[0]: SET6_DSU
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[1]: SET_DSU
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[2]: SET6_MANAGED
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[3]: SET_MANAGED
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[4]: SET_LOVRF_COMMUNITY
+2018-08-21 12:05:48,001|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[5]: SET_RESET_LP
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport_length: 6
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0]: SET_BVOIP_IN
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[1]: SET6_BVOIP_IN
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport_length: 2
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName: 21302:811182
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.ack-final-indicator: Y
+2018-08-21 12:05:48,002|||main||||INFO||||||| --- ApplyGroupResponse.response-code: 200
+2018-08-21 12:05:48,003|||main||||INFO||||||| --- ApplyGroupResponse.response-message: Success
+2018-08-21 12:05:48,011|||main||||INFO||||||| <vnf-config-parameters>
+	<snmp-target-v3>
+		<snmp-security-level>NO_AUTH_NO_PRIV</snmp-security-level>
+		<snmp-target-ip-address>127.0.0.1</snmp-target-ip-address>
+		<snmp-target-v3-id>1</snmp-target-v3-id>
+	</snmp-target-v3>
+	<snmp-target-v3>
+		<snmp-security-level>NO_AUTH_NO_PRIV</snmp-security-level>
+		<snmp-target-ip-address>192.168.1.8</snmp-target-ip-address>
+		<snmp-target-v3-id>2</snmp-target-v3-id>
+	</snmp-target-v3>
+	<rf-mated-pair-ip-address>10.111.108.146</rf-mated-pair-ip-address>
+	<diameter-rf-realm-name>uvp.els-an.att.net</diameter-rf-realm-name>
+	<core-net-pcscf>
+		<network-name>Core</network-name>
+		<sip-pa-termination-ip-address>10.111.108.138</sip-pa-termination-ip-address>
+		<next-hop-ip-address>10.111.108.142</next-hop-ip-address>
+	</core-net-pcscf>
+	<rf-interface-nexthop-ip-address>10.111.108.150</rf-interface-nexthop-ip-address>
+	<vnf-type>N-SBG</vnf-type>
+	<diameter-rf-peer-ip-address>192.168.1.66</diameter-rf-peer-ip-address>
+	<dns-server-ip-address>10.11.12.13</dns-server-ip-address>
+	<access-net-pcscf>
+		<network-name>UvpbUgnAccess1</network-name>
+		<sip-pa-termination-ip-address>10.111.108.146</sip-pa-termination-ip-address>
+	</access-net-pcscf>
+	<access-net-pcscf>
+		<network-name>MIS</network-name>
+		<next-hop-ip-address>10.111.108.158</next-hop-ip-address>
+		<proactive-transcoding-profile>trinity-transcodingProfile</proactive-transcoding-profile>
+		<subnet-mask-length>10.111.108.154</subnet-mask-length>
+	</access-net-pcscf>
+	<access-net-pcscf>
+		<network-name>AVPN1</network-name>
+		<next-hop-ip-address>10.111.108.166</next-hop-ip-address>
+		<proactive-transcoding-profile>trinity-transcodingProfile</proactive-transcoding-profile>
+		<subnet-mask-length>10.111.108.162</subnet-mask-length>
+	</access-net-pcscf>
+	<access-net-pcscf>
+		<network-name>AVPN1</network-name>
+		<next-hop-ip-address>10.129.108.166</next-hop-ip-address>
+		<proactive-transcoding-profile>trinity-transcodingProfile</proactive-transcoding-profile>
+		<subnet-mask-length>10.129.108.162</subnet-mask-length>
+	</access-net-pcscf>
+	<dns-ip-address-1>2001:1890:1001:2224::1</dns-ip-address-1>
+	<mated-pair-fully-qualified-domain-name>mt1nj01sbg01pyl-mt1nj01sbg02pyl.ar1ga.uvp.els-an.att.net</mated-pair-fully-qualified-domain-name>
+	<dns-ip-address-2>2001:1890:1001:2424::1</dns-ip-address-2>
+	<bgf-controller-ip-address>192.168.1.186</bgf-controller-ip-address>
+	<bgf-control-link-name>mg3/69@192.168.1.226</bgf-control-link-name>
+	<escf-domain-name>hclab.atttest.com</escf-domain-name>
+</vnf-config-parameters>
+
+2018-08-21 12:05:48,012|||main||||INFO||||||| <vendor>Netconf</vendor>
+<vnf-host-ip-address>192.168.13.151</vnf-host-ip-address>
+<escape-test>blah blah &quot;xxx&amp;nnn&lt;&gt;\&apos;&quot;there&gt;blah&lt;&amp;&apos;&apos;&quot;&quot;123\\\&apos;&apos;&apos;blah blah &amp;</escape-test>
+
+2018-08-21 12:05:48,014|||main||||INFO||||||| [
+	{
+		"snmp-target-v3": [
+			{
+				"snmp-security-level": "NO_AUTH_NO_PRIV",
+				"snmp-target-ip-address": "127.0.0.1",
+				"snmp-target-v3-id": "1"
+			},
+			{
+				"snmp-security-level": "NO_AUTH_NO_PRIV",
+				"snmp-target-ip-address": "192.168.1.8",
+				"snmp-target-v3-id": "2"
+			}
+		],
+		"rf-mated-pair-ip-address": "10.111.108.146",
+		"diameter-rf-realm-name": "uvp.els-an.att.net",
+		"core-net-pcscf": [
+			{
+				"network-name": "Core",
+				"sip-pa-termination-ip-address": "10.111.108.138",
+				"next-hop-ip-address": "10.111.108.142"
+			}
+		],
+		"rf-interface-nexthop-ip-address": "10.111.108.150",
+		"vnf-type": "N-SBG",
+		"diameter-rf-peer-ip-address": "192.168.1.66",
+		"dns-server-ip-address": "10.11.12.13",
+		"access-net-pcscf": [
+			{
+				"network-name": "UvpbUgnAccess1",
+				"sip-pa-termination-ip-address": "10.111.108.146"
+			},
+			{
+				"network-name": "MIS",
+				"next-hop-ip-address": "10.111.108.158",
+				"proactive-transcoding-profile": "trinity-transcodingProfile",
+				"subnet-mask-length": "10.111.108.154"
+			},
+			{
+				"network-name": "AVPN1",
+				"next-hop-ip-address": "10.111.108.166",
+				"proactive-transcoding-profile": "trinity-transcodingProfile",
+				"subnet-mask-length": "10.111.108.162"
+			},
+			{
+				"network-name": "AVPN1",
+				"next-hop-ip-address": "10.129.108.166",
+				"proactive-transcoding-profile": "trinity-transcodingProfile",
+				"subnet-mask-length": "10.129.108.162"
+			}
+		],
+		"dns-ip-address-1": "2001:1890:1001:2224::1",
+		"mated-pair-fully-qualified-domain-name": "mt1nj01sbg01pyl-mt1nj01sbg02pyl.ar1ga.uvp.els-an.att.net",
+		"dns-ip-address-2": "2001:1890:1001:2424::1",
+		"bgf-controller-ip-address": "192.168.1.186",
+		"bgf-control-link-name": "mg3/69@192.168.1.226",
+		"escf-domain-name": "hclab.atttest.com"
+	}
+]
+2018-08-21 12:05:48,014|||main||||INFO||||||| {
+	"vendor": "Netconf",
+	"vnf-host-ip-address": "192.168.13.151",
+	"escape-test": "blah blah \"xxx&nnn<>\\'\"there>blah<&''\"\"123\\\\\\'''blah blah &"
+}
+2018-08-21 12:05:48,015|||main||||INFO||||||| "192.168.13.151"
+2018-08-21 12:05:48,015|||main||||INFO||||||| 192.168.13.151
+2018-08-21 12:05:48,016|||main||||INFO||||||| {
+    "T1":{
+        "T2":{
+            "T5":{
+                "T7":[
+                    "T10":"blah",
+                ]
+            }
+        }
+    }
+}
+
+2018-08-21 12:05:48,017|||main||||INFO||||||| <T1>
+    <T2>
+        <T7>blah</T7>
+    </T2>
+    <T18>blah blah</T18>
+</T1>
+
+2018-08-21 13:10:44,631|||main||||INFO||||||| EELF0005I Searching path "${user.home};etc;../etc" for log configuration file "logback-test.xml"
+2018-08-21 13:10:44,631|||main||||INFO||||||| EELF0001I Loading default logging configuration from system resource file "com/att/eelf/logback.xml"
+2018-08-21 13:10:44,639|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,639|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,639|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,639|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,640|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,640|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,641|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,641|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,641|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,642|||main||||INFO||||||| Parameter ResponseType: [txt]
+2018-08-21 13:10:44,647|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,648|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,648|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,648|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,656|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,656|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,656|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,657|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,657|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,657|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 13:10:44,657|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 13:10:44,660|||main||||INFO||||||| Added property: equipment-data : boo
+2018-08-21 13:10:44,660|||main||||INFO||||||| +++ equipment-data: [boo]
+2018-08-21 13:10:44,661|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,661|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,661|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,661|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,661|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,661|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 13:10:44,662|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 13:10:44,662|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 13:10:44,663|||main||||INFO||||||| Added property: equipment-data : boo
+2018-08-21 13:10:44,663|||main||||INFO||||||| +++ test.equipment-data: [boo]
+2018-08-21 13:10:44,664|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,664|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,664|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,665|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,665|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,665|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,665|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 13:10:44,665|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 13:10:44,665|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 13:10:44,669|||main||||INFO||||||| Added property: modelVersion : 4.0.0
+2018-08-21 13:10:44,669|||main||||INFO||||||| +++ test.modelVersion: [4.0.0]
+2018-08-21 13:10:44,670|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,670|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,670|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,670|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,670|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,670|||main||||INFO||||||| Parameter AuthType: [key]
+2018-08-21 13:10:44,671|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,671|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,671|||main||||INFO||||||| Parameter SshKey: [test]
+2018-08-21 13:10:44,671|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,671|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 13:10:44,671|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 13:10:44,672|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,673|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,673|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,673|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,673|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,673|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,673|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 13:10:44,674|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 13:10:44,675|||main||||INFO||||||| Added property: modelVersion : 4.0.0
+2018-08-21 13:10:44,675|||main||||INFO||||||| +++ modelVersion: [4.0.0]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter ResponsePrefix: [test]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 13:10:44,676|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter ResponseType: [xml]
+2018-08-21 13:10:44,678|||main||||INFO||||||| Parameter AuthType: [none]
+2018-08-21 13:10:44,679|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,680|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,680|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,680|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,680|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,680|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,680|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 13:10:44,682|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,682|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,682|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,682|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter ResponseType: [json]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter AuthType: [spring]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,683|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,684|||main||||INFO||||||| Parameter Url: [test]
+2018-08-21 13:10:44,684|||main||||INFO||||||| Parameter Port: [10]
+2018-08-21 13:10:44,684|||main||||INFO||||||| Parameter User: [test]
+2018-08-21 13:10:44,684|||main||||INFO||||||| Parameter Password: [test]
+2018-08-21 13:10:44,684|||main||||INFO||||||| Parameter Cmd: [test]
+2018-08-21 13:10:44,684|||main||||INFO||||||| Parameter AuthType: [basic]
+2018-08-21 13:10:44,689|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId : ICOREPVC-81114561
+2018-08-21 13:10:44,689|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey : VPNL811182
+2018-08-21 13:10:44,689|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId : 811182
+2018-08-21 13:10:44,689|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName : 21302:811182
+2018-08-21 13:10:44,689|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport : SET_BVOIP_IN
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport : SET6_BVOIP_IN
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET6_DSU
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_DSU
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET6_MANAGED
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_MANAGED
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_LOVRF_COMMUNITY
+2018-08-21 13:10:44,690|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport : SET_RESET_LP
+2018-08-21 13:10:44,691|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup : AG_MAX_MCASTROUTES
+2018-08-21 13:10:44,691|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 13:10:44,691|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v4
+2018-08-21 13:10:44,691|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp_21302:811182
+2018-08-21 13:10:44,691|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_L3VPN_EBGP
+2018-08-21 13:10:44,692|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_MAX_PREFIX
+2018-08-21 13:10:44,692|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BGP_UNMANAGED
+2018-08-21 13:10:44,692|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BFD_BGP_3000
+2018-08-21 13:10:44,692|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 13:10:44,692|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v6
+2018-08-21 13:10:44,692|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp6_21302:811182
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_L3VPN_EBGP
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_MAX_PREFIX
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BGP_UNMANAGED
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BFD_BGP_3000
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.response-code : 200
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.response-message : Success
+2018-08-21 13:10:44,693|||main||||INFO||||||| Added property: ApplyGroupResponse.ack-final-indicator : Y
+2018-08-21 13:10:44,694|||main||||INFO||||||| Properties:
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup: AG6_BFD_BGP_3000
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup: AG6_MAX_PREFIX
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family: v6
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName: gp6_21302:811182
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol: BGP4_PROTOCOL
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId: ICOREPVC-81114561
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup: AG_MAX_MCASTROUTES
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey: VPNL811182
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId: 811182
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport: SET_RESET_LP
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport: SET6_BVOIP_IN
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName: 21302:811182
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.ack-final-indicator: Y
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.response-code: 200
+2018-08-21 13:10:44,694|||main||||INFO||||||| --- ApplyGroupResponse.response-message: Success
+2018-08-21 13:10:44,696|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId : ICOREPVC-81114561
+2018-08-21 13:10:44,699|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey : VPNL811182
+2018-08-21 13:10:44,699|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId : 811182
+2018-08-21 13:10:44,699|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName : 21302:811182
+2018-08-21 13:10:44,700|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0] : SET_BVOIP_IN
+2018-08-21 13:10:44,700|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[1] : SET6_BVOIP_IN
+2018-08-21 13:10:44,700|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport_length : a
+2018-08-21 13:10:44,702|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId : ICOREPVC-81114561
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey : VPNL811182
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId : 811182
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName : 21302:811182
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0] : SET_BVOIP_IN
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[1] : SET6_BVOIP_IN
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[0] : SET6_DSU
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[1] : SET_DSU
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[2] : SET6_MANAGED
+2018-08-21 13:10:44,703|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[3] : SET_MANAGED
+2018-08-21 13:10:44,704|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[4] : SET_LOVRF_COMMUNITY
+2018-08-21 13:10:44,704|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[5] : SET_RESET_LP
+2018-08-21 13:10:44,704|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup : AG_MAX_MCASTROUTES
+2018-08-21 13:10:44,704|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 13:10:44,704|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v4
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp_21302:811182
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_L3VPN_EBGP
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG_MAX_PREFIX
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BGP_UNMANAGED
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG_BFD_BGP_3000
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol : BGP4_PROTOCOL
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family : v6
+2018-08-21 13:10:44,705|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName : gp6_21302:811182
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_L3VPN_EBGP
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup : AG6_MAX_PREFIX
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BGP_UNMANAGED
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup : AG6_BFD_BGP_3000
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.response-code : 200
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.response-message : Success
+2018-08-21 13:10:44,706|||main||||INFO||||||| Added property: ApplyGroupResponse.ack-final-indicator : Y
+2018-08-21 13:10:44,716|||main||||INFO||||||| Properties:
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupNeighbour.ApplyGroup: AG6_BFD_BGP_3000
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.ApplyGroupPeer.ApplyGroup: AG6_MAX_PREFIX
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.Family: v6
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.PeerGroupName: gp6_21302:811182
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.RoutingApplyGroups.RoutingProtocol: BGP4_PROTOCOL
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.ServiceInstanceId: ICOREPVC-81114561
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.ApplyGroup.ApplyGroup: AG_MAX_MCASTROUTES
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.End2EndVpnKey: VPNL811182
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VpnId: 811182
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[0]: SET6_DSU
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[1]: SET_DSU
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[2]: SET6_MANAGED
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[3]: SET_MANAGED
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[4]: SET_LOVRF_COMMUNITY
+2018-08-21 13:10:44,716|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport[5]: SET_RESET_LP
+2018-08-21 13:10:44,717|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfExport_length: 6
+2018-08-21 13:10:44,717|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[0]: SET_BVOIP_IN
+2018-08-21 13:10:44,718|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport[1]: SET6_BVOIP_IN
+2018-08-21 13:10:44,719|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfImport_length: 2
+2018-08-21 13:10:44,719|||main||||INFO||||||| --- ApplyGroupResponse.ApplyGroupResponseData.VrfDetails.VrfName: 21302:811182
+2018-08-21 13:10:44,719|||main||||INFO||||||| --- ApplyGroupResponse.ack-final-indicator: Y
+2018-08-21 13:10:44,719|||main||||INFO||||||| --- ApplyGroupResponse.response-code: 200
+2018-08-21 13:10:44,719|||main||||INFO||||||| --- ApplyGroupResponse.response-message: Success
+2018-08-21 13:10:44,728|||main||||INFO||||||| <vnf-config-parameters>
+	<snmp-target-v3>
+		<snmp-security-level>NO_AUTH_NO_PRIV</snmp-security-level>
+		<snmp-target-ip-address>127.0.0.1</snmp-target-ip-address>
+		<snmp-target-v3-id>1</snmp-target-v3-id>
+	</snmp-target-v3>
+	<snmp-target-v3>
+		<snmp-security-level>NO_AUTH_NO_PRIV</snmp-security-level>
+		<snmp-target-ip-address>192.168.1.8</snmp-target-ip-address>
+		<snmp-target-v3-id>2</snmp-target-v3-id>
+	</snmp-target-v3>
+	<rf-mated-pair-ip-address>10.111.108.146</rf-mated-pair-ip-address>
+	<diameter-rf-realm-name>uvp.els-an.att.net</diameter-rf-realm-name>
+	<core-net-pcscf>
+		<network-name>Core</network-name>
+		<sip-pa-termination-ip-address>10.111.108.138</sip-pa-termination-ip-address>
+		<next-hop-ip-address>10.111.108.142</next-hop-ip-address>
+	</core-net-pcscf>
+	<rf-interface-nexthop-ip-address>10.111.108.150</rf-interface-nexthop-ip-address>
+	<vnf-type>N-SBG</vnf-type>
+	<diameter-rf-peer-ip-address>192.168.1.66</diameter-rf-peer-ip-address>
+	<dns-server-ip-address>10.11.12.13</dns-server-ip-address>
+	<access-net-pcscf>
+		<network-name>UvpbUgnAccess1</network-name>
+		<sip-pa-termination-ip-address>10.111.108.146</sip-pa-termination-ip-address>
+	</access-net-pcscf>
+	<access-net-pcscf>
+		<network-name>MIS</network-name>
+		<next-hop-ip-address>10.111.108.158</next-hop-ip-address>
+		<proactive-transcoding-profile>trinity-transcodingProfile</proactive-transcoding-profile>
+		<subnet-mask-length>10.111.108.154</subnet-mask-length>
+	</access-net-pcscf>
+	<access-net-pcscf>
+		<network-name>AVPN1</network-name>
+		<next-hop-ip-address>10.111.108.166</next-hop-ip-address>
+		<proactive-transcoding-profile>trinity-transcodingProfile</proactive-transcoding-profile>
+		<subnet-mask-length>10.111.108.162</subnet-mask-length>
+	</access-net-pcscf>
+	<access-net-pcscf>
+		<network-name>AVPN1</network-name>
+		<next-hop-ip-address>10.129.108.166</next-hop-ip-address>
+		<proactive-transcoding-profile>trinity-transcodingProfile</proactive-transcoding-profile>
+		<subnet-mask-length>10.129.108.162</subnet-mask-length>
+	</access-net-pcscf>
+	<dns-ip-address-1>2001:1890:1001:2224::1</dns-ip-address-1>
+	<mated-pair-fully-qualified-domain-name>mt1nj01sbg01pyl-mt1nj01sbg02pyl.ar1ga.uvp.els-an.att.net</mated-pair-fully-qualified-domain-name>
+	<dns-ip-address-2>2001:1890:1001:2424::1</dns-ip-address-2>
+	<bgf-controller-ip-address>192.168.1.186</bgf-controller-ip-address>
+	<bgf-control-link-name>mg3/69@192.168.1.226</bgf-control-link-name>
+	<escf-domain-name>hclab.atttest.com</escf-domain-name>
+</vnf-config-parameters>
+
+2018-08-21 13:10:44,729|||main||||INFO||||||| <vendor>Netconf</vendor>
+<vnf-host-ip-address>192.168.13.151</vnf-host-ip-address>
+<escape-test>blah blah &quot;xxx&amp;nnn&lt;&gt;\&apos;&quot;there&gt;blah&lt;&amp;&apos;&apos;&quot;&quot;123\\\&apos;&apos;&apos;blah blah &amp;</escape-test>
+
+2018-08-21 13:10:44,730|||main||||INFO||||||| [
+	{
+		"snmp-target-v3": [
+			{
+				"snmp-security-level": "NO_AUTH_NO_PRIV",
+				"snmp-target-ip-address": "127.0.0.1",
+				"snmp-target-v3-id": "1"
+			},
+			{
+				"snmp-security-level": "NO_AUTH_NO_PRIV",
+				"snmp-target-ip-address": "192.168.1.8",
+				"snmp-target-v3-id": "2"
+			}
+		],
+		"rf-mated-pair-ip-address": "10.111.108.146",
+		"diameter-rf-realm-name": "uvp.els-an.att.net",
+		"core-net-pcscf": [
+			{
+				"network-name": "Core",
+				"sip-pa-termination-ip-address": "10.111.108.138",
+				"next-hop-ip-address": "10.111.108.142"
+			}
+		],
+		"rf-interface-nexthop-ip-address": "10.111.108.150",
+		"vnf-type": "N-SBG",
+		"diameter-rf-peer-ip-address": "192.168.1.66",
+		"dns-server-ip-address": "10.11.12.13",
+		"access-net-pcscf": [
+			{
+				"network-name": "UvpbUgnAccess1",
+				"sip-pa-termination-ip-address": "10.111.108.146"
+			},
+			{
+				"network-name": "MIS",
+				"next-hop-ip-address": "10.111.108.158",
+				"proactive-transcoding-profile": "trinity-transcodingProfile",
+				"subnet-mask-length": "10.111.108.154"
+			},
+			{
+				"network-name": "AVPN1",
+				"next-hop-ip-address": "10.111.108.166",
+				"proactive-transcoding-profile": "trinity-transcodingProfile",
+				"subnet-mask-length": "10.111.108.162"
+			},
+			{
+				"network-name": "AVPN1",
+				"next-hop-ip-address": "10.129.108.166",
+				"proactive-transcoding-profile": "trinity-transcodingProfile",
+				"subnet-mask-length": "10.129.108.162"
+			}
+		],
+		"dns-ip-address-1": "2001:1890:1001:2224::1",
+		"mated-pair-fully-qualified-domain-name": "mt1nj01sbg01pyl-mt1nj01sbg02pyl.ar1ga.uvp.els-an.att.net",
+		"dns-ip-address-2": "2001:1890:1001:2424::1",
+		"bgf-controller-ip-address": "192.168.1.186",
+		"bgf-control-link-name": "mg3/69@192.168.1.226",
+		"escf-domain-name": "hclab.atttest.com"
+	}
+]
+2018-08-21 13:10:44,731|||main||||INFO||||||| {
+	"vendor": "Netconf",
+	"vnf-host-ip-address": "192.168.13.151",
+	"escape-test": "blah blah \"xxx&nnn<>\\'\"there>blah<&''\"\"123\\\\\\'''blah blah &"
+}
+2018-08-21 13:10:44,731|||main||||INFO||||||| "192.168.13.151"
+2018-08-21 13:10:44,731|||main||||INFO||||||| 192.168.13.151
+2018-08-21 13:10:44,732|||main||||INFO||||||| {
+    "T1":{
+        "T2":{
+            "T5":{
+                "T7":[
+                    "T10":"blah",
+                ]
+            }
+        }
+    }
+}
+
+2018-08-21 13:10:44,732|||main||||INFO||||||| <T1>
+    <T2>
+        <T7>blah</T7>
+    </T2>
+    <T18>blah blah</T18>
+</T1>
+
