@@ -21,6 +21,7 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 
 /**
  * Abstraction of an entity which provides interface for JSON walk. This
@@ -36,6 +37,8 @@ public interface JsonWalker {
      *
      * @param listener JSON listener implemented by the protocol
      * @param jsonNode root node of the JSON data tree
+     * @throws SvcLogicException when walking the JSON node fails
      */
-    void walk(JsonListener listener, JsonNode jsonNode);
+    void walk(JsonListener listener, JsonNode jsonNode)
+            throws SvcLogicException;
 }

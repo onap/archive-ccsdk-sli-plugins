@@ -77,10 +77,11 @@ public abstract class PropertiesNodeSerializer<T, P> {
      * Decodes from properties-node to properties map.
      *
      * @param propertiesNode properties-node
-     * @throws SvcLogicException fails to decode properties node to properties
      * @return parameter map
+     * @throws SvcLogicException fails to decode properties node to properties
      */
-    public abstract Map<String, String> decode(PropertiesNode propertiesNode) throws SvcLogicException;
+    public abstract Map<String, String> decode(PropertiesNode propertiesNode)
+            throws SvcLogicException;
 
     /**
      * Returns the schema node of the property

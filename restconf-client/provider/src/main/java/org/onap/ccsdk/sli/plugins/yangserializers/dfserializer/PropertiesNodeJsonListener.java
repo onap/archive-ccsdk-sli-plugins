@@ -21,10 +21,24 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.google.gson.stream.JsonWriter;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.LeafNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeListener;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.RootNode;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Map;
+
+import static com.google.common.base.Strings.repeat;
+import static java.lang.String.format;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.JSON_WRITE_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.NODE_TYPE_ERR;
 
 /**
  * Representation of JSON implementation of properties node listener.
@@ -46,25 +60,160 @@ public class PropertiesNodeJsonListener implements PropertiesNodeListener{
      * indenting the writer.
      */
     public PropertiesNodeJsonListener() {
+        writer = new StringWriter();
+        jsonWriter = new JsonWriter(writer);
+        jsonWriter.setIndent(repeat(" ", 4));
     }
 
     @Override
-    public void start(PropertiesNode node) {
-        //TODO: Implementation code.
+    public void start(PropertiesNode node) throws SvcLogicException {
+        try {
+            jsonWriter.beginObject();
+        } catch (IOException e) {
+            throw new SvcLogicException(JSON_WRITE_ERR, e);
+        }
     }
 
     @Override
-    public void end(PropertiesNode node) {
-        //TODO: Implementation code.
+    public void end(PropertiesNode node) throws SvcLogicException {
+        try {
+            jsonWriter.endObject();
+            jsonWriter.flush();
+        } catch (IOException e) {
+            throw new SvcLogicException(JSON_WRITE_ERR, e);
+        }
     }
 
     @Override
-    public void enterPropertiesNode(PropertiesNode node) {
-        //TODO: Implementation code.
+    public void enterPropertiesNode(PropertiesNode node)
+            throws SvcLogicException {
+        String val;
+        String nodeName = getNodeName(node);
+        try {
+            switch (node.nodeType()) {
+                case SINGLE_INSTANCE_NODE:
+                    jsonWriter.name(nodeName);
+                    jsonWriter.beginObject();
+                    break;
+
+                case MULTI_INSTANCE_NODE:
+                    jsonWriter.beginObject();
+                    break;
+
+                case SINGLE_INSTANCE_LEAF_NODE:
+                    val = getValueWithNs((LeafNode) node);
+                    jsonWriter.name(nodeName).value(val);
+                    break;
+
+                case MULTI_INSTANCE_HOLDER_NODE:
+                case MULTI_INSTANCE_LEAF_HOLDER_NODE:
+                    jsonWriter.name(nodeName);
+                    jsonWriter.beginArray();
+                    break;
+
+                case MULTI_INSTANCE_LEAF_NODE:
+                    val = getValueWithNs((LeafNode) node);
+                    jsonWriter.value(val);
+                    break;
+
+                default:
+                    throw new SvcLogicException(format(
+                            NODE_TYPE_ERR, node.nodeType().toString()));
+
+            }
+        } catch (IOException e) {
+            throw new SvcLogicException(JSON_WRITE_ERR, e);
+        }
     }
 
     @Override
-    public void exitPropertiesNode(PropertiesNode node) {
-        //TODO: Implementation code.
+    public void exitPropertiesNode(PropertiesNode node) throws SvcLogicException {
+        walkAugmentationNode(node);
+        try {
+            switch (node.nodeType()) {
+                case SINGLE_INSTANCE_NODE:
+                case MULTI_INSTANCE_NODE:
+                    jsonWriter.endObject();
+                    break;
+
+                case MULTI_INSTANCE_HOLDER_NODE:
+                case MULTI_INSTANCE_LEAF_HOLDER_NODE:
+                    jsonWriter.endArray();
+                    break;
+
+                case  SINGLE_INSTANCE_LEAF_NODE:
+                case MULTI_INSTANCE_LEAF_NODE:
+                    break;
+
+                default:
+                    throw new SvcLogicException(format(
+                            NODE_TYPE_ERR, node.nodeType().toString()));
+            }
+        } catch (IOException e) {
+            throw new SvcLogicException(JSON_WRITE_ERR, e);
+        }
+    }
+
+    /**
+     * Returns the writer.
+     *
+     * @return writer
+     */
+    public Writer getWriter() {
+        return writer;
+    }
+
+    /**
+     * Returns the abstract JSON node name to be used in JSON data format
+     * from the properties node.
+     *
+     * @param node properties node
+     * @return abstract JSON node
+     */
+    private String getNodeName(PropertiesNode node) {
+        PropertiesNode parent = node.parent();
+        if (parent instanceof RootNode || !parent.namespace().moduleName()
+                .equals(node.namespace().moduleName())) {
+            return node.namespace().moduleName() + ":" + node.name();
+        }
+        return node.name();
+    }
+
+    /**
+     * Returns the value of JSON leaf node with module name if required.
+     *
+     * @param node properties node
+     * @return value with namespace
+     */
+    private String getValueWithNs(LeafNode node) {
+        Namespace valNs = node.valueNs();
+        String modName = (valNs == null) ? null : valNs.moduleName();
+        if (modName != null) {
+            return modName + ":" + node.value();
+        }
+        return node.value();
+    }
+
+    /**
+     * Gets all the augmentation of the given node and walks through it.
+     *
+     * @param node properties node
+     * @throws SvcLogicException when walking the properties node fails
+     */
+    private void walkAugmentationNode(PropertiesNode node)
+            throws SvcLogicException {
+        for (Map.Entry<Object, Collection<PropertiesNode>>
+                augToChild : node.augmentations().asMap().entrySet()) {
+            Collection<PropertiesNode> augChild = augToChild.getValue();
+            if (!augChild.isEmpty()) {
+                DefaultPropertiesNodeWalker walker = new
+                        DefaultPropertiesNodeWalker();
+                for (PropertiesNode p : augChild) {
+                    enterPropertiesNode(p);
+                    walker.walkChildNode(this, p);
+                    exitPropertiesNode(p);
+                }
+            }
+        }
     }
 }

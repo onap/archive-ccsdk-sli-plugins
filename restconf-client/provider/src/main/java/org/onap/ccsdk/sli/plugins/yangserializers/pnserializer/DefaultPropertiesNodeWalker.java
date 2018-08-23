@@ -20,6 +20,8 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ public class DefaultPropertiesNodeWalker<T extends NodeChild> implements Propert
 
     @Override
     public void walk(PropertiesNodeListener listener,
-                     PropertiesNode propertiesNode) {
+                     PropertiesNode propertiesNode) throws SvcLogicException {
         listener.start(propertiesNode);
         walkChildNode(listener, propertiesNode);
         listener.end(propertiesNode);
@@ -42,9 +44,11 @@ public class DefaultPropertiesNodeWalker<T extends NodeChild> implements Propert
      *
      * @param listener properties node listener
      * @param propertiesNode properties node
+     * @throws SvcLogicException when properties node walking fails
      */
     public void walkChildNode(PropertiesNodeListener listener,
-                              PropertiesNode propertiesNode) {
+                              PropertiesNode propertiesNode)
+            throws SvcLogicException {
         Map<String, T> children = getChildren(propertiesNode);
         if (children != null) {
             for (Map.Entry<String, T> entry : children.entrySet()) {

@@ -21,6 +21,10 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
+import static java.lang.String.format;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.NODE_TYPE_ERR;
 
 /**
  * Representation of default implementation of XML listener.
@@ -42,17 +46,34 @@ public class DefaultXmlListener implements XmlListener {
     }
 
     @Override
-    public void enterXmlElement(Element element, XmlNodeType nodeType) {
-        //TODO: Implementation code.
+    public void enterXmlElement(Element element, XmlNodeType nodeType)
+            throws SvcLogicException {
+        switch (nodeType) {
+            case TEXT_NODE:
+                serializerHelper.addNode(element.getName(),
+                                         element.getNamespace().getURI(),
+                                         element.getText(), null, null);
+                break;
+
+            case OBJECT_NODE:
+                serializerHelper.addNode(element.getName(),
+                                         element.getNamespace().getURI(),
+                                         null, null, null);
+                break;
+
+            default:
+                throw new SvcLogicException(format(NODE_TYPE_ERR,
+                                                   nodeType.toString()));
+        }
     }
 
     @Override
-    public void exitXmlElement(Element element) {
-        //TODO: Implementation code.
+    public void exitXmlElement(Element element) throws SvcLogicException {
+        serializerHelper.exitNode();
     }
 
     @Override
     public SerializerHelper serializerHelper() {
         return serializerHelper;
     }
-    }
+}

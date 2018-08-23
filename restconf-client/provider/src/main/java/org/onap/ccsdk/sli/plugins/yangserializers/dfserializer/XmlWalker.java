@@ -21,6 +21,7 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 
 /**
  * Abstraction of an entity which provides interface for XML walk. This
@@ -36,6 +37,8 @@ public interface XmlWalker {
      *
      * @param listener   XML listener implemented by the protocol
      * @param xmlElement root element of the XML data tree
+     * @throws SvcLogicException when walking the XML node fails
      */
-    void walk(XmlListener listener, Element xmlElement);
+    void walk(XmlListener listener, Element xmlElement) throws
+            SvcLogicException;
 }

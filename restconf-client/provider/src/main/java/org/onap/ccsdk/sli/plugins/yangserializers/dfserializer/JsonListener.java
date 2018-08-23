@@ -21,6 +21,7 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
 
 /**
@@ -38,14 +39,17 @@ public interface JsonListener extends Listener {
      * @param nodeName JSON node name
      * @param node     JSON node
      * @param nodeType JSON node type
+     * @throws SvcLogicException when node type is of wrong format
      */
-    void enterJsonNode(String nodeName, JsonNode node, NodeType nodeType);
+    void enterJsonNode(String nodeName, JsonNode node, NodeType nodeType)
+            throws SvcLogicException;
 
     /**
      * Call back invoked during JSON node exit. All the related information
      * can be obtained from the JSON node.
      *
      * @param node JSON node
+     * @throws SvcLogicException when JSON node exit doesn't happen
      */
-    void exitJsonNode(JsonNode node);
+    void exitJsonNode(JsonNode node) throws SvcLogicException;
 }

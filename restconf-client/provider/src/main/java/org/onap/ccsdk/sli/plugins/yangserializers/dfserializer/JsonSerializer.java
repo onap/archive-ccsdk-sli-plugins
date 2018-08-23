@@ -20,10 +20,20 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeWalker;
+
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat.JSON;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.*;
 
 /**
  * Representation of JSON serializer which encodes properties to JSON and
@@ -42,14 +52,38 @@ public class JsonSerializer extends DataFormatSerializer {
 
     @Override
     public String encode(Map<String, String> param,
-                         Map<String, List<Annotation>> annotations) {
-        //TODO: Implementation code.
-        return null;
+                         Map<String, List<Annotation>> annotations)
+            throws SvcLogicException {
+        PropertiesNode propNode = serializerContext().getPropNodeSerializer()
+                .encode(param);
+        PropertiesNodeWalker nodeWalker = new DefaultPropertiesNodeWalker<>();
+        PropertiesNodeJsonListener jsonLis = new PropertiesNodeJsonListener();
+        nodeWalker.walk(jsonLis, propNode);
+        Writer writer = jsonLis.getWriter();
+        return writer.toString();
     }
 
     @Override
-    public Map<String, String> decode(String dataFormatBody) {
-        //TODO: Implementation code.
-        return null;
+    public Map<String, String> decode(String dataFormatBody)
+            throws SvcLogicException {
+        if (!(serializerContext().listener() instanceof JsonListener)) {
+            throw new SvcLogicException(JSON_LIS_ERR);
+        }
+
+        JsonListener listener = (JsonListener) serializerContext().listener();
+        JsonWalker walker = new DefaultJsonWalker();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode;
+
+        try {
+            jsonNode = mapper.readTree(dataFormatBody);
+        } catch (IOException e) {
+            throw new SvcLogicException(JSON_TREE_ERR, e);
+        }
+
+        walker.walk(listener, jsonNode);
+
+        return serializerContext().getPropNodeSerializer().decode(
+                listener.serializerHelper().getPropertiesNode());
     }
 }

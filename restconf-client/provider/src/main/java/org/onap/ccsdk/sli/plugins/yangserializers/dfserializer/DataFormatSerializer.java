@@ -20,6 +20,8 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -57,17 +59,20 @@ public abstract class DataFormatSerializer {
      * @param param context memory parameter
      * @param annotations annotations
      * @return data format body
+     * @throws SvcLogicException when serialization fails
      */
     public abstract String encode(Map<String, String> param,
-        Map<String, List<Annotation>> annotations);
+        Map<String, List<Annotation>> annotations) throws SvcLogicException;
 
     /**
      * Decodes data format body to context memory parameters.
      *
      * @param dataFormatBody abstract node
      * @return context memory parameters
+     * @throws SvcLogicException when serialization fails
      */
-    public abstract Map<String, String> decode(String dataFormatBody);
+    public abstract Map<String, String> decode(String dataFormatBody)
+            throws SvcLogicException;
 
     /**
      * Returns data format serializer context.

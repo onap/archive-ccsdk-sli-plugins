@@ -21,6 +21,11 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
+import java.util.Iterator;
+
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.getXmlNodeType;
 
 /**
  * Implementation of XML walker to walk through the nodes and process it.
@@ -28,7 +33,16 @@ import org.dom4j.Element;
 public class DefaultXmlWalker implements XmlWalker {
 
     @Override
-    public void walk(XmlListener listener, Element xmlElement) {
-        //TODO: Implementation code.
+    public void walk(XmlListener listener, Element xmlElement) throws
+            SvcLogicException {
+        listener.enterXmlElement(xmlElement, getXmlNodeType(xmlElement));
+        if (xmlElement.hasContent() && !xmlElement.isTextOnly()) {
+            Iterator i = xmlElement.elementIterator();
+            while (i.hasNext()) {
+                Element childElement = (Element) i.next();
+                walk(listener, childElement);
+            }
+        }
+        listener.exitXmlElement(xmlElement);
     }
 }
