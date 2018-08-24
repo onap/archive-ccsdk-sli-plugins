@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_1eeb4814",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/yangserializers/dfserializer/XmlSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-08-24T14:53:46Z",
+      "side": 1,
+      "message": "please add XML protocol annotation handling as part of future commits.",
+      "range": {
+        "startLine": 56,
+        "startChar": 55,
+        "endLine": 56,
+        "endChar": 66
+      },
+      "revId": "51608f7e35fdad0242b3d801f2015a9db5fa93a1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
