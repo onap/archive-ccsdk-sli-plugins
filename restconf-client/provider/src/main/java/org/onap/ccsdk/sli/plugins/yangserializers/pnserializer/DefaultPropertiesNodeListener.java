@@ -20,6 +20,8 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +42,7 @@ public class DefaultPropertiesNodeListener implements PropertiesNodeListener {
     }
 
     @Override
-    public void end(PropertiesNode node) {
+    public void end(PropertiesNode node) throws SvcLogicException {
         exitPropertiesNode(node);
     }
 
@@ -57,7 +59,8 @@ public class DefaultPropertiesNodeListener implements PropertiesNodeListener {
     }
 
     @Override
-    public void exitPropertiesNode(PropertiesNode node) {
+    public void exitPropertiesNode(PropertiesNode node) throws
+            SvcLogicException {
         if (!node.augmentations().isEmpty()) {
             for (Map.Entry<Object, Collection<PropertiesNode>> augmentationTochild
                     : node.augmentations().asMap().entrySet()) {

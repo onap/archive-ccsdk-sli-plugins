@@ -21,6 +21,20 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
+
+import java.util.Iterator;
+import java.util.Map;
+
+import static com.fasterxml.jackson.databind.node.JsonNodeType.NUMBER;
+import static com.fasterxml.jackson.databind.node.JsonNodeType.STRING;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_LEAF_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_NODE;
 
 /**
  * Implementation of JSON walker to walk through the nodes and process it.
@@ -28,8 +42,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class DefaultJsonWalker implements JsonWalker {
 
     @Override
-    public void walk(JsonListener listener, JsonNode jsonNode) {
-        //TODO: Implementation code.
+    public void walk(JsonListener listener, JsonNode jsonNode) throws
+            SvcLogicException {
+        Iterator<Map.Entry<String, JsonNode>> children = jsonNode.fields();
+        while (children.hasNext()) {
+            Map.Entry<String, JsonNode> child = children.next();
+            JsonNode value = child.getValue();
+            String key = child.getKey();
+            if (value.isArray()) {
+                processMultiNodes(key, value, listener);
+            } else {
+                processSingleNode(key, value, listener);
+            }
+        }
     }
 
     /**
@@ -39,10 +64,18 @@ public class DefaultJsonWalker implements JsonWalker {
      * @param key      JSON name
      * @param value    JSON node
      * @param listener JSON listener
+     * @throws SvcLogicException when processing the node fails
      */
     private void processSingleNode(String key, JsonNode value,
-                                   JsonListener listener) {
-        //TODO: Implementation code.
+                                   JsonListener listener)
+            throws SvcLogicException {
+        NodeType nodeType;
+        if (!value.isContainerNode()) {
+            nodeType = SINGLE_INSTANCE_LEAF_NODE;
+        } else {
+            nodeType = SINGLE_INSTANCE_NODE;
+        }
+        processNode(key, value, nodeType, listener);
     }
 
     /**
@@ -52,9 +85,57 @@ public class DefaultJsonWalker implements JsonWalker {
      * @param key      JSON name
      * @param value    JSON node
      * @param listener JSON listener
+     * @throws SvcLogicException when processing a single instance fails
      */
     private void processMultiNodes(String key, JsonNode value,
-                                   JsonListener listener) {
-        //TODO: Implementation code.
+                                   JsonListener listener)
+            throws SvcLogicException {
+        NodeType nodeType;
+        Iterator<JsonNode> multiNodes = value.elements();
+        while (multiNodes.hasNext()) {
+            if (isLeafListNode((ArrayNode) value)) {
+                nodeType = MULTI_INSTANCE_LEAF_NODE;
+            } else {
+                nodeType = MULTI_INSTANCE_NODE;
+            }
+            JsonNode multiNode = multiNodes.next();
+            processNode(key, multiNode, nodeType, listener);
+        }
+    }
+
+    /**
+     * Processes each node by first entering the JSON node through JSON
+     * listener, second a call back to walking the rest of the tree of the
+     * node and finally exiting the node.
+     *
+     * @param key      JSON name
+     * @param node     JSON node
+     * @param nodeType JSON node type
+     * @param listener JSON listener
+     * @throws SvcLogicException when entering a JSON node fails
+     */
+    private void processNode(String key, JsonNode node, NodeType nodeType,
+                             JsonListener listener) throws SvcLogicException {
+        listener.enterJsonNode(key, node, nodeType);
+        walk(listener, node);
+        listener.exitJsonNode(node);
+    }
+
+    /**
+     * Returns true if the node corresponds to a leaf-list node; false
+     * otherwise.
+     *
+     * @param node JSON node
+     * @return true if node corresponds to leaf-list node; false otherwise
+     */
+    private boolean isLeafListNode(ArrayNode node) {
+        Iterator<JsonNode> children = node.elements();
+        while (children.hasNext()) {
+            JsonNodeType type = children.next().getNodeType();
+            if (type != STRING && type != NUMBER) {
+                return false;
+            }
+        }
+        return true;
     }
 }

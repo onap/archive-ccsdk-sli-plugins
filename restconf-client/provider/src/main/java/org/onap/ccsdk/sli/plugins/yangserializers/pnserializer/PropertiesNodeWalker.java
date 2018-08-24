@@ -20,16 +20,19 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
 /**
  * Abstraction of properties node walker
  */
 public interface PropertiesNodeWalker {
-
     /**
      * Walks the properties node with the listener.
      *
      * @param listener properties node listener.
      * @param propertiesNode properties node
+     * @throws SvcLogicException when walking the properties node fails
      */
-    void walk(PropertiesNodeListener listener, PropertiesNode propertiesNode);
+    void walk(PropertiesNodeListener listener, PropertiesNode propertiesNode)
+            throws SvcLogicException;
 }

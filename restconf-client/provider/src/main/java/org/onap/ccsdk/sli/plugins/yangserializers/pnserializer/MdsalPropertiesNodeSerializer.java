@@ -86,7 +86,8 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
     }
 
     @Override
-    public Map<String, String> decode(PropertiesNode propertiesNode) {
+    public Map<String, String> decode(PropertiesNode propertiesNode)
+            throws SvcLogicException {
         PropertiesNodeWalker walker = new DefaultPropertiesNodeWalker<>();
         DefaultPropertiesNodeListener listener = new DefaultPropertiesNodeListener();
         walker.walk(listener, propertiesNode);

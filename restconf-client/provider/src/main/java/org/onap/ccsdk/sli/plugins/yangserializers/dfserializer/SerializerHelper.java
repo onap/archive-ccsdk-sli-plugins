@@ -20,6 +20,7 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 
@@ -92,15 +93,19 @@ public abstract class SerializerHelper<T, P> {
      * @param valNameSpace value namespace for identityref, could be module
      *                     name or namespace
      * @param type         type of node if known like in case of JSON
+     * @throws SvcLogicException when adding node fails
      */
     protected abstract void addNode(String name, String nameSpace, String value,
-                                    String valNameSpace, NodeType type);
+                                    String valNameSpace, NodeType type)
+            throws SvcLogicException;
 
     /**
      * Exits the node, in case if it's leaf node then it adds to the properties
      * map.
+     *
+     * @throws SvcLogicException when properties node tree is improper
      */
-    protected abstract void exitNode();
+    protected abstract void exitNode() throws SvcLogicException;
 
     /**
      * Returns the built properties corresponding to the data.

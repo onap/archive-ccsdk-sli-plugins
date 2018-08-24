@@ -20,6 +20,11 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
+import static java.lang.String.format;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.FORMAT_ERR;
+
 /**
  * Represents the data format listener factory which will return JSON or XML
  * listener according to the serializer helper.
@@ -52,9 +57,11 @@ public final class DfListenerFactory {
      * @param serHelper serializer helper
      * @param params    parameters
      * @return data format listener
+     * @throws SvcLogicException when the data format type is wrong
      */
     public Listener getListener(SerializerHelper serHelper,
-                                YangParameters params) {
+                                YangParameters params)
+            throws SvcLogicException {
         Listener listener;
         switch (params.format) {
             case JSON:
@@ -65,9 +72,9 @@ public final class DfListenerFactory {
                 listener = new DefaultXmlListener(serHelper);
                 break;
 
-            //TODO: DataFormat Exception code to be added.
             default:
-                throw new IllegalArgumentException("In correct format");
+                throw new SvcLogicException(format(FORMAT_ERR,
+                                                   params.format));
         }
         return listener;
     }

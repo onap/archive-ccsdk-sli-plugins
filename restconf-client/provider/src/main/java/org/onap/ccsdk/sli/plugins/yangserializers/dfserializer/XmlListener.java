@@ -21,6 +21,7 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 
 /**
  * Abstraction of an entity which provides call back methods, which in turn
@@ -36,14 +37,17 @@ public interface XmlListener extends Listener {
      *
      * @param element  current XML element
      * @param nodeType node type of the element
+     * @throws SvcLogicException when node type is of wrong format
      */
-    void enterXmlElement(Element element, XmlNodeType nodeType);
+    void enterXmlElement(Element element, XmlNodeType nodeType)
+            throws SvcLogicException;
 
     /**
      * Callback invoked during a node exit. All the related information about
      * the node can be obtained from the element.
      *
      * @param element current xml element.
+     * @throws SvcLogicException when XML node exit doesn't happen
      */
-    void exitXmlElement(Element element);
+    void exitXmlElement(Element element) throws SvcLogicException;
 }

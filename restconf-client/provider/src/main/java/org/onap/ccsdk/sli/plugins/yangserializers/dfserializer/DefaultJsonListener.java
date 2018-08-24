@@ -21,7 +21,15 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
+
+import static java.lang.String.format;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.NODE_TYPE_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_LEAF_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_NODE;
 
 
 /**
@@ -54,18 +62,61 @@ public class DefaultJsonListener implements JsonListener {
     }
 
     @Override
-    public void enterJsonNode(String nodeName, JsonNode node, NodeType nodeType) {
-        //TODO: Implementation code.
+    public void enterJsonNode(String nodeName, JsonNode node,
+                              NodeType nodeType) throws SvcLogicException {
+        getNodeName(nodeName);
+
+        switch (nodeType) {
+            case SINGLE_INSTANCE_LEAF_NODE:
+                serializerHelper.addNode(name, modName, node.asText(), null,
+                                         SINGLE_INSTANCE_LEAF_NODE);
+                break;
+
+            case MULTI_INSTANCE_LEAF_NODE:
+                serializerHelper.addNode(name, modName, node.asText(), null,
+                                         MULTI_INSTANCE_LEAF_NODE);
+                break;
+
+            case SINGLE_INSTANCE_NODE:
+                serializerHelper.addNode(name, modName, null, null,
+                                         SINGLE_INSTANCE_NODE);
+                break;
+
+            case MULTI_INSTANCE_NODE:
+                serializerHelper.addNode(name, modName, null, null,
+                                         MULTI_INSTANCE_NODE);
+                break;
+
+            default:
+                throw new SvcLogicException(format(NODE_TYPE_ERR,
+                                                   nodeType.toString()));
+        }
     }
 
     @Override
-    public void exitJsonNode(JsonNode node) {
-        //TODO: Implementation code.
+    public void exitJsonNode(JsonNode node) throws SvcLogicException {
+        serializerHelper.exitNode();
     }
 
     @Override
     public SerializerHelper serializerHelper() {
         return serializerHelper;
+    }
+
+    /**
+     * Parses the abstract JSON name and fills the node name and node
+     * namespace of the current JSON node.
+     *
+     * @param abstractName abstract JSON name
+     */
+    private void getNodeName(String abstractName) {
+        String[] val = abstractName.split(":");
+        if (val.length == 2) {
+            modName = val[0];
+            name = val[1];
+        } else {
+            name = val[0];
+        }
     }
 
 }

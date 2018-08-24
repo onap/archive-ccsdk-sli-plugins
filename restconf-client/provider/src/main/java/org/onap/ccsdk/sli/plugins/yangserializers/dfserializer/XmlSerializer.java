@@ -20,10 +20,21 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeWalker;
+
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat.XML;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.XML_LIS_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.XML_TREE_ERR;
 
 /**
  * Representation of XML serializer which encodes properties to XML and
@@ -42,14 +53,36 @@ public class XmlSerializer extends DataFormatSerializer {
 
     @Override
     public String encode(Map<String, String> param,
-                         Map<String, List<Annotation>> annotations) {
-        //TODO: Implementation code.
-        return null;
+                         Map<String, List<Annotation>> annotations)
+            throws SvcLogicException {
+        PropertiesNode propNode = serializerContext().getPropNodeSerializer()
+                .encode(param);
+        PropertiesNodeWalker nodeWalker = new DefaultPropertiesNodeWalker<>();
+        PropertiesNodeXmlListener xmlListener = new PropertiesNodeXmlListener();
+        nodeWalker.walk(xmlListener, propNode);
+        Writer writer = xmlListener.getWriter();
+        return writer.toString();
     }
 
     @Override
-    public Map<String, String> decode(String dataFormatBody) {
-        //TODO: Implementation code.
-        return null;
+    public Map<String, String> decode(String dataFormatBody)
+            throws SvcLogicException {
+        if (!(serializerContext().listener() instanceof XmlListener)) {
+            throw new SvcLogicException(XML_LIS_ERR);
+        }
+
+        XmlListener listener = (XmlListener) serializerContext().listener();
+        XmlWalker walker = new DefaultXmlWalker();
+        Document document;
+
+        try {
+            document = DocumentHelper.parseText(dataFormatBody);
+        } catch (DocumentException e) {
+            throw new SvcLogicException(XML_TREE_ERR, e);
+        }
+        walker.walk(listener, document.getRootElement());
+
+        return serializerContext().getPropNodeSerializer().decode(
+                listener.serializerHelper().getPropertiesNode());
     }
 }

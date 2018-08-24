@@ -44,7 +44,15 @@ public class RootNode<T extends NodeChild> extends PropertiesNode {
 
     private Map<String, T> children = new HashMap<String, T>();
 
-    protected RootNode(String name, Namespace namespace,
+    /**
+     * Creates an instance of the root node to build the properties.
+     *
+     * @param name      name of the node
+     * @param namespace namespace of the node
+     * @param appInfo   application info
+     * @param uri       URI of the node
+     */
+    public RootNode(String name, Namespace namespace,
                        Object appInfo, String uri) {
         super(name, namespace, uri, null, appInfo, null);
     }
