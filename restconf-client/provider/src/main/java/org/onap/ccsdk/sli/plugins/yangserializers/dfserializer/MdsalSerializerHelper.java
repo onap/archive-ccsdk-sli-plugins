@@ -76,8 +76,8 @@ public class MdsalSerializerHelper extends SerializerHelper<SchemaNode, SchemaCo
      * @param c schema context
      * @param u URI of the request
      */
-    protected MdsalSerializerHelper(SchemaNode n, SchemaContext c,
-                                    String u) {
+    public MdsalSerializerHelper(SchemaNode n, SchemaContext c,
+                                 String u) {
         super(n, c, u);
         Namespace ns = new Namespace(n.getQName().getLocalName(),
                                      n.getQName().getNamespace(),

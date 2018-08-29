@@ -37,12 +37,12 @@
 
     <!-- context:property-placeholder location="file:${SDNC_CONFIG_DIR}/ueb.properties" /-->
 
-    <bean id="restconfapiCallNode" class="org.onap.ccsdk.sli.plugins.restconfapicall.RestconfapiCallNode">
+    <bean id="restconfApiCallNode" class="org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode">
         <property name="uebServers" value="${servers}" />
     </bean>
 
     <bean id="restconfDiscoveryNode" class="org.onap.ccsdk.sli.plugins.restconfdiscovery.RestconfDiscoveryNode">
-        <property name="restconfapiCallNode" ref="restconfapiCallNode" />
+        <property name="restconfApiCallNode" ref="restconfApiCallNode" />
     </bean>
 
 </beans>

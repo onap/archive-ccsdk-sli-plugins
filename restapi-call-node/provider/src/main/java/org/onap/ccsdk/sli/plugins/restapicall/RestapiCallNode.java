@@ -21,8 +21,33 @@
 
 package org.onap.ccsdk.sli.plugins.restapicall;
 
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
+import com.sun.jersey.client.urlconnection.HTTPSProperties;
+import com.sun.jersey.oauth.client.OAuthClientFilter;
+import com.sun.jersey.oauth.signature.OAuthParameters;
+import com.sun.jersey.oauth.signature.OAuthSecrets;
+import org.apache.commons.lang3.StringUtils;
+import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriBuilder;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.SocketException;
@@ -40,34 +65,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
-
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
-import com.sun.jersey.oauth.client.OAuthClientFilter;
-import com.sun.jersey.oauth.signature.OAuthParameters;
-import com.sun.jersey.oauth.signature.OAuthSecrets;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
+import static java.lang.Boolean.valueOf;
+import static org.onap.ccsdk.sli.plugins.restapicall.AuthType.fromString;
 
 public class RestapiCallNode implements SvcLogicJavaPlugin {
 
@@ -81,7 +80,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
     protected static final String PROPERTIES_DIR_KEY = "SDNC_CONFIG_DIR";
 
-    protected RetryPolicyStore getRetryPolicyStore() {
+    public RetryPolicyStore getRetryPolicyStore() {
         return retryPolicyStore;
     }
 
@@ -154,7 +153,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         RetryPolicy retryPolicy = null;
         HttpResponse r = new HttpResponse();
         try {
-            Parameters p = getParameters(paramMap);
+            Parameters p = getParameters(paramMap, new Parameters());
             if (p.partner != null) {
                 retryPolicy = retryPolicyStore.getRetryPolicy(p.partner);
             }
@@ -245,49 +244,88 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             throw new SvcLogicException(String.valueOf(r.code) + ": " + r.message);
     }
 
-    protected Parameters getParameters(Map<String, String> paramMap) throws SvcLogicException {
-        Parameters p = new Parameters();
-        p.templateFileName = parseParam(paramMap, "templateFileName", false, null);
+    /**
+     * Returns parameters from the parameter map.
+     *
+     * @param paramMap parameter map
+     * @param p        parameters instance
+     * @return parameters filed instance
+     * @throws SvcLogicException when svc logic exception occurs
+     */
+    public static Parameters getParameters(Map<String, String> paramMap,
+                                           Parameters p)
+            throws SvcLogicException {
+        p.templateFileName = parseParam(paramMap, "templateFileName",
+                                        false, null);
         p.requestBody = parseParam(paramMap, "requestBody", false, null);
         p.restapiUrl = parseParam(paramMap, "restapiUrl", true, null);
         validateUrl(p.restapiUrl);
         p.restapiUser = parseParam(paramMap, "restapiUser", false, null);
-        p.restapiPassword = parseParam(paramMap, "restapiPassword", false, null);
-        p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey", false, null);
-        p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret", false, null);
-        p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod", false, null);
+        p.restapiPassword = parseParam(paramMap, "restapiPassword", false,
+                                       null);
+        p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey",
+                                        false, null);
+        p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret",
+                                           false, null);
+        p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod",
+                                            false, null);
         p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
         p.contentType = parseParam(paramMap, "contentType", false, null);
-        p.format = Format.fromString(parseParam(paramMap, "format", false, "json"));
-        p.authtype = AuthType.fromString(parseParam(paramMap, "authType", false, "unspecified"));
-        p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod", false, "post"));
+        p.format = Format.fromString(parseParam(paramMap, "format", false,
+                                                "json"));
+        p.authtype = fromString(parseParam(paramMap, "authType", false,
+                                           "unspecified"));
+        p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod",
+                                                        false, "post"));
         p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
         p.listNameList = getListNameList(paramMap);
         String skipSendingStr = paramMap.get("skipSending");
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
-        p.convertResponse = Boolean.valueOf(parseParam(paramMap, "convertResponse", false, "true"));
-        p.trustStoreFileName = parseParam(paramMap, "trustStoreFileName", false, null);
-        p.trustStorePassword = parseParam(paramMap, "trustStorePassword", false, null);
-        p.keyStoreFileName = parseParam(paramMap, "keyStoreFileName", false, null);
-        p.keyStorePassword = parseParam(paramMap, "keyStorePassword", false, null);
-        p.ssl = p.trustStoreFileName != null && p.trustStorePassword != null && p.keyStoreFileName != null &&
-                p.keyStorePassword != null;
-        p.customHttpHeaders = parseParam(paramMap, "customHttpHeaders", false, null);
+        p.convertResponse = valueOf(parseParam(paramMap, "convertResponse",
+                                               false, "true"));
+        p.trustStoreFileName = parseParam(paramMap, "trustStoreFileName",
+                                          false, null);
+        p.trustStorePassword = parseParam(paramMap, "trustStorePassword",
+                                          false, null);
+        p.keyStoreFileName = parseParam(paramMap, "keyStoreFileName",
+                                        false, null);
+        p.keyStorePassword = parseParam(paramMap, "keyStorePassword",
+                                        false, null);
+        p.ssl = p.trustStoreFileName != null && p.trustStorePassword != null
+                && p.keyStoreFileName != null && p.keyStorePassword != null;
+        p.customHttpHeaders = parseParam(paramMap, "customHttpHeaders",
+                                         false, null);
         p.partner = parseParam(paramMap, "partner", false, null);
-        p.dumpHeaders = Boolean.valueOf(parseParam(paramMap, "dumpHeaders", false, null));
-        p.returnRequestPayload = Boolean.valueOf(parseParam(paramMap, "returnRequestPayload", false, null));
+        p.dumpHeaders = valueOf(parseParam(paramMap, "dumpHeaders",
+                                           false, null));
+        p.returnRequestPayload = valueOf(parseParam(
+                paramMap, "returnRequestPayload", false, null));
         return p;
     }
 
-    private void validateUrl(String restapiUrl) throws SvcLogicException {
+    /**
+     * Validates the given URL in the parameters.
+     *
+     * @param restapiUrl rest api URL
+     * @throws SvcLogicException when URL validation fails
+     */
+    private static void validateUrl(String restapiUrl)
+            throws SvcLogicException {
         try {
             URI.create(restapiUrl);
         } catch (IllegalArgumentException e) {
-            throw new SvcLogicException("Invalid input of url " + e.getLocalizedMessage(), e);
+            throw new SvcLogicException("Invalid input of url "
+                                                + e.getLocalizedMessage(), e);
         }
     }
 
-    protected Set<String> getListNameList(Map<String, String> paramMap) {
+    /**
+     * Returns the list of list name.
+     *
+     * @param paramMap parameters map
+     * @return list of list name
+     */
+    private static Set<String> getListNameList(Map<String, String> paramMap) {
         Set<String> ll = new HashSet<>();
         for (Map.Entry<String,String> entry : paramMap.entrySet())
             if (entry.getKey().startsWith("listName"))
@@ -295,7 +333,19 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return ll;
     }
 
-    protected String parseParam(Map<String, String> paramMap, String name, boolean required, String def)
+    /**
+     * Parses the parameter string map of property, validates if required,
+     * assigns default value if present and returns the value.
+     *
+     * @param paramMap string param map
+     * @param name     name of the property
+     * @param required if value required
+     * @param def      default value
+     * @return value of the property
+     * @throws SvcLogicException if required parameter value is empty
+     */
+    public static String parseParam(Map<String, String> paramMap, String name,
+                                    boolean required, String def)
             throws SvcLogicException {
         String s = paramMap.get(name);
 
@@ -524,7 +574,16 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return client;
     }
 
-    protected HttpResponse sendHttpRequest(String request, Parameters p) throws SvcLogicException {
+    /**
+     * Receives the http response for the http request sent.
+     *
+     * @param request request msg
+     * @param p       parameters
+     * @return HTTP response
+     * @throws SvcLogicException when sending http request fails
+     */
+    public HttpResponse sendHttpRequest(String request, Parameters p)
+            throws SvcLogicException {
 
         ClientConfig config = new DefaultClientConfig();
         SSLContext ssl = null;
@@ -693,7 +752,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
         p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret", false, null);
         p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod", false, null);
-        p.authtype = AuthType.fromString(parseParam(paramMap, "authType", false, "unspecified"));
+        p.authtype = fromString(parseParam(paramMap, "authType", false, "unspecified"));
         return p;
     }
 

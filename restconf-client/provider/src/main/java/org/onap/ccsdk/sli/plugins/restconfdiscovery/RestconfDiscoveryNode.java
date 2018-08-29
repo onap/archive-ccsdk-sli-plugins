@@ -24,7 +24,7 @@ import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfapiCallNode;
+import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
 
     private ExecutorService executor = Executors.newCachedThreadPool();
     private Map<String, PersistentConnection> runnableInfo = new ConcurrentHashMap<>();
-    private RestconfapiCallNode restconfapiCallNode;
+    private RestconfApiCallNode restconfApiCallNode;
 
     private volatile Map<String, SubscriptionInfo> subscriptionInfoMap = new ConcurrentHashMap<>();
     private volatile LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
@@ -78,7 +78,7 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
             throw new SvcLogicException("Subscriber Id is null");
         }
 
-        restconfapiCallNode.sendRequest(paramMap, ctx);
+        restconfApiCallNode.sendRequest(paramMap, ctx);
 
         if (getResponseCode(paramMap.get(RESPONSE_PREFIX), ctx).equals(RESPONSE_CODE_200)) {
             // TODO: save subscription id and subscriber in MYSQL
@@ -207,8 +207,8 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
      *
      * @return restconfApiCallNode
      */
-    protected RestconfapiCallNode restconfapiCallNode() {
-        return restconfapiCallNode;
+    protected RestconfApiCallNode restconfapiCallNode() {
+        return restconfApiCallNode;
     }
 
     /**
@@ -216,8 +216,8 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
      *
      * @param node restconfApiCallNode
      */
-    void restconfapiCallNode(RestconfapiCallNode node) {
-        restconfapiCallNode = node;
+    void restconfapiCallNode(RestconfApiCallNode node) {
+        restconfApiCallNode = node;
     }
 
     Map<String, SubscriptionInfo> subscriptionInfoMap() {

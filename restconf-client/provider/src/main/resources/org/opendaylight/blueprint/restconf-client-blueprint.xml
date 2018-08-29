@@ -23,12 +23,12 @@
            xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
            odl:use-default-for-reference-types="true">
 
-    <bean id="restconfapiCallNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfapicall.RestconfapiCallNode" />
+    <bean id="restconfapiCallNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode" />
     <bean id="restconfDiscoveryNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfdiscovery.RestconfDiscoveryNode" />
 
     <service ref="restconfapiCallNodeProvider">
         <interfaces>
-            <value>org.onap.ccsdk.sli.plugins.restconfapicall.RestconfapiCallNode</value>
+            <value>org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode</value>
         </interfaces>
     </service>
 
