@@ -21,33 +21,14 @@
 
 package org.onap.ccsdk.sli.plugins.restapicall;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
-import com.sun.jersey.oauth.client.OAuthClientFilter;
-import com.sun.jersey.oauth.signature.OAuthParameters;
-import com.sun.jersey.oauth.signature.OAuthSecrets;
-import org.apache.commons.lang3.StringUtils;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.glassfish.jersey.client.oauth1.ConsumerCredentials;
+import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Feature;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.SocketException;
@@ -64,29 +45,39 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-
 import static java.lang.Boolean.valueOf;
 import static org.onap.ccsdk.sli.plugins.restapicall.AuthType.fromString;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.ClientResponse;
+import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestapiCallNode implements SvcLogicJavaPlugin {
 
-    private static final Logger log = LoggerFactory.getLogger(RestapiCallNode.class);
-
-    private String uebServers;
-    private String defaultUebTemplateFileName = "/opt/bvc/restapi/templates/default-ueb-message.json";
-    protected RetryPolicyStore retryPolicyStore;
     protected static final String DME2_PROPERTIES_FILE_NAME = "dme2.properties";
     protected static final String UEB_PROPERTIES_FILE_NAME = "ueb.properties";
     protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
     protected static final String PROPERTIES_DIR_KEY = "SDNC_CONFIG_DIR";
 
-    public RetryPolicyStore getRetryPolicyStore() {
-        return retryPolicyStore;
-    }
-
-    public void setRetryPolicyStore(RetryPolicyStore retryPolicyStore) {
-        this.retryPolicyStore = retryPolicyStore;
-    }
+    private static final Logger log = LoggerFactory.getLogger(RestapiCallNode.class);
+    protected RetryPolicyStore retryPolicyStore;
+    private String uebServers;
+    private String defaultUebTemplateFileName = "/opt/bvc/restapi/templates/default-ueb-message.json";
 
     public RestapiCallNode() {
         String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
@@ -111,7 +102,15 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
     }
 
-     /**
+    public RetryPolicyStore getRetryPolicyStore() {
+        return retryPolicyStore;
+    }
+
+    public void setRetryPolicyStore(RetryPolicyStore retryPolicyStore) {
+        this.retryPolicyStore = retryPolicyStore;
+    }
+
+    /**
      * Allows Directed Graphs  the ability to interact with REST APIs.
      * @param paramMap HashMap<String,String> of parameters passed by the DG to this function
      * <table border="1">
@@ -148,7 +147,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     public void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx, Integer retryCount)
-            throws SvcLogicException {
+        throws SvcLogicException {
 
         RetryPolicy retryPolicy = null;
         HttpResponse r = new HttpResponse();
@@ -174,9 +173,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     ctx.setAttribute(pp + "header." + a.getKey(), StringUtils.join(a.getValue(), ","));
                 }
             }
-            
+
             if (p.returnRequestPayload && req != null) {
-            	ctx.setAttribute(pp + "httpRequest", req);
+                ctx.setAttribute(pp + "httpRequest", req);
             }
 
             if (r.body != null && r.body.trim().length() > 0) {
@@ -184,14 +183,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
                 if (p.convertResponse) {
                     Map<String, String> mm = null;
-                    if (p.format == Format.XML)
+                    if (p.format == Format.XML) {
                         mm = XmlParser.convertToProperties(r.body, p.listNameList);
-                    else if (p.format == Format.JSON)
+                    } else if (p.format == Format.JSON) {
                         mm = JsonParser.convertToProperties(r.body);
+                    }
 
-                    if (mm != null)
-                        for (Map.Entry<String,String> entry : mm.entrySet())
+                    if (mm != null) {
+                        for (Map.Entry<String, String> entry : mm.entrySet()) {
                             ctx.setAttribute(pp + entry.getKey(), entry.getValue());
+                        }
+                    }
                 }
             }
         } catch (SvcLogicException e) {
@@ -209,7 +211,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     retryCount = 0;
                 }
                 String retryMessage = retryCount + " attempts were made out of " + retryPolicy.getMaximumRetries() +
-                        " maximum retries.";
+                    " maximum retries.";
                 log.debug(retryMessage);
                 try {
                     retryCount = retryCount + 1;
@@ -219,7 +221,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         String retryString = retryPolicy.getNextHostName(uri.toString());
                         URI uriTwo = new URI(retryString);
                         URI retryUri = UriBuilder.fromUri(uri).host(uriTwo.getHost()).port(uriTwo.getPort()).scheme(
-                                uriTwo.getScheme()).build();
+                            uriTwo.getScheme()).build();
                         paramMap.put("restapiUrl", retryUri.toString());
                         log.debug("URL was set to {}", retryUri.toString());
                         log.debug("Failed to communicate with host {}. Request will be re-attempted using the host {}.",
@@ -233,15 +235,16 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 } catch (Exception ex) {
                     log.error("Could not attempt retry.", ex);
                     String retryErrorMessage =
-                            "Retry attempt has failed. No further retry shall be attempted, calling " +
-                                "setFailureResponseStatus.";
+                        "Retry attempt has failed. No further retry shall be attempted, calling " +
+                            "setFailureResponseStatus.";
                     setFailureResponseStatus(ctx, prefix, retryErrorMessage, r);
                 }
             }
         }
 
-        if (r != null && r.code >= 300)
+        if (r != null && r.code >= 300) {
             throw new SvcLogicException(String.valueOf(r.code) + ": " + r.message);
+        }
     }
 
     /**
@@ -327,9 +330,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      */
     private static Set<String> getListNameList(Map<String, String> paramMap) {
         Set<String> ll = new HashSet<>();
-        for (Map.Entry<String,String> entry : paramMap.entrySet())
-            if (entry.getKey().startsWith("listName"))
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            if (entry.getKey().startsWith("listName")) {
                 ll.add(entry.getValue());
+            }
+        }
         return ll;
     }
 
@@ -350,8 +355,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         String s = paramMap.get(name);
 
         if (s == null || s.trim().length() == 0) {
-            if (!required)
+            if (!required) {
                 return def;
+            }
             throw new SvcLogicException("Parameter " + name + " is required in RestapiCallNode");
         }
 
@@ -361,13 +367,15 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         int i1 = s.indexOf('%');
         while (i1 >= 0) {
             int i2 = s.indexOf('%', i1 + 1);
-            if (i2 < 0)
+            if (i2 < 0) {
                 break;
+            }
 
             String varName = s.substring(i1 + 1, i2);
             String varValue = System.getenv(varName);
-            if (varValue == null)
+            if (varValue == null) {
                 varValue = "%" + varName + "%";
+            }
 
             value.append(s.substring(i, i1));
             value.append(varValue);
@@ -389,8 +397,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         template = expandRepeats(ctx, template, 1);
 
         Map<String, String> mm = new HashMap<>();
-        for (String s : ctx.getAttributeKeySet())
+        for (String s : ctx.getAttributeKeySet()) {
             mm.put(s, ctx.getAttribute(s));
+        }
 
         StringBuilder ss = new StringBuilder();
         int i = 0;
@@ -402,8 +411,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             }
 
             int i2 = template.indexOf('}', i1 + 2);
-            if (i2 < 0)
+            if (i2 < 0) {
                 throw new SvcLogicException("Template error: Matching } not found");
+            }
 
             String var1 = template.substring(i1 + 2, i2);
             String value1 = format == Format.XML ? XmlJsonUtil.getXml(mm, var1) : XmlJsonUtil.getJson(mm, var1);
@@ -411,14 +421,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (value1 == null || value1.trim().length() == 0) {
                 // delete the whole element (line)
                 int i3 = template.lastIndexOf('\n', i1);
-                if (i3 < 0)
+                if (i3 < 0) {
                     i3 = 0;
+                }
                 int i4 = template.indexOf('\n', i1);
-                if (i4 < 0)
+                if (i4 < 0) {
                     i4 = template.length();
+                }
 
-                if (i < i3)
+                if (i < i3) {
                     ss.append(template.substring(i, i3));
+                }
                 i = i4;
             } else {
                 ss.append(template.substring(i, i1)).append(value1);
@@ -427,10 +440,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         String req = format == Format.XML
-                ? XmlJsonUtil.removeEmptyStructXml(ss.toString()) : XmlJsonUtil.removeEmptyStructJson(ss.toString());
+            ? XmlJsonUtil.removeEmptyStructXml(ss.toString()) : XmlJsonUtil.removeEmptyStructJson(ss.toString());
 
-        if (format == Format.JSON)
+        if (format == Format.JSON) {
             req = XmlJsonUtil.removeLastCommaJson(req);
+        }
 
         long t2 = System.currentTimeMillis();
         log.info("Building {} completed. Time: {}", format, (t2 - t1));
@@ -449,9 +463,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             }
 
             int i2 = template.indexOf(':', i1 + 9);
-            if (i2 < 0)
+            if (i2 < 0) {
                 throw new SvcLogicException(
-                        "Template error: Context variable name followed by : is required after repeat");
+                    "Template error: Context variable name followed by : is required after repeat");
+            }
 
             // Find the closing }, store in i3
             int nn = 1;
@@ -459,8 +474,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             int i = i2;
             while (nn > 0 && i < template.length()) {
                 i3 = template.indexOf('}', i);
-                if (i3 < 0)
+                if (i3 < 0) {
                     throw new SvcLogicException("Template error: Matching } not found");
+                }
                 int i32 = template.indexOf('{', i);
                 if (i32 >= 0 && i32 < i3) {
                     nn++;
@@ -489,8 +505,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 String ss = rpt.replaceAll("\\[\\$\\{" + level + "\\}\\]", "[" + ii + "]");
                 if (ii == n - 1 && ss.trim().endsWith(",")) {
                     int i4 = ss.lastIndexOf(',');
-                    if (i4 > 0)
+                    if (i4 > 0) {
                         ss = ss.substring(0, i4) + ss.substring(i4 + 1);
+                    }
                 }
                 newTemplate.append(ss);
             }
@@ -498,8 +515,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             k = i3 + 1;
         }
 
-        if (k == 0)
+        if (k == 0) {
             return newTemplate.toString();
+        }
 
         return expandRepeats(ctx, newTemplate.toString(), level + 1);
     }
@@ -528,46 +546,36 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected Client addAuthType(Client client, Parameters p) throws SvcLogicException {
         if (p.authtype == AuthType.Unspecified){
             if (p.restapiUser != null && p.restapiPassword != null)
-                client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
+                client.register(HttpAuthenticationFeature.basic(p.restapiUser, p.restapiPassword));
             else if(p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null
-                    && p.oAuthSignatureMethod != null) {
-                OAuthParameters params = new OAuthParameters()
-                        .signatureMethod(p.oAuthSignatureMethod)
-                        .consumerKey(p.oAuthConsumerKey)
-                        .version(p.oAuthVersion);
-
-                OAuthSecrets secrets = new OAuthSecrets()
-                        .consumerSecret(p.oAuthConsumerSecret);
-                client.addFilter(new OAuthClientFilter(client.getProviders(), params, secrets));
+                && p.oAuthSignatureMethod != null) {
+                Feature oAuth1Feature = OAuth1ClientSupport.builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
+                    .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
+                client.register(oAuth1Feature);
             }
         } else {
             if (p.authtype == AuthType.DIGEST) {
                 if (p.restapiUser != null && p.restapiPassword != null) {
-                    client.addFilter(new HTTPDigestAuthFilter(p.restapiUser, p.restapiPassword));
+                    client.register(HttpAuthenticationFeature.digest(p.restapiUser, p.restapiPassword));
                 } else {
                     throw new SvcLogicException("oAUTH authentication type selected but all restapiUser and restapiPassword " +
-                                                        "parameters doesn't exist", new Throwable());
+                        "parameters doesn't exist", new Throwable());
                 }
             } else if (p.authtype == AuthType.BASIC){
                 if (p.restapiUser != null && p.restapiPassword != null) {
-                    client.addFilter(new HTTPBasicAuthFilter(p.restapiUser, p.restapiPassword));
+                    client.register(HttpAuthenticationFeature.basic(p.restapiUser, p.restapiPassword));
                 } else {
                     throw new SvcLogicException("oAUTH authentication type selected but all restapiUser and restapiPassword " +
-                                                        "parameters doesn't exist", new Throwable());
+                        "parameters doesn't exist", new Throwable());
                 }
             } else if(p.authtype == AuthType.OAUTH ) {
                 if(p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null && p.oAuthSignatureMethod != null) {
-                    OAuthParameters params = new OAuthParameters()
-                            .signatureMethod(p.oAuthSignatureMethod)
-                            .consumerKey(p.oAuthConsumerKey)
-                            .version(p.oAuthVersion);
-
-                    OAuthSecrets secrets = new OAuthSecrets()
-                            .consumerSecret(p.oAuthConsumerSecret);
-                    client.addFilter(new OAuthClientFilter(client.getProviders(), params, secrets));
+                    Feature oAuth1Feature = OAuth1ClientSupport.builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
+                        .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
+                    client.register(oAuth1Feature);
                 } else {
                     throw new SvcLogicException("oAUTH authentication type selected but all oAuthConsumerKey, oAuthConsumerSecret " +
-                                                        "and oAuthSignatureMethod parameters doesn't exist", new Throwable());
+                        "and oAuthSignatureMethod parameters doesn't exist", new Throwable());
                 }
             }
         }
@@ -585,22 +593,23 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     public HttpResponse sendHttpRequest(String request, Parameters p)
             throws SvcLogicException {
 
-        ClientConfig config = new DefaultClientConfig();
         SSLContext ssl = null;
-        if (p.ssl && p.restapiUrl.startsWith("https"))
+        if (p.ssl && p.restapiUrl.startsWith("https")) {
             ssl = createSSLContext(p);
-        if (ssl != null) {
-            HostnameVerifier hostnameVerifier = (hostname, session) -> true;
-
-            config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES,
-                    new HTTPSProperties(hostnameVerifier, ssl));
         }
+        Client client;
 
-        logProperties(config.getProperties());
+        if (ssl != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(ssl.getSocketFactory());
+            client = ClientBuilder.newBuilder().sslContext(ssl).hostnameVerifier((s, sslSession) -> true)
+                .build();
+        } else {
+            client = ClientBuilder.newBuilder().hostnameVerifier((s, sslSession) -> true)
+                .build();
+        }
+        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
 
-        Client client = Client.create(config);
-        client.setConnectTimeout(5000);
-        WebResource webResource = addAuthType(client,p).resource(p.restapiUrl);
+        WebTarget webTarget = addAuthType(client,p).target(p.restapiUrl);
 
         log.info("Sending request:");
         log.info(request);
@@ -617,38 +626,53 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 tt1 = p.contentType;
             }
 
-            WebResource.Builder webResourceBuilder = webResource.accept(tt).type(tt1);
-            if(p.format == Format.NONE){
-                webResourceBuilder = webResource.header("","");
+            Invocation.Builder invocationBuilder = webTarget.request(tt1).accept(tt);
+
+            if (p.format == Format.NONE) {
+                invocationBuilder.header("", "");
             }
 
             if (p.customHttpHeaders != null && p.customHttpHeaders.length() > 0) {
                 String[] keyValuePairs = p.customHttpHeaders.split(",");
                 for (String singlePair : keyValuePairs) {
                     int equalPosition = singlePair.indexOf('=');
-                    webResourceBuilder.header(singlePair.substring(0, equalPosition),
-                            singlePair.substring(equalPosition + 1, singlePair.length()));
+                    invocationBuilder.header(singlePair.substring(0, equalPosition),
+                        singlePair.substring(equalPosition + 1, singlePair.length()));
                 }
             }
 
-            webResourceBuilder.header("X-ECOMP-RequestID",org.slf4j.MDC.get("X-ECOMP-RequestID"));
+            invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
 
-            ClientResponse response;
+            ClientResponse response = null;
 
             try {
-                response = webResourceBuilder.method(p.httpMethod.toString(), ClientResponse.class, request);
-            } catch (UniformInterfaceException | ClientHandlerException e) {
-                throw new SvcLogicException("Exception while sending http request to client "
-                    + e.getLocalizedMessage(), e);
+                switch (p.httpMethod) {
+                    case POST:
+                        response = invocationBuilder.post(Entity.entity(request, tt1), ClientResponse.class);
+                        break;
+                    case PUT:
+                        response = invocationBuilder.put(Entity.entity(request, tt1), ClientResponse.class);
+                        break;
+                    case DELETE:
+                        response = invocationBuilder.delete(ClientResponse.class);
+                        break;
+                    default:
+                        throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
+                }
+            } catch (ProcessingException | IllegalStateException e) {
+                throw new SvcLogicException("Exception while posting http request to client " +
+                    e.getLocalizedMessage(), e);
             }
 
             r.code = response.getStatus();
             r.headers = response.getHeaders();
             EntityTag etag = response.getEntityTag();
-            if (etag != null)
+            if (etag != null) {
                 r.message = etag.getValue();
-            if (response.hasEntity() && r.code != 204)
-                r.body = response.getEntity(String.class);
+            }
+            if (response.hasEntity() && r.code != 204) {
+                r.body = response.readEntity(String.class);
+            }
         }
 
         long t2 = System.currentTimeMillis();
@@ -718,24 +742,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             setResponseStatus(ctx, prefix, r);
         }
 
-        if (r != null && r.code >= 300)
+        if (r != null && r.code >= 300) {
             throw new SvcLogicException(String.valueOf(r.code) + ": " + r.message);
-    }
-
-    private static class FileParam {
-
-        public String fileName;
-        public String url;
-        public String user;
-        public String password;
-        public HttpMethod httpMethod;
-        public String responsePrefix;
-        public boolean skipSending;
-        public String oAuthConsumerKey;
-        public String oAuthConsumerSecret;
-        public String oAuthSignatureMethod;
-        public String oAuthVersion;
-        public AuthType authtype;
+        }
     }
 
     private FileParam getFileParameters(Map<String, String> paramMap) throws SvcLogicException {
@@ -754,80 +763,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod", false, null);
         p.authtype = fromString(parseParam(paramMap, "authType", false, "unspecified"));
         return p;
-    }
-
-    protected HttpResponse sendHttpData(byte[] data, FileParam p) throws SvcLogicException {
-        Client client = Client.create();
-        client.setConnectTimeout(5000);
-        client.setFollowRedirects(true);
-        WebResource webResource = addAuthType(client,p).resource(p.url);
-
-        log.info("Sending file");
-        long t1 = System.currentTimeMillis();
-
-        HttpResponse r = new HttpResponse();
-        r.code = 200;
-
-        if (!p.skipSending) {
-            String tt = "application/octet-stream";
-
-            ClientResponse response;
-            try {
-                if (p.httpMethod == HttpMethod.POST)
-                    response = webResource.accept(tt).type(tt).post(ClientResponse.class, data);
-                else if (p.httpMethod == HttpMethod.PUT)
-                    response = webResource.accept(tt).type(tt).put(ClientResponse.class, data);
-                else
-                    throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
-            } catch (UniformInterfaceException | ClientHandlerException e) {
-                throw new SvcLogicException("Exception while sending http request to client " +
-                    e.getLocalizedMessage(), e);
-            }
-
-            r.code = response.getStatus();
-            r.headers = response.getHeaders();
-            EntityTag etag = response.getEntityTag();
-            if (etag != null)
-                r.message = etag.getValue();
-            if (response.hasEntity() && r.code != 204)
-                r.body = response.getEntity(String.class);
-
-            if (r.code == 301) {
-                String newUrl = response.getHeaders().getFirst("Location");
-
-                log.info("Got response code 301. Sending same request to URL: {}", newUrl);
-
-                webResource = client.resource(newUrl);
-
-                try {
-                    if (p.httpMethod == HttpMethod.POST)
-                        response = webResource.accept(tt).type(tt).post(ClientResponse.class, data);
-                    else if (p.httpMethod == HttpMethod.PUT)
-                        response = webResource.accept(tt).type(tt).put(ClientResponse.class, data);
-                    else
-                        throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
-                } catch (UniformInterfaceException | ClientHandlerException e) {
-                    throw new SvcLogicException("Exception while sending http request to client " +
-                        e.getLocalizedMessage(), e);
-                }
-
-                r.code = response.getStatus();
-                etag = response.getEntityTag();
-                if (etag != null)
-                    r.message = etag.getValue();
-                if (response.hasEntity() && r.code != 204)
-                    r.body = response.getEntity(String.class);
-            }
-        }
-
-        long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: {}", (t2 - t1));
-        log.info("HTTP response code: {}", r.code);
-        log.info("HTTP response message: {}", r.message);
-        logHeaders(r.headers);
-        log.info("HTTP response: {}", r.body);
-
-        return r;
     }
 
     public void postMessageOnUeb(Map<String, String> paramMap, SvcLogicContext ctx) throws SvcLogicException {
@@ -850,8 +785,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             r = postOnUeb(req, p);
             setResponseStatus(ctx, p.responsePrefix, r);
-            if (r.body != null)
+            if (r.body != null) {
                 ctx.setAttribute(pp + "httpResponse", r.body);
+            }
 
         } catch (SvcLogicException e) {
             log.error("Error sending the request: {}", e.getMessage(), e);
@@ -863,17 +799,87 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             setResponseStatus(ctx, prefix, r);
         }
 
-        if (r.code >= 300)
+        if (r.code >= 300) {
             throw new SvcLogicException(String.valueOf(r.code) + ": " + r.message);
+        }
     }
 
-    private static class UebParam {
+    protected HttpResponse sendHttpData(byte[] data, FileParam p) throws SvcLogicException {
 
-        public String topic;
-        public String templateFileName;
-        public String rootVarName;
-        public String responsePrefix;
-        public boolean skipSending;
+        Client client = ClientBuilder.newBuilder().build();
+        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        client.property(ClientProperties.FOLLOW_REDIRECTS, true);
+        WebTarget webTarget = addAuthType(client,p).target(p.url);
+
+        log.info("Sending file");
+        long t1 = System.currentTimeMillis();
+
+        HttpResponse r = new HttpResponse();
+        r.code = 200;
+
+        if (!p.skipSending) {
+            String tt = "application/octet-stream";
+            Invocation.Builder invocationBuilder = webTarget.request(tt).accept(tt);
+
+            Response response;
+
+            try {
+                if (p.httpMethod == HttpMethod.POST)
+                    response = invocationBuilder.post(Entity.entity(data, tt));
+                else if (p.httpMethod == HttpMethod.PUT)
+                    response = invocationBuilder.put(Entity.entity(data, tt));
+                else
+                    throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
+            } catch (ProcessingException e) {
+                throw new SvcLogicException("Exception while posting http request to client " +
+                    e.getLocalizedMessage(), e);
+            }
+
+            r.code = response.getStatus();
+            r.headers = response.getStringHeaders();
+            EntityTag etag = response.getEntityTag();
+            if (etag != null)
+                r.message = etag.getValue();
+            if (response.hasEntity() && r.code != 204)
+                r.body = response.readEntity(String.class);
+
+            if (r.code == 301) {
+                String newUrl = response.getStringHeaders().getFirst("Location");
+
+                log.info("Got response code 301. Sending same request to URL: {}", newUrl);
+
+                webTarget = client.target(newUrl);
+                invocationBuilder = webTarget.request(tt).accept(tt);
+
+                try {
+                    if (p.httpMethod == HttpMethod.POST)
+                        response = invocationBuilder.post(Entity.entity(data, tt));
+                    else if (p.httpMethod == HttpMethod.PUT)
+                        response = invocationBuilder.put(Entity.entity(data, tt));
+                    else
+                        throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
+                } catch (ProcessingException e) {
+                    throw new SvcLogicException("Exception while posting http request to client " +
+                        e.getLocalizedMessage(), e);
+                }
+
+                r.code = response.getStatus();
+                etag = response.getEntityTag();
+                if (etag != null)
+                    r.message = etag.getValue();
+                if (response.hasEntity() && r.code != 204)
+                    r.body = response.readEntity(String.class);
+            }
+        }
+
+        long t2 = System.currentTimeMillis();
+        log.info("Response received. Time: {}", (t2 - t1));
+        log.info("HTTP response code: {}", r.code);
+        log.info("HTTP response message: {}", r.message);
+        logHeaders(r.headers);
+        log.info("HTTP response: {}", r.body);
+
+        return r;
     }
 
     private UebParam getUebParameters(Map<String, String> paramMap) throws SvcLogicException {
@@ -887,6 +893,37 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return p;
     }
 
+    protected void logProperties(Map<String, Object> mm) {
+        List<String> ll = new ArrayList<>();
+        for (Object o : mm.keySet()) {
+            ll.add((String) o);
+        }
+        Collections.sort(ll);
+
+        log.info("Properties:");
+        for (String name : ll) {
+            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
+        }
+    }
+
+    protected void logHeaders(MultivaluedMap<String, String> mm) {
+        log.info("HTTP response headers:");
+
+        if (mm == null) {
+            return;
+        }
+
+        List<String> ll = new ArrayList<>();
+        for (Object o : mm.keySet()) {
+            ll.add((String) o);
+        }
+        Collections.sort(ll);
+
+        for (String name : ll) {
+            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
+        }
+    }
+
     protected HttpResponse postOnUeb(String request, UebParam p) throws SvcLogicException {
         String[] urls = uebServers.split(" ");
         for (int i = 0; i < urls.length; i++) {
@@ -895,9 +932,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             urls[i] += "events/" + p.topic;
         }
 
-        Client client = Client.create();
-        client.setConnectTimeout(5000);
-        WebResource webResource = client.resource(urls[0]);
+        Client client = ClientBuilder.newBuilder().build();
+        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        WebTarget webTarget = client.target(urls[0]);
 
         log.info("UEB URL: {}", urls[0]);
         log.info("Sending request:");
@@ -911,19 +948,19 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             String tt = "application/json";
             String tt1 = tt + ";charset=UTF-8";
 
-            ClientResponse response;
+            Response response;
+            Invocation.Builder invocationBuilder = webTarget.request(tt1).accept(tt);
 
             try {
-                response = webResource.accept(tt).type(tt1).post(ClientResponse.class, request);
-            } catch (UniformInterfaceException | ClientHandlerException e) {
+                response = invocationBuilder.post(Entity.entity(request, tt1));
+            } catch (ProcessingException e) {
                 throw new SvcLogicException("Exception while posting http request to client " +
                     e.getLocalizedMessage(), e);
             }
-
             r.code = response.getStatus();
-            r.headers = response.getHeaders();
+            r.headers = response.getStringHeaders();
             if (response.hasEntity())
-                r.body = response.getEntity(String.class);
+                r.body = response.readEntity(String.class);
         }
 
         long t2 = System.currentTimeMillis();
@@ -935,37 +972,36 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return r;
     }
 
-    protected void logProperties(Map<String, Object> mm) {
-        List<String> ll = new ArrayList<>();
-        for (Object o : mm.keySet())
-            ll.add((String) o);
-        Collections.sort(ll);
-
-        log.info("Properties:");
-        for (String name : ll)
-            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
-    }
-
-    protected void logHeaders(MultivaluedMap<String, String> mm) {
-        log.info("HTTP response headers:");
-
-        if (mm == null)
-            return;
-
-        List<String> ll = new ArrayList<>();
-        for (Object o : mm.keySet())
-            ll.add((String) o);
-        Collections.sort(ll);
-
-        for (String name : ll)
-            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
-    }
-
     public void setUebServers(String uebServers) {
         this.uebServers = uebServers;
     }
 
     public void setDefaultUebTemplateFileName(String defaultUebTemplateFileName) {
         this.defaultUebTemplateFileName = defaultUebTemplateFileName;
+    }
+
+    private static class FileParam {
+
+        public String fileName;
+        public String url;
+        public String user;
+        public String password;
+        public HttpMethod httpMethod;
+        public String responsePrefix;
+        public boolean skipSending;
+        public String oAuthConsumerKey;
+        public String oAuthConsumerSecret;
+        public String oAuthSignatureMethod;
+        public String oAuthVersion;
+        public AuthType authtype;
+    }
+
+    private static class UebParam {
+
+        public String topic;
+        public String templateFileName;
+        public String rootVarName;
+        public String responsePrefix;
+        public boolean skipSending;
     }
 }
