@@ -90,11 +90,6 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
     private static final Logger log = LoggerFactory.getLogger(
             RestconfApiCallNode.class);
 
-    /**
-     * Creates an instance of restconf api call node.
-     */
-    public RestconfApiCallNode() {
-    }
 
     /**
      * Sends the restconf request using the parameters map and the memory

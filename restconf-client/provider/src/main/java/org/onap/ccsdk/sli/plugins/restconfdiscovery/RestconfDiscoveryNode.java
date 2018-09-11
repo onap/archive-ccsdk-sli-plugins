@@ -85,7 +85,7 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
 
             establishPersistentConnection(paramMap, ctx, subscriberId);
         } else {
-            log.info("Failed to subscribe " + subscriberId);
+            log.info("Failed to subscribe {}", subscriberId);
             throw new SvcLogicException(ctx.getAttribute(RESPONSE_CODE));
         }
     }
@@ -131,7 +131,8 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    log.error("Exception: " + e.getMessage());
+                    log.error("Interrupted!", e);
+                    Thread.currentThread().interrupt();
                 }
             }
             eventSource.close();

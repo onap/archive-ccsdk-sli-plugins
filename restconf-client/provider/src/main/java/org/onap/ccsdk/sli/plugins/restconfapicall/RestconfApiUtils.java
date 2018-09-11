@@ -200,13 +200,17 @@ public final class RestconfApiUtils {
         if (dir.exists()) {
             File[] files = dir.listFiles();
             if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.getName().endsWith(YANG)) {
-                        yangFiles.add(file);
-                    } else if (file.isDirectory()) {
-                        getYangFiles(file, yangFiles);
-                    }
-                }
+                processFiles(files, yangFiles);
+            }
+        }
+    }
+
+    private static void processFiles(File[] files, List<File> yangFiles) {
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(YANG)) {
+                yangFiles.add(file);
+            } else if (file.isDirectory()) {
+                getYangFiles(file, yangFiles);
             }
         }
     }
