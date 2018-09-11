@@ -40,11 +40,7 @@ class EventHandler implements EventListener {
     public void onEvent(InboundEvent event) {
         String payload = event.readData();
         if (!node.eventQueue().offer(payload)) {
-            log.error("Unable to process event "
-                              + payload + "as processing queue is full");
-            throw new RuntimeException("Unable to process event "
-                                               + payload
-                                               + "as processing queue is full");
+            log.error("Unable to process event {} as processing queue is full", payload);
         }
     }
 }

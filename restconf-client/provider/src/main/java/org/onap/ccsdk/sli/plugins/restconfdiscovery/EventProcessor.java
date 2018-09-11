@@ -53,17 +53,22 @@ class EventProcessor implements Runnable {
                 String id = param.get(EVENT_SUBSCRIPTION_ID);
                 SubscriptionInfo info = node.subscriptionInfoMap().get(id);
                 if (info != null) {
-                    SvcLogicContext ctx = new SvcLogicContext();
-                    for (Map.Entry<String, String> entry : param.entrySet()) {
-                        ctx.setAttribute(entry.getKey(), entry.getValue());
-                    }
+                    SvcLogicContext ctx = setContext(param);
                     SvcLogicGraphInfo callbackDG = info.callBackDG();
                     callbackDG.executeGraph(ctx);
                 }
             } catch (InterruptedException | SvcLogicException e) {
-                log.error(e.getMessage());
-                throw new RuntimeException(e.getMessage());
+                log.error("Interrupted!", e);
+                Thread.currentThread().interrupt();
             }
         }
+    }
+
+    private SvcLogicContext setContext(Map<String, String> param) {
+        SvcLogicContext ctx = new SvcLogicContext();
+        for (Map.Entry<String, String> entry : param.entrySet()) {
+            ctx.setAttribute(entry.getKey(), entry.getValue());
+        }
+        return ctx;
     }
 }
