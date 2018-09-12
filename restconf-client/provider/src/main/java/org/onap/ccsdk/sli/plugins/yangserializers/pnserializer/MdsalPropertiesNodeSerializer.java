@@ -33,6 +33,7 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPrope
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getListName;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNodeType;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getParsedValue;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getRevision;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getValueNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.resolveName;
@@ -116,26 +117,32 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
                                      SINGLE_INSTANCE_NODE, schema);
                 curSchema = schema;
                 break;
+
             case MULTI_INSTANCE_NODE:
                 node = node.addChild(getIndex(name), localName, ns,
                                      MULTI_INSTANCE_NODE, schema);
                 curSchema = schema;
                 break;
+
             case SINGLE_INSTANCE_LEAF_NODE:
+                Namespace valNs = getValueNamespace(value, schemaCtx());
+                value = getParsedValue(valNs, value);
                 node = node.addChild(localName, ns, SINGLE_INSTANCE_LEAF_NODE,
-                                     value, getValueNamespace(value, schemaCtx()),
-                                     schema);
+                                     value, valNs, schema);
                 node = node.endNode();
                 curSchema = ((SchemaNode) node.appInfo());
                 break;
+
             case MULTI_INSTANCE_LEAF_NODE:
+                valNs = getValueNamespace(value, schemaCtx());
+                value = getParsedValue(valNs, value);
                 node = node.addChild(getIndex(name), localName, ns,
                                      MULTI_INSTANCE_LEAF_NODE, value,
-                                     getValueNamespace(value, schemaCtx()),
-                                     schema);
+                                     valNs, schema);
                 node = node.endNode();
                 curSchema = ((SchemaNode) node.appInfo());
                 break;
+
             default:
                 throw new SvcLogicException("Invalid node type");
         }

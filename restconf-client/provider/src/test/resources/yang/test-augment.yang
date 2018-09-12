@@ -14,19 +14,24 @@ module test-augment {
     augment "/t:cont1/t:cont2/t:cont4" {
         container cont5 {
             leaf leaf13 {
-               type string;
+               type empty;
             }
         }
         list list7 {
-           leaf leaf14 {
-              type string;
-           }
+            leaf leaf14 {
+                type instance-identifier;
+            }
         }
         leaf leaf15 {
             type string;
         }
         leaf-list ll6 {
-            type string;
+            type union {
+                type int32;
+                type enumeration {
+                    enum "unbounded";
+                }
+            }
         }
         uses "t:g1";
     }
@@ -34,16 +39,22 @@ module test-augment {
     uses "t:g1";
     augment "/t:ch1/t:c1/t:cont8/t:cont6" {
         choice ch2 {
-           case c3 {
-               leaf leaf21 {
-                   type string;
-               }
-           }
-           case c4 {
-               leaf leaf22 {
-                   type string;
-               }
-           }
+            case c3 {
+                leaf leaf21 {
+                    type string;
+                }
+            }
+            case c4 {
+                leaf leaf22 {
+                    type enumeration {
+                        enum zero;
+                        enum one;
+                        enum seven {
+                            value 7;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -72,14 +83,24 @@ module test-augment {
     }
 
     augment "/t:create-sfc/t:input" {
-       leaf leaf36 {
-           type string;
-       }
+        leaf leaf36 {
+            type bits {
+                bit angle {
+                    position 0;
+                }
+                bit degree {
+                    position 1;
+                }
+                bit movement {
+                    position 2;
+                }
+            }
+        }
     }
 
     augment "/t:create-sfc/t:output" {
        leaf leaf37 {
-           type string;
+           type boolean;
        }
     }
 }

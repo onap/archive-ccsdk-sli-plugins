@@ -1,4 +1,4 @@
-module  identity-types-second{
+module identity-types-second {
     yang-version 1;
     namespace "identity:list:second:ns:test:json:ser";
     prefix "sec";

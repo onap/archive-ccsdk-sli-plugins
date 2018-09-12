@@ -350,4 +350,12 @@ public final class MdsalPropertiesNodeUtils {
         return new Namespace(m.getName(), m.getQNameModule().getNamespace(),
                              getRevision(m.getRevision()));
     }
+
+    static String getParsedValue(Namespace valNs, String value) {
+        if (valNs != null && value.contains(":")) {
+            String[] valArr = value.split(":");
+            return valArr[1];
+        }
+        return value;
+    }
 }

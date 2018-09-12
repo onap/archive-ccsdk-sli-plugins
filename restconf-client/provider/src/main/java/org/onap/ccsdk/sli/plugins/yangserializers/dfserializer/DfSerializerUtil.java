@@ -26,7 +26,6 @@ import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -46,6 +45,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 
 import static javax.xml.transform.OutputKeys.INDENT;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.XmlNodeType.OBJECT_NODE;
@@ -150,40 +150,44 @@ public final class DfSerializerUtil {
      * Returns the resolved namespace object from the input received from the
      * abstract data format.
      *
-     * @param mName     module name
-     * @param curSchema current schema
-     * @param ctx       schema context
-     * @param mUri      module URI
-     * @param pNode     properties node
+     * @param mName  module name
+     * @param mUri   module URI
+     * @param ctx    schema context
+     * @param parent parent properties node
      * @return namespace
      * @throws SvcLogicException when resolving namespace fails
      */
-    static Namespace getResolvedNamespace(String mName, SchemaNode curSchema,
-                                          SchemaContext ctx, String mUri,
-                                          PropertiesNode pNode)
+    static Namespace getResolvedNamespace(String mName, String mUri,
+                                          SchemaContext ctx,
+                                          PropertiesNode parent)
             throws SvcLogicException {
-        Module m = null;
-        URI namespace = curSchema.getQName().getNamespace();
-
-        if (mName != null) {
-            m = ctx.findModule(mName).get();
-            namespace = m == null ? null : m.getNamespace();
+        if (mName == null && mUri == null) {
+            Namespace parentNs = parent.namespace();
+            return new Namespace(parentNs.moduleName(), parentNs.moduleNs(),
+                                 parentNs.revision());
         }
-        if (mUri != null) {
+
+        Iterator<Module> it;
+        Module mod;
+        if (mName != null) {
+            it = ctx.findModules(mName).iterator();
+        } else {
+            URI modUri = null;
             try {
-                m = ctx.findModule(new URI(mUri)).get();
+               modUri = new URI(mUri);
             } catch (URISyntaxException e) {
                 throw new SvcLogicException(URI_ERR, e);
             }
-            namespace = m == null ? null : m.getNamespace();
-            mName = m.getName();
+            it = ctx.findModules(modUri).iterator();
         }
 
-        if (mName == null && mUri == null) {
-            return pNode.namespace();
+        if (!it.hasNext()) {
+            return null;
         }
+        mod = it.next();
 
-        return new Namespace(mName, namespace, getRevision(m.getRevision()));
+        return new Namespace(mod.getName(), mod.getQNameModule().getNamespace(),
+                             getRevision(mod.getRevision()));
     }
 
     /**

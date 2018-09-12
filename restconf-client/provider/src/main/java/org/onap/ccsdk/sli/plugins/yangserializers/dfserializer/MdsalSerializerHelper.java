@@ -25,6 +25,9 @@ import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.RootNode;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -49,6 +52,8 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.M
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_LEAF_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_NODE;
+import static org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils.findDataChildSchemaByQName;
+import static org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils.findSchemaForChild;
 import static org.opendaylight.yangtools.yang.data.util.ParserStreamUtils.findSchemaNodeByNameAndNamespace;
 
 /**
@@ -108,14 +113,17 @@ public class MdsalSerializerHelper extends SerializerHelper<SchemaNode, SchemaCo
             throws SvcLogicException {
         Namespace ns;
         if (type == null) {
-            ns = getResolvedNamespace(null, curSchemaNode, getSchemaCtx(),
-                                      nameSpace, propNode);
+            ns = getResolvedNamespace(null, nameSpace,
+                                      getSchemaCtx(), propNode);
         } else {
-            ns = getResolvedNamespace(nameSpace, curSchemaNode, getSchemaCtx(),
-                                      nameSpace, propNode);
+            ns = getResolvedNamespace(nameSpace, null,
+                                      getSchemaCtx(), propNode);
         }
         if (isChildPresent(name, ns)) {
             addNodeToProperty(name, ns, value, valNameSpace, type);
+        } else {
+            throw new SvcLogicException(format(
+                    "Unable to add the node %s", name));
         }
     }
 
@@ -192,15 +200,20 @@ public class MdsalSerializerHelper extends SerializerHelper<SchemaNode, SchemaCo
                                  NodeType nodeType) throws SvcLogicException {
         Namespace ns = null;
         if (valNs != null) {
-            TypeDefinition type = ((LeafSchemaNode) schemaNode).getType();
+            TypeDefinition type;
+            if (schemaNode instanceof LeafSchemaNode) {
+                type = ((LeafSchemaNode) schemaNode).getType();
+            } else {
+                type = ((LeafListSchemaNode) schemaNode).getType();
+            }
             TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
             if (baseType instanceof IdentityrefTypeDefinition) {
                 if (nodeType == null) {
-                    ns = getResolvedNamespace(null,schemaNode, getSchemaCtx(),
-                                              valNs, propNode);
+                    ns = getResolvedNamespace(null, valNs, getSchemaCtx(),
+                                              propNode);
                 } else {
-                    ns = getResolvedNamespace(valNs, schemaNode, getSchemaCtx(),
-                                              null, propNode);
+                    ns = getResolvedNamespace(valNs, null, getSchemaCtx(),
+                                              propNode);
                 }
             }
         }
@@ -255,14 +268,28 @@ public class MdsalSerializerHelper extends SerializerHelper<SchemaNode, SchemaCo
      * @return returns true if the child schema is available; false otherwise
      */
     private boolean isChildPresent(String name, Namespace namespace) {
-        Deque<DataSchemaNode> dataSchema = findSchemaNodeByNameAndNamespace(
-                (DataSchemaNode) curSchemaNode, name, namespace.moduleNs());
-        if (dataSchema != null) {
-            DataSchemaNode node = dataSchema.pop();
-            if (node != null) {
-                curSchemaNode = node;
-                return true;
+        QName qname =  QName.create(namespace.moduleNs(),
+                                    Revision.of(namespace.revision()), name);
+        SchemaNode childNode = null;
+        if (curSchemaNode instanceof DataSchemaNode) {
+            Deque<DataSchemaNode> dataSchema = findSchemaNodeByNameAndNamespace(
+                    (DataSchemaNode) curSchemaNode, name, namespace.moduleNs());
+            if (dataSchema != null && !dataSchema.isEmpty()) {
+                childNode = dataSchema.pop();
             }
+
+            if (!dataSchema.isEmpty()) {
+                childNode = findSchemaForChild(((ChoiceSchemaNode) childNode),
+                                               qname);
+            }
+
+        } else {
+            childNode = findDataChildSchemaByQName(curSchemaNode, qname);
+        }
+
+        if (childNode != null) {
+            curSchemaNode = childNode;
+            return true;
         }
         return false;
     }

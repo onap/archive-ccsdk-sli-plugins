@@ -36,8 +36,8 @@ import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.SerializerHelper;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.YangParameters;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeSerializer;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeSerializer;
-import org.opendaylight.netconf.sal.restconf.impl.ControllerContext;
 import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
+import org.opendaylight.restconf.nb.rfc8040.utils.parser.ParserIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -90,6 +90,27 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
     private static final Logger log = LoggerFactory.getLogger(
             RestconfApiCallNode.class);
 
+    /**
+     * Rest api call node service instance
+     */
+    private RestapiCallNode restapiCallNode;
+
+    /**
+     * Creates an instance of restconf api call node with restapi call node.
+     *
+     * @param r restapi call node
+     */
+    public RestconfApiCallNode(RestapiCallNode r) {
+        this.restapiCallNode = r;
+    }
+
+    /**
+     * Returns the restapi call node instance.
+     * @return
+     */
+    public RestapiCallNode getRestapiCallNode() {
+        return restapiCallNode;
+    }
 
     /**
      * Sends the restconf request using the parameters map and the memory
@@ -116,7 +137,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
      */
     public void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx,
                             Integer retryCount) throws SvcLogicException {
-        RestapiCallNode rest = new RestapiCallNode();
+        RestapiCallNode rest = getRestapiCallNode();
         RetryPolicy retryPolicy = null;
         HttpResponse r = new HttpResponse();
         try {
@@ -203,7 +224,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
      * @return JSON or XML message to be sent
      * @throws SvcLogicException when serializing the request fails
      */
-     protected String serializeRequest(Map<String, String> properties,
+     public String serializeRequest(Map<String, String> properties,
                                     YangParameters params, String uri,
                                     InstanceIdentifierContext insIdCtx)
              throws SvcLogicException {
@@ -227,9 +248,9 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
      * @return response message as properties
      * @throws SvcLogicException when serializing the response fails
      */
-    protected Map<String, String> serializeResponse(YangParameters params,
-                                                  String uri, String response,
-                                                  InstanceIdentifierContext insIdCtx)
+    public Map<String, String> serializeResponse(YangParameters params,
+                                                 String uri, String response,
+                                                 InstanceIdentifierContext insIdCtx)
             throws SvcLogicException {
         PropertiesNodeSerializer propSer = new MdsalPropertiesNodeSerializer(
                 insIdCtx.getSchemaNode(), insIdCtx.getSchemaContext(), uri);
@@ -255,9 +276,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
                                                      String uri)
             throws SvcLogicException {
         SchemaContext context = getSchemaContext(params);
-        ControllerContext contCtx = ControllerContext.getInstance();
-        contCtx.onGlobalContextUpdated(context);
-        return contCtx.toInstanceIdentifier(uri);
+        return ParserIdentifier.toInstanceIdentifier(uri, context, null);
     }
 
     /**
@@ -294,7 +313,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
      * @param res    http response
      * @return response message body
      */
-    private String getResponse(SvcLogicContext ctx, YangParameters params,
+    public String getResponse(SvcLogicContext ctx, YangParameters params,
                                String pre, HttpResponse res) {
         ctx.setAttribute(pre + RES_CODE, String.valueOf(res.code));
         ctx.setAttribute(pre + RES_MSG, res.message);

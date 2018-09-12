@@ -42,6 +42,8 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializ
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.UTF_HEADER;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.XML_PREFIX;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.getXmlWriter;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_HOLDER_NODE;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_HOLDER_NODE;
 
 /**
  * Representation of XML implementation of properties node listener.
@@ -193,7 +195,11 @@ public class PropertiesNodeXmlListener implements PropertiesNodeListener {
      */
     private String getNodeNamespace(PropertiesNode node) {
         PropertiesNode parent = node.parent();
-        if (parent instanceof RootNode || !parent.namespace().moduleName()
+        if (parent.nodeType() == MULTI_INSTANCE_HOLDER_NODE ||
+                parent.nodeType() == MULTI_INSTANCE_LEAF_HOLDER_NODE) {
+            parent = parent.parent();
+        }
+        if (parent instanceof RootNode || ! parent.namespace().moduleName()
                 .equals(node.namespace().moduleName())) {
             return node.namespace().moduleNs().toString();
         }

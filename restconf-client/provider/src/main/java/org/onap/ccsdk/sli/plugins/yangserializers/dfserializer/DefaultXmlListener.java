@@ -21,7 +21,10 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
+import org.dom4j.Namespace;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
+import java.util.List;
 
 import static java.lang.String.format;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.NODE_TYPE_ERR;
@@ -56,6 +59,11 @@ public class DefaultXmlListener implements XmlListener {
                 break;
 
             case OBJECT_NODE:
+                List cont = element.content();
+                if (cont != null && cont.size() == 2 &&
+                        isValueNsForLeaf(cont, element)) {
+                    return;
+                }
                 serializerHelper.addNode(element.getName(),
                                          element.getNamespace().getURI(),
                                          null, null, null);
@@ -65,6 +73,39 @@ public class DefaultXmlListener implements XmlListener {
                 throw new SvcLogicException(format(NODE_TYPE_ERR,
                                                    nodeType.toString()));
         }
+    }
+
+    /**
+     * Returns true if element has value namespace and adds the node to
+     * property tree; false otherwise.
+     *
+     * @param cont    content of the element
+     * @param element element
+     * @return true if element has value namespace; false otherwise
+     * @throws SvcLogicException
+     */
+    private boolean isValueNsForLeaf(List cont, Element element)
+            throws SvcLogicException {
+        for (Object c : cont) {
+            if (c instanceof Namespace) {
+                String value = element.getText();
+                if (value != null) {
+                    String[] val = value.split(":");
+                    String valPrefix = val[0];
+                    String actVal = val[1];
+                    if (valPrefix != null && actVal != null &&
+                            valPrefix.equals(((Namespace) c).getPrefix())) {
+                        serializerHelper.addNode(
+                                element.getName(),
+                                element.getNamespace().getURI(),
+                                actVal,
+                                ((Namespace) c).getURI(), null);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

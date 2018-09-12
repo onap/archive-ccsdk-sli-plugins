@@ -23,7 +23,15 @@
            xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
            odl:use-default-for-reference-types="true">
 
-    <bean id="restconfapiCallNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode" />
+    <reference xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+               id="restapiCallNodeProvider"
+               interface="org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode"
+               ext:proxy-method="classes"/>
+
+    <bean id="restconfapiCallNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode" >
+        <argument ref="restapiCallNodeProvider"/>
+    </bean>
+
     <bean id="restconfDiscoveryNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfdiscovery.RestconfDiscoveryNode" />
 
     <service ref="restconfapiCallNodeProvider">

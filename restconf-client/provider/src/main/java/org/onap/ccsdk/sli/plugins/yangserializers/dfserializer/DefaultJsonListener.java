@@ -53,6 +53,16 @@ public class DefaultJsonListener implements JsonListener {
     private String modName;
 
     /**
+     * Value of the current JSON node.
+     */
+    private String value;
+
+    /**
+     * Value namespace of the current JSON node.
+     */
+    private String valueNs;
+
+    /**
      * Creates an instance of default json listener with its serializer helper.
      *
      * @param serializerHelper serializer helper
@@ -64,16 +74,18 @@ public class DefaultJsonListener implements JsonListener {
     @Override
     public void enterJsonNode(String nodeName, JsonNode node,
                               NodeType nodeType) throws SvcLogicException {
-        getNodeName(nodeName);
+        getNodeName(nodeName, false);
 
         switch (nodeType) {
             case SINGLE_INSTANCE_LEAF_NODE:
-                serializerHelper.addNode(name, modName, node.asText(), null,
+                getNodeName(node.asText(), true);
+                serializerHelper.addNode(name, modName, value, valueNs,
                                          SINGLE_INSTANCE_LEAF_NODE);
                 break;
 
             case MULTI_INSTANCE_LEAF_NODE:
-                serializerHelper.addNode(name, modName, node.asText(), null,
+                getNodeName(node.asText(), true);
+                serializerHelper.addNode(name, modName, value, valueNs,
                                          MULTI_INSTANCE_LEAF_NODE);
                 break;
 
@@ -105,18 +117,29 @@ public class DefaultJsonListener implements JsonListener {
 
     /**
      * Parses the abstract JSON name and fills the node name and node
-     * namespace of the current JSON node.
+     * namespace or value and value namespace of the current JSON node .
      *
-     * @param abstractName abstract JSON name
+     * @param abstractName full name value
+     * @param isVal if it is for value parsing
      */
-    private void getNodeName(String abstractName) {
+    private void getNodeName(String abstractName, boolean isVal) {
         String[] val = abstractName.split(":");
         if (val.length == 2) {
-            modName = val[0];
-            name = val[1];
+            if (isVal) {
+                valueNs = val[0];
+                value = val[1];
+            } else {
+                modName = val[0];
+                name = val[1];
+            }
         } else {
-            name = val[0];
+            if (isVal) {
+                value = val[0];
+                valueNs = null;
+            } else {
+                name = val[0];
+                modName = null;
+            }
         }
     }
-
 }

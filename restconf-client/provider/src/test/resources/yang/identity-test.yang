@@ -58,16 +58,16 @@ module identity-test {
                             type available;
                         }
                         leaf leaf1 {
-                          type leafref {
-                              path "../../iden";
-                          }
+                            type leafref {
+                                path "../../iden";
+                            }
                         }
 
                         leaf leaf2 {
-                           type identityref {
+                            type identityref {
                                 base type:int-type;
                                 base sec:iden1;
-                           }
+                            }
                         }
                     }
                 }

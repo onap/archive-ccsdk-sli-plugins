@@ -54,7 +54,11 @@ public class DefaultPropertiesNodeListener implements PropertiesNodeListener {
          */
         if (node.nodeType() == SINGLE_INSTANCE_LEAF_NODE
                 || node.nodeType() == MULTI_INSTANCE_LEAF_NODE) {
-            params.put(node.uri(), ((LeafNode) node).value());
+            String val = ((LeafNode) node).value();
+            if (((LeafNode) node).valueNs() != null) {
+                val = ((LeafNode) node).valueNs().moduleName() + ":" + val;
+            }
+            params.put(node.uri(), val);
         }
     }
 
