@@ -16,6 +16,10 @@
 	<version>0.3.1-SNAPSHOT</version>
 	<packaging>feature</packaging>
 
+	<properties>
+		<skip.karaf.featureTest>true</skip.karaf.featureTest>
+	</properties>
+
 	<name>ccsdk-sli-plugins :: restconf-client :: ${project.artifactId}</name>
 
 
@@ -48,10 +52,10 @@
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>${project.groupId}</groupId>-->
-			<!--<artifactId>restconf-client-provider</artifactId>-->
-			<!--<version>${project.version}</version>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>restconf-client-provider</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
