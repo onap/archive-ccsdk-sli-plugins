@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_f24c0aca",
+        "filename": "restapi-call-node/provider/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2091
+      },
+      "writtenOn": "2018-09-18T05:15:48Z",
+      "side": 1,
+      "message": "The below dependency must be added for runtime env to work with jersey client.\n        \u003cdependency\u003e\n            \u003cgroupId\u003eorg.glassfish.jersey.inject\u003c/groupId\u003e\n            \u003cartifactId\u003ejersey-hk2\u003c/artifactId\u003e\n            \u003cversion\u003e2.27\u003c/version\u003e\n        \u003c/dependency\u003e",
+      "range": {
+        "startLine": 65,
+        "startChar": 6,
+        "endLine": 65,
+        "endChar": 18
+      },
+      "revId": "f4c1d78c389f554d88a785002d251de597803285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
