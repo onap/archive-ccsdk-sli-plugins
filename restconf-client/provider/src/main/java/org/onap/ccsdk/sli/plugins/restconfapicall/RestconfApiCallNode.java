@@ -54,6 +54,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PATCH;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.POST;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PUT;
 import static org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode.parseParam;
@@ -153,7 +154,8 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
             InstanceIdentifierContext<?> insIdCtx = getInsIdCtx(p, uri);
 
             String req = null;
-            if (p.httpMethod == POST || p.httpMethod == PUT) {
+            if (p.httpMethod == POST || p.httpMethod == PUT
+                    || p.httpMethod == PATCH) {
                 req = serializeRequest(props, p, uri, insIdCtx);
             }
             if (req == null && p.requestBody != null) {
@@ -181,8 +183,8 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
 
             log.error(REQ_ERR + e.getMessage(), e);
             String prefix = parseParam(paramMap, RES_PRE, false, null);
-            if (retryPolicy == null || shouldRetry == false) {
-                setFailureResponseStatus(ctx, prefix, e.getMessage(), r);
+            if (retryPolicy == null || !shouldRetry) {
+                setFailureResponseStatus(ctx, prefix, e.getMessage());
             } else {
                 if (retryCount == null) {
                     retryCount = 0;
@@ -198,12 +200,11 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
                         sendRequest(paramMap, ctx, retryCount);
                     } else {
                         log.debug(MAX_RETRY_ERR);
-                        setFailureResponseStatus(ctx, prefix,
-                                                 e.getMessage(), r);
+                        setFailureResponseStatus(ctx, prefix, e.getMessage());
                     }
                 } catch (Exception ex) {
                     log.error(NO_MORE_RETRY, ex);
-                    setFailureResponseStatus(ctx, prefix, RETRY_FAIL, r);
+                    setFailureResponseStatus(ctx, prefix, RETRY_FAIL);
                 }
             }
         }
@@ -338,11 +339,10 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
      * @param ctx    service logic context
      * @param prefix prefix to be added
      * @param errMsg error message
-     * @param res    http response
      */
     private void setFailureResponseStatus(SvcLogicContext ctx, String prefix,
-                                          String errMsg, HttpResponse res) {
-        res = new HttpResponse();
+                                          String errMsg) {
+        HttpResponse res = new HttpResponse();
         res.code = 500;
         res.message = errMsg;
         ctx.setAttribute(prefix + RES_CODE, String.valueOf(res.code));

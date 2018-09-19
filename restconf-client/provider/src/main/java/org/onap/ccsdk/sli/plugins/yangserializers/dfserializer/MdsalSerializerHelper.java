@@ -274,11 +274,12 @@ public class MdsalSerializerHelper extends SerializerHelper<SchemaNode, SchemaCo
         if (curSchemaNode instanceof DataSchemaNode) {
             Deque<DataSchemaNode> dataSchema = findSchemaNodeByNameAndNamespace(
                     (DataSchemaNode) curSchemaNode, name, namespace.moduleNs());
+
             if (dataSchema != null && !dataSchema.isEmpty()) {
                 childNode = dataSchema.pop();
             }
 
-            if (!dataSchema.isEmpty()) {
+            if (dataSchema != null && !dataSchema.isEmpty()) {
                 childNode = findSchemaForChild(((ChoiceSchemaNode) childNode),
                                                qname);
             }

@@ -41,6 +41,10 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.GET;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.POST;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PUT;
+import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.parseUrl;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_FROM_JSON_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_FROM_XML_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_ID;
@@ -314,6 +318,51 @@ public class DataFormatSerializerTest {
         restconf.sendRequest(p, ctx);
         assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_RPC));
         verifyAttListRpc(ctx, outPre);
+    }
+
+    /**
+     * Verifies URL parser returning path with only schema information for all
+     * kind of URL.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void validateUrlParser() throws SvcLogicException {
+        String actVal = "identity-test:test";
+        String url1 = "http://echo.getpostman.com/restconf/operations/" +
+                actVal;
+        String url2 = "http://echo.getpostman.com/restconf/data/" + actVal;
+        String url3 = "https://echo.getpostman.com/restconf/operations/" +
+                actVal;
+        String url4 = "https://echo.getpostman.com/restconf/data/" + actVal +
+                "/for-put";
+        String url5 = "http://localhost:8282/restconf/operations/" + actVal;
+        String url6 = "https://localhost:8282/restconf/operations/" + actVal;
+        String url7 = "http://localhost:8282/restconf/data/" + actVal +
+                "/for-put";
+        String url8 = "https://localhost:8282/restconf/data/" + actVal;
+        String url9 = "http://182.2.61.24:2250/restconf/data/" + actVal;
+        String url10 = "https://182.2.61.24:2250/restconf/operations/" + actVal;
+        String val1 = parseUrl(url1, POST);
+        String val2 = parseUrl(url2, GET);
+        String val3 = parseUrl(url3, POST);
+        String val4 = parseUrl(url4, PUT);
+        String val5 = parseUrl(url5, GET);
+        String val6 = parseUrl(url6, POST);
+        String val7 = parseUrl(url7, PUT);
+        String val8 = parseUrl(url8, POST);
+        String val9 = parseUrl(url9, GET);
+        String val10 = parseUrl(url10, POST);
+        assertThat(val1, is(actVal));
+        assertThat(val2, is(actVal));
+        assertThat(val3, is(actVal));
+        assertThat(val4, is(actVal));
+        assertThat(val5, is(actVal));
+        assertThat(val6, is(actVal));
+        assertThat(val7, is(actVal));
+        assertThat(val8, is(actVal));
+        assertThat(val9, is(actVal));
+        assertThat(val10, is(actVal));
     }
 
     /**

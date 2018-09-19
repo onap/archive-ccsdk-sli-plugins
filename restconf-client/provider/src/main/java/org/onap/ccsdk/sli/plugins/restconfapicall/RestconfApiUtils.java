@@ -97,8 +97,6 @@ public final class RestconfApiUtils {
     private static final String URL_SYNTAX = "The following URL cannot be " +
             "parsed into URI : ";
 
-    private static final String RESTCONF_PATH = "/restconf/operations/";
-
     private static final String PUT_NODE_ERR = "The following URL does not " +
             "contain minimum two nodes for PUT operation.";
 
@@ -136,7 +134,7 @@ public final class RestconfApiUtils {
      * @return YANG path pointing to parent
      * @throws SvcLogicException when parsing the URL fails
      */
-    static String parseUrl(String url, HttpMethod method)
+    public static String parseUrl(String url, HttpMethod method)
             throws SvcLogicException {
         URI uri;
         try {
@@ -146,14 +144,33 @@ public final class RestconfApiUtils {
         }
 
         String path = uri.getPath();
-        if (path.contains(RESTCONF_PATH)) {
-            path = path.replaceFirst(RESTCONF_PATH, "");
-        }
+        path = getParsedPath(path);
         if (method == PUT) {
             if (!path.contains(SLASH)) {
                 throw new SvcLogicException(PUT_NODE_ERR + url);
             }
             path = path.substring(0, path.lastIndexOf(SLASH));
+        }
+        return path;
+    }
+
+    /**
+     * Returns the path which contains only the schema nodes.
+     *
+     * @param path path
+     * @return path representing schema
+     */
+    private static String getParsedPath(String path) {
+        String firstHalf;
+        if (path.contains(":")) {
+            String[] p = path.split(":");
+            if (p[0].contains(SLASH)) {
+                int slash = p[0].lastIndexOf(SLASH);
+                firstHalf = p[0].substring(slash + 1);
+            } else {
+                firstHalf = p[0];
+            }
+            return firstHalf + ":" + p[1];
         }
         return path;
     }
