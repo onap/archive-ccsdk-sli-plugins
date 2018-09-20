@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a76adc5_643d942a",
+        "filename": "restapi-call-node/provider/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2018-09-20T18:27:09Z",
+      "side": 1,
+      "message": "Version 2.0.1 of this package comes pre-installed with Opendaylight Oxygen.  We need to use that version, otherwise we run the risk of version conflicts (ClassNotFoundExceptions)",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 21
+      },
+      "revId": "f4c1d78c389f554d88a785002d251de597803285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_840b107c",
+        "filename": "restapi-call-node/provider/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2018-09-20T18:27:09Z",
+      "side": 1,
+      "message": "This is okay, I think. Version 1.19.4 of  the com.sun version of Jersey client comes preinstalled with ODL, but if we\u0027re using org.glassfish\u0027s version that should not create a conflict (assuming the package names are also org.glassfish.* vs com.sum.*)",
+      "range": {
+        "startLine": 60,
+        "startChar": 1,
+        "endLine": 64,
+        "endChar": 21
+      },
+      "revId": "f4c1d78c389f554d88a785002d251de597803285",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_f24c0aca",
         "filename": "restapi-call-node/provider/pom.xml",
         "patchSetId": 2
