@@ -22,6 +22,30 @@
       "revId": "6a8381e0f724955e520ef03b775024b4e515d837",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_c749eeb8",
+        "filename": "restapi-call-node/provider/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-09-23T06:44:06Z",
+      "side": 1,
+      "message": "RestconfDiscoveryNode needs to establish Server Sent Event (SSE) which is introduced from JAX-RS 2.1. If we downgrade this than RestconfClient which is using RestApiCallNode to sendHttpRequest will not work. Kindly suggest.",
+      "parentUuid": "1a76adc5_433ddbdb",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 27,
+        "endChar": 34
+      },
+      "revId": "6a8381e0f724955e520ef03b775024b4e515d837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
