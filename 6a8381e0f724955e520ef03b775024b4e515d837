@@ -46,6 +46,30 @@
       "revId": "6a8381e0f724955e520ef03b775024b4e515d837",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ed23a9bc",
+        "filename": "restapi-call-node/provider/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2018-09-24T18:02:51Z",
+      "side": 1,
+      "message": "I see.  The only concern I have is that I see that the ODL shiro package expects version 2.0.1 of this package. I\u0027ll try loading version 2.1 in addition in my dev environment and make sure nothing breaks and, if not, I have no problem adding version 2.1 as part of the \"dependences\" package in ccsdk/distribution (that\u0027s where we install additional third party libraries)",
+      "parentUuid": "1a76adc5_c749eeb8",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 27,
+        "endChar": 34
+      },
+      "revId": "6a8381e0f724955e520ef03b775024b4e515d837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
