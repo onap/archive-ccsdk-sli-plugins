@@ -5,18 +5,15 @@
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
 		<artifactId>single-feature-parent</artifactId>
-		<version>1.1.0</version>
+		<version>1.1.1-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 	<groupId>org.onap.ccsdk.sli.plugins</groupId>
 	<artifactId>ccsdk-template-node</artifactId>
-	<version>0.3.3-SNAPSHOT</version>
+	<version>0.3.1-SNAPSHOT</version>
 	<packaging>feature</packaging>
 
-	<properties>
-		<skip.karaf.featureTest>true</skip.karaf.featureTest>
-	</properties>
 
 	<dependencies>
 		<dependency>
