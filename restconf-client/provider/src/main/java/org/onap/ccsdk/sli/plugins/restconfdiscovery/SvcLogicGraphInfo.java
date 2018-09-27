@@ -142,7 +142,7 @@ class SvcLogicGraphInfo {
 
         SvcLogicStore store = service.getStore();
         if (store != null) {
-            SvcLogicGraph subGraph = store.fetch(module, rpc, version, mode);
+            SvcLogicGraph subGraph = store.fetch(module, rpc, mode, version);
             if (subGraph != null) {
                 ctx.setAttribute("subGraph", subGraph.toString());
                 service.execute(subGraph, ctx);

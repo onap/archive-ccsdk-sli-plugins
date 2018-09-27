@@ -20,16 +20,19 @@
 
 package org.onap.ccsdk.sli.plugins.restconfdiscovery;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
+import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -47,13 +50,15 @@ public class TestRestconfDiscoveryNode {
         ctx.setAttribute("prop.encoding-json", "encoding-json");
         ctx.setAttribute("restapi-result.response-code", "200");
         ctx.setAttribute("restapi-result.ietf-subscribed-notifications" +
-                                 ":output.identifier", "100");
+                                 ":establish-subscription.output.identifier",
+                         "100");
 
         Map<String, String> p = new HashMap<>();
         p.put("sseConnectURL", "http://localhost:8080/events");
         p.put("subscriberId", "networkId");
         p.put("responsePrefix", "restapi-result");
-        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode();
+        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
+                new RestconfApiCallNode(new RestapiCallNode()));
         rdn.establishPersistentConnection(p, ctx, "networkId");
         Thread.sleep(2000);
         rdn.deleteSubscription(p, ctx);
@@ -75,7 +80,8 @@ public class TestRestconfDiscoveryNode {
             throws SvcLogicException{
         SvcLogicContext ctx = new SvcLogicContext();
         Map<String, String> p = new HashMap<>();
-        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode();
+        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
+                new RestconfApiCallNode(new RestapiCallNode()));
         rdn.establishSubscription(p, ctx);
     }
 
@@ -84,7 +90,8 @@ public class TestRestconfDiscoveryNode {
         SvcLogicContext ctx = new SvcLogicContext();
         ctx.setAttribute("restapi-result.response-code", "200");
         ctx.setAttribute("response-code", "404");
-        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode();
+        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
+                new RestconfApiCallNode(new RestapiCallNode()));
         assertThat(rdn.getResponseCode("restapi-result", ctx),
                    is("200"));
         assertThat(rdn.getResponseCode(null, ctx),
@@ -95,10 +102,12 @@ public class TestRestconfDiscoveryNode {
     public void testOutputIdentifier() {
         SvcLogicContext ctx = new SvcLogicContext();
         ctx.setAttribute("restapi-result.ietf-subscribed-notifications:" +
-                                 "output.identifier", "89");
-        ctx.setAttribute("ietf-subscribed-notifications:output.identifier",
+                                 "establish-subscription.output.identifier",
                          "89");
-        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode();
+        ctx.setAttribute("ietf-subscribed-notifications:establish-subscripti" +
+                                 "on.output.identifier", "89");
+        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
+                new RestconfApiCallNode(new RestapiCallNode()));
         assertThat(rdn.getOutputIdentifier("restapi-result", ctx),
                    is("89"));
     }
