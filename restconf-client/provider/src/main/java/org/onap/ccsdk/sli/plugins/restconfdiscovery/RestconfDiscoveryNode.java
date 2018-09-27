@@ -26,7 +26,6 @@ import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -37,12 +36,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * Representation of a plugin to subscribe for notification and then
  * to handle the received notifications.
  */
 public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
-    private static final Logger log = LoggerFactory.getLogger(RestconfDiscoveryNode.class);
+
+    private static final Logger log = getLogger(RestconfDiscoveryNode.class);
 
     private ExecutorService executor = Executors.newCachedThreadPool();
     private Map<String, PersistentConnection> runnableInfo = new ConcurrentHashMap<>();
@@ -54,15 +56,19 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
     private static final String SUBSCRIBER_ID = "subscriberId";
     private static final String RESPONSE_CODE = "response-code";
     private static final String RESPONSE_PREFIX = "responsePrefix";
-    private static final String OUTPUT_IDENTIFIER = "ietf-subscribed-notifications:output.identifier";
+    private static final String OUTPUT_IDENTIFIER = "ietf-subscribed-notif" +
+            "ications:establish-subscription.output.identifier";
     private static final String RESPONSE_CODE_200 = "200";
     private static final String SSE_URL = "sseConnectURL";
 
     /**
-     * Creates an instance of RestconfDiscoveryNode and
-     * starts processing of event.
+     * Creates an instance of RestconfDiscoveryNode and starts processing of
+     * event.
+     *
+     * @param r restconf api call node
      */
-    public RestconfDiscoveryNode() {
+    public RestconfDiscoveryNode(RestconfApiCallNode r) {
+        this.restconfApiCallNode = r;
         ExecutorService e = Executors.newFixedThreadPool(20);
         EventProcessor p = new EventProcessor(this);
         for (int i = 0; i < 20; ++i) {

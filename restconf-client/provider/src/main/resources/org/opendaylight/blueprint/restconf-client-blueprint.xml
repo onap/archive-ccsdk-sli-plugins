@@ -32,7 +32,9 @@
         <argument ref="restapiCallNodeProvider"/>
     </bean>
 
-    <bean id="restconfDiscoveryNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfdiscovery.RestconfDiscoveryNode" />
+    <bean id="restconfDiscoveryNodeProvider" class="org.onap.ccsdk.sli.plugins.restconfdiscovery.RestconfDiscoveryNode" >
+        <argument ref="restconfapiCallNodeProvider"/>
+    </bean>
 
     <service ref="restconfapiCallNodeProvider">
         <interfaces>
