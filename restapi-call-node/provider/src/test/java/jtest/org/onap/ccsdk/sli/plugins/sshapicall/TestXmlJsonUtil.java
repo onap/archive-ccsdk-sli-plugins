@@ -254,7 +254,7 @@ public class TestXmlJsonUtil {
                 "}\r\n" +
                 "";
 
-        String xmlout = XmlJsonUtil.removeEmptyStructJson(xmlin);
+        String xmlout = XmlJsonUtil.removeEmptyStructJson(null, xmlin);
         log.info(xmlout);
 
         Assert.assertEquals(xmloutexpected, xmlout);

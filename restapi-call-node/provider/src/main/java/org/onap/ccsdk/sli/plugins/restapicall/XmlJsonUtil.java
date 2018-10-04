@@ -272,7 +272,7 @@ public final class XmlJsonUtil {
         return sb.toString();
     }
 
-    public static String removeEmptyStructJson(String s) {
+    public static String removeEmptyStructJson(String template, String s) {
         int k = 0;
         while (k < s.length()) {
             boolean curly = true;
@@ -304,8 +304,13 @@ public final class XmlJsonUtil {
                         if (i5 < 0)
                             i5 = s.length();
 
-                        s = s.substring(0, i4) + s.substring(i5);
-                        k = 0;
+                        /*If template mandates empty construct to be present, those should not be removed.*/
+                        if ((template != null) && template.contains(s.substring(i4))) {
+                            k = i1 + 1;
+                        } else {
+                            s = s.substring(0, i4) + s.substring(i5);
+                            k = 0;
+                        }
                     } else
                         k = i1 + 1;
                 } else

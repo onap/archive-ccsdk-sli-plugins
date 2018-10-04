@@ -392,6 +392,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         throws SvcLogicException {
         log.info("Building {} started", format);
         long t1 = System.currentTimeMillis();
+        String originalTemplate = template;
 
         template = expandRepeats(ctx, template, 1);
 
@@ -439,7 +440,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         String req = format == Format.XML
-            ? XmlJsonUtil.removeEmptyStructXml(ss.toString()) : XmlJsonUtil.removeEmptyStructJson(ss.toString());
+            ? XmlJsonUtil.removeEmptyStructXml(ss.toString()) : XmlJsonUtil.removeEmptyStructJson(originalTemplate, ss.toString());
 
         if (format == Format.JSON) {
             req = XmlJsonUtil.removeLastCommaJson(req);
