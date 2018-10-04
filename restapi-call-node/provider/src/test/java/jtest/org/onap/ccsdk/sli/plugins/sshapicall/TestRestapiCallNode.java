@@ -50,6 +50,61 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
     }
+	
+	@Test
+    public void testJsonSdwanVpnTopologyTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        ctx.setAttribute("prop.topology", "topoType");
+
+        ctx.setAttribute("prop.roles_length", "1");
+        ctx.setAttribute("prop.roles[0]", "role1");
+
+        ctx.setAttribute("prop.siteAttachement_length", "2");
+
+        ctx.setAttribute("prop.siteAttachement[0].siteId", "site1");
+        ctx.setAttribute("prop.siteAttachement[0].roles_length", "0");
+        ctx.setAttribute("prop.siteAttachement[0].roles[0]", "role1");
+        ctx.setAttribute("prop.siteAttachement[0].roles[1]", "role3");
+
+        ctx.setAttribute("prop.siteAttachement[1].siteId", "site2");
+        ctx.setAttribute("prop.siteAttachement[1].roles_length", "1");
+        ctx.setAttribute("prop.siteAttachement[1].roles[0]", "role2");
+		
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/sdwan-vpn-topology.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+	
+	@Test
+    public void testJsonSdwanSiteTemplate() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        ctx.setAttribute("prop.name", "site1");
+
+
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("templateFileName", "src/test/resources/sdwan-site.json");
+        p.put("restapiUrl", "http://echo.getpostman.com");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "abc123");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "response");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
 
     @Test
     public void testJsonTemplate() throws SvcLogicException {
