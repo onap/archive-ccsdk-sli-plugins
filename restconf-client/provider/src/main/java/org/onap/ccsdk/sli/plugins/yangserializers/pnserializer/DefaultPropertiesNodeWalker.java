@@ -22,6 +22,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -56,6 +57,32 @@ public class DefaultPropertiesNodeWalker<T extends NodeChild> implements Propert
                 listener.enterPropertiesNode(node);
                 walkChildNode(listener, node);
                 listener.exitPropertiesNode(node);
+            }
+        }
+        if (propertiesNode instanceof RootNode) {
+            processAugments(propertiesNode, listener);
+        }
+    }
+
+    /**
+     * Processes the augments present in the root node.
+     *
+     * @param node     root node
+     * @param listener properties node listener
+     * @throws SvcLogicException when augment node walking fails
+     */
+    private void processAugments(PropertiesNode node,
+                                 PropertiesNodeListener listener)
+            throws SvcLogicException {
+        for (Map.Entry<Object, Collection<PropertiesNode>>
+                augToChild : node.augmentations().asMap().entrySet()) {
+            Collection<PropertiesNode> child = augToChild.getValue();
+            if (!child.isEmpty()) {
+                for (PropertiesNode p : child) {
+                    listener.enterPropertiesNode(p);
+                    walkChildNode(listener, p);
+                    listener.exitPropertiesNode(p);
+                }
             }
         }
     }

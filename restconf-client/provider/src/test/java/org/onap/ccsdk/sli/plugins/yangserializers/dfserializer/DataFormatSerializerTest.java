@@ -50,6 +50,7 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_ID;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_YANG;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_YANG_AUG_POST;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_ID;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG;
@@ -215,6 +216,25 @@ public class DataFormatSerializerTest {
                 ".com/restconf/operations/test-yang:cont1");
         restconf.sendRequest(p, ctx);
         assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_YANG));
+    }
+
+    /**
+     * Verifies encoding of parameters to JSON data format with augment as
+     * root child.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToJsonWithAugAsRootChild() throws SvcLogicException {
+        String pre = "test-yang:cont1.cont2.";
+        SvcLogicContext ctx = createAttListYang(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/test-yang:cont1/cont2/cont4");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_YANG_AUG_POST));
     }
 
     /**
