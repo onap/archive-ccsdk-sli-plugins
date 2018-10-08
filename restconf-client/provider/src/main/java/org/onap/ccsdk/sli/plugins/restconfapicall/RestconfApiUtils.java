@@ -41,7 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PUT;
 import static org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode.getParameters;
 import static org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode.parseParam;
 import static org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode.DEFAULT_MODE;
@@ -65,6 +64,8 @@ public final class RestconfApiUtils {
     static final String HEADER = "header.";
 
     static final String COMMA = ",";
+
+    static final String COLON = ":";
 
     static final String HTTP_RES = "httpResponse";
 
@@ -96,9 +97,6 @@ public final class RestconfApiUtils {
 
     private static final String URL_SYNTAX = "The following URL cannot be " +
             "parsed into URI : ";
-
-    private static final String PUT_NODE_ERR = "The following URL does not " +
-            "contain minimum two nodes for PUT operation.";
 
     private static final String YANG = ".yang";
 
@@ -145,12 +143,6 @@ public final class RestconfApiUtils {
 
         String path = uri.getPath();
         path = getParsedPath(path);
-        if (method == PUT) {
-            if (!path.contains(SLASH)) {
-                throw new SvcLogicException(PUT_NODE_ERR + url);
-            }
-            path = path.substring(0, path.lastIndexOf(SLASH));
-        }
         return path;
     }
 
@@ -162,15 +154,15 @@ public final class RestconfApiUtils {
      */
     private static String getParsedPath(String path) {
         String firstHalf;
-        if (path.contains(":")) {
-            String[] p = path.split(":");
+        if (path.contains(COLON)) {
+            String[] p = path.split(COLON);
             if (p[0].contains(SLASH)) {
                 int slash = p[0].lastIndexOf(SLASH);
                 firstHalf = p[0].substring(slash + 1);
             } else {
                 firstHalf = p[0];
             }
-            return firstHalf + ":" + p[1];
+            return firstHalf + COLON + p[1];
         }
         return path;
     }
@@ -222,6 +214,13 @@ public final class RestconfApiUtils {
         }
     }
 
+    /**
+     * Processes all the obtained files by isolating all the YANG files from
+     * all the directory of the given path recursively.
+     *
+     * @param files     files in the given path
+     * @param yangFiles YANG files list
+     */
     private static void processFiles(File[] files, List<File> yangFiles) {
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(YANG)) {
@@ -230,5 +229,21 @@ public final class RestconfApiUtils {
                 getYangFiles(file, yangFiles);
             }
         }
+    }
+
+    /**
+     * Returns the updated XML request message by adding root node to it.
+     *
+     * @param req      XML request
+     * @param nodeName root node name
+     * @param modNs    module namespace of the root node
+     * @return updated XML request message
+     */
+    static String getUpdatedXmlReq(String req, String nodeName, String modNs) {
+        String rootNode = "\n<" + nodeName + " xmlns=\"" + modNs.toString() +
+                "\">\n";
+        req = req.replaceFirst("\n", rootNode);
+        req = req + "</" + nodeName + ">";
+        return req.replaceAll(">\\s+<", "><");
     }
 }

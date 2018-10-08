@@ -26,9 +26,9 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
  */
 public final class DataFormatUtilsTest {
 
-    static final String ENCODE_TO_JSON_ID = "{\n" +
-            "    \"identity-test:con1\": {\n" +
-            "        \"interfaces\": {\n" +
+    static final String ENCODE_TO_JSON_ID_COMMON = "\n        \"interfaces\"" +
+            ": " +
+            "{\n" +
             "            \"int-list\": [\n" +
             "                {\n" +
             "                    \"iden\": \"optical\",\n" +
@@ -61,14 +61,23 @@ public final class DataFormatUtilsTest {
             "            ]\n" +
             "        },\n" +
             "        \"interface\": \"identity-types:physical\"\n" +
-            "    },\n" +
+            "    }";
+
+    static final String ENCODE_TO_JSON_ID = "{\n" +
+            "    \"identity-test:con1\": {" + ENCODE_TO_JSON_ID_COMMON +
+            ",\n" +
             "    \"identity-test:l\": \"abc\"\n" +
             "}";
 
-    static final String ENCODE_TO_XML_ID = "<?xml version=\"1.0\" encoding=" +
-            "\"UTF-8\" standalone=\"no\"?>\n" +
-            "<con1 xmlns=\"identity:ns:test:json:ser\">\n" +
-            "    <interfaces>\n" +
+    static final String ENCODE_TO_JSON_ID_PUT = "{\n" +
+            "    \"identity-test:test\": {\n" +
+            "        \"con1\": {" + addSpace(ENCODE_TO_JSON_ID_COMMON, 4) +
+            ",\n" +
+            "        \"l\": \"abc\"\n" +
+            "    }\n" +
+            "}";
+
+    static final String ENCODE_TO_XML_ID_COMMON = "\n    <interfaces>\n" +
             "        <int-list>\n" +
             "            <iden>optical</iden>\n" +
             "            <available>\n" +
@@ -97,8 +106,19 @@ public final class DataFormatUtilsTest {
             "        </int-list>\n" +
             "    </interfaces>\n" +
             "    <interface xmlns:yangid=\"identity:list:ns:test:json:ser\">" +
-            "yangid:physical</interface>\n" +
-            "</con1>\n";
+            "yangid:physical</interface>";
+
+    static final String ENCODE_TO_XML_ID = "<?xml version=\"1.0\" encoding=" +
+            "\"UTF-8\" standalone=\"no\"?>\n" +
+            "<con1 xmlns=\"identity:ns:test:json:ser\">" +
+            ENCODE_TO_XML_ID_COMMON + "\n</con1>\n";
+
+    static final String ENCODE_TO_XML_ID_PUT = "<?xml version=\"1.0\" enco" +
+            "ding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<test xmlns=\"identity:ns:test:json:ser\">\n" +
+            "    <con1>" + addSpace(ENCODE_TO_XML_ID_COMMON, 4)
+            + "\n    </con1>\n" +
+            "</test>\n";
 
     static final String ENCODE_TO_JSON_YANG_COMMON = "\n    " +
             "\"test-augment:cont13\": {\n" +
@@ -249,6 +269,13 @@ public final class DataFormatUtilsTest {
             "    }\n" +
             "}";
 
+    static final String ENCODE_TO_JSON_YANG_PUT = "{\n" +
+            "    \"test-yang:cont4\": {" + addSpace(
+            ENCODE_TO_JSON_YANG_COMMON, 4) + ",\n" +
+            "        \"leaf10\": \"abc\"\n" +
+            "    }\n" +
+            "}";
+
     static final String ENCODE_TO_XML_YANG_COMMON = "\n" +
             "<cont13 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
             "augment\">\n" +
@@ -289,6 +316,12 @@ public final class DataFormatUtilsTest {
             "<leaf10 xmlns=\"urn:opendaylight:params:xml:ns:yang:test\">abc" +
             "</leaf10>" +
             ENCODE_TO_XML_YANG_COMMON + "\n";
+
+    static final String ENCODE_TO_XML_YANG_PUT = "<?xml version=\"1.0\" enc" +
+            "oding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<cont4 xmlns=\"urn:opendaylight:params:xml:ns:yang:test\">\n" +
+            "    <leaf10>abc</leaf10>" +
+            addSpace(ENCODE_TO_XML_YANG_COMMON, 4) + "\n</cont4>\n";
 
     static final String ENCODE_TO_XML_YANG = "<?xml version=\"1.0\" encoding" +
             "=\"UTF-8\" standalone=\"no\"?>\n" +

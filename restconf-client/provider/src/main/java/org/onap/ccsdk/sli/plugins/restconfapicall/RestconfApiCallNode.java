@@ -20,6 +20,14 @@
 
 package org.onap.ccsdk.sli.plugins.restconfapicall;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
@@ -35,30 +43,39 @@ import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.MdsalSerializerHe
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.SerializerHelper;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.YangParameters;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeSerializer;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeSerializer;
 import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
 import org.opendaylight.restconf.nb.rfc8040.utils.parser.ParserIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.UriBuilder;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Strings.repeat;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.DELETE;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.GET;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PATCH;
-import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.POST;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PUT;
 import static org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode.parseParam;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.ATTEMPTS_MSG;
+import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.COLON;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.COMMA;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.COMM_FAIL;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.HEADER;
@@ -74,10 +91,16 @@ import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.RES_PR
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.RETRY_COUNT;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.RETRY_FAIL;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.UPDATED_URL;
+import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getUpdatedXmlReq;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getSchemaCtxFromDir;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getYangParameters;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.parseUrl;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfListenerFactory.instance;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.FORMAT_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.UTF_HEADER;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.XML_TREE_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.getXmlWriter;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getModuleNamespace;
 import static org.osgi.framework.FrameworkUtil.getBundle;
 
 /**
@@ -154,9 +177,11 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
             InstanceIdentifierContext<?> insIdCtx = getInsIdCtx(p, uri);
 
             String req = null;
-            if (p.httpMethod == POST || p.httpMethod == PUT
-                    || p.httpMethod == PATCH) {
+            if (p.httpMethod != GET && p.httpMethod != DELETE) {
                 req = serializeRequest(props, p, uri, insIdCtx);
+                if (p.httpMethod == PUT || p.httpMethod == PATCH) {
+                    updateReq(req, p, insIdCtx);
+                }
             }
             if (req == null && p.requestBody != null) {
                 req = p.requestBody;
@@ -210,8 +235,8 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
         }
 
         if (r != null && r.code >= 300) {
-            throw new SvcLogicException(
-                    String.valueOf(r.code) + ": " + r.message);
+            throw new SvcLogicException(valueOf(r.code) +
+                                                COLON + " " + r.message);
         }
     }
 
@@ -316,7 +341,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
      */
     public String getResponse(SvcLogicContext ctx, YangParameters params,
                                String pre, HttpResponse res) {
-        ctx.setAttribute(pre + RES_CODE, String.valueOf(res.code));
+        ctx.setAttribute(pre + RES_CODE, valueOf(res.code));
         ctx.setAttribute(pre + RES_MSG, res.message);
 
         if (params.dumpHeaders && res.headers != null) {
@@ -345,7 +370,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
         HttpResponse res = new HttpResponse();
         res.code = 500;
         res.message = errMsg;
-        ctx.setAttribute(prefix + RES_CODE, String.valueOf(res.code));
+        ctx.setAttribute(prefix + RES_CODE, valueOf(res.code));
         ctx.setAttribute(prefix + RES_MSG, res.message);
     }
 
@@ -372,5 +397,115 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
         paramMap.put(REST_API_URL, retryUri.toString());
         log.debug(UPDATED_URL + retryUri.toString());
         log.debug(format(COMM_FAIL, hostName, retryString));
+    }
+
+    /**
+     * Updates request message for JSON and XML data format, when the HTTP
+     * method points it as PUT or PATCH.
+     *
+     * @param req      current request message
+     * @param p        YANG parameters
+     * @param insIdCtx instance identifier context
+     * @return update request message
+     * @throws SvcLogicException when the data format type is wrong
+     */
+    public String updateReq(String req, YangParameters p,
+                             InstanceIdentifierContext<?> insIdCtx)
+            throws SvcLogicException {
+
+        SchemaNode schemaNode = insIdCtx.getSchemaNode();
+        Namespace modNs = getModuleNamespace(schemaNode.getQName(),
+                                             insIdCtx.getSchemaContext());
+        String nodeName = schemaNode.getQName().getLocalName();
+
+        switch (p.format) {
+            case JSON:
+                return getUpdatedJsonReq(req, nodeName, modNs.moduleName());
+
+            case XML:
+                return getXmlReqForPutOp(req, nodeName, modNs.moduleNs());
+
+            default:
+                throw new SvcLogicException(format(FORMAT_ERR, p.format));
+        }
+    }
+
+    /**
+     * Returns the updated JSON request message, when the HTTP method
+     * points to PUT or PATCH.
+     *
+     * @param req      current JSON request message
+     * @param nodeName root node name
+     * @param modName  module name of the root node
+     * @return update JSON request message
+     */
+    private String getUpdatedJsonReq(String req, String nodeName,
+                                     String modName) {
+        Writer writer = new StringWriter();
+        JsonWriter jsonWriter = new JsonWriter(writer);
+        jsonWriter.setIndent(repeat(" ", 4));
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject oldJson = (JsonObject)jsonParser.parse(req);
+        oldJson = remChildModName(oldJson, modName);
+        JsonObject newJson = new JsonObject();
+        newJson.add(modName + COLON + nodeName, oldJson.deepCopy());
+
+        Gson gson= new Gson();
+        gson.toJson(newJson, jsonWriter);
+        return writer.toString();
+    }
+
+    /**
+     * Removes module name from all the updated first level child node, if it
+     * is same as the root node added.
+     *
+     * @param oldJson JSON object for old request
+     * @param modName module name of root node
+     * @return JSON object for old request with updated child module name
+     */
+    private JsonObject remChildModName(JsonObject oldJson, String modName) {
+        Iterator<Map.Entry<String, JsonElement>> it = oldJson.entrySet().iterator();
+        Map<String, JsonElement> m = new HashMap<>();
+        while (it.hasNext()) {
+            Map.Entry<String, JsonElement> jNode = it.next();
+            if (jNode.getKey().contains(COLON)) {
+                String[] modArr = jNode.getKey().split(COLON);
+                if (modArr[0].equals(modName)) {
+                    it.remove();
+                    m.put(modArr[1], jNode.getValue());
+                }
+            }
+        }
+        if (!m.isEmpty()) {
+            for (Map.Entry<String, JsonElement> element : m.entrySet()) {
+                oldJson.add(element.getKey(), element.getValue());
+            }
+        }
+        return oldJson;
+    }
+
+    /**
+     * Returns the updated XML request message, when the HTTP method points
+     * to PUT or PATCH.
+     *
+     * @param req      current JSON request message
+     * @param nodeName root node name
+     * @param modNs    module namespace of the root node
+     * @return update JSON request message
+     * @throws SvcLogicException when XML parsing fails
+     */
+    private String getXmlReqForPutOp(String req, String nodeName,
+                                     URI modNs) throws SvcLogicException {
+        req = getUpdatedXmlReq(req, nodeName, modNs.toString());
+        Document oldDoc;
+        try {
+            oldDoc = DocumentHelper.parseText(req);
+        } catch (DocumentException e) {
+            throw new SvcLogicException(XML_TREE_ERR, e);
+        }
+        Writer writer = getXmlWriter(
+                UTF_HEADER + oldDoc.getRootElement().asXML(), "4");
+        return writer.toString();
     }
 }

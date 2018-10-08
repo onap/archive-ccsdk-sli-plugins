@@ -340,7 +340,15 @@ public final class MdsalPropertiesNodeUtils {
         return null;
     }
 
-    private static Namespace getModuleNamespace(QName qName, SchemaContext ctx)
+    /**
+     * Returns module namespace from a given qName.
+     *
+     * @param qName qName of a node
+     * @param ctx   schema context
+     * @return module namespace of the node
+     * @throws SvcLogicException when the module is not available
+     */
+    public static Namespace getModuleNamespace(QName qName, SchemaContext ctx)
             throws SvcLogicException {
         Optional<Module> module = ctx.findModule(qName.getModule());
         if (!module.isPresent()) {
