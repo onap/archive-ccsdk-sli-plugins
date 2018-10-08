@@ -100,6 +100,46 @@ public final class DataFormatUtilsTest {
             "yangid:physical</interface>\n" +
             "</con1>\n";
 
+    static final String ENCODE_TO_JSON_YANG_COMMON = "\n    " +
+            "\"test-augment:cont13\": {\n" +
+            "        \"ll9\": [\n" +
+            "            \"abc\",\n" +
+            "            \"abc\"\n" +
+            "        ],\n" +
+            "        \"list9\": [\n" +
+            "            {\n" +
+            "                \"leaf27\": \"abc\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"leaf27\": \"abc\"\n" +
+            "            }\n" +
+            "        ],\n" +
+            "        \"leaf28\": \"abc\",\n" +
+            "        \"cont12\": {\n" +
+            "            \"leaf26\": \"abc\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"test-augment:list7\": [\n" +
+            "        {\n" +
+            "            \"leaf14\": \"test\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"leaf14\": \"create\"\n" +
+            "        }\n" +
+            "    ],\n" +
+            "    \"test-augment:leaf15\": \"abc\",\n" +
+            "    \"test-augment:ll6\": [\n" +
+            "        \"unbounded\",\n" +
+            "        \"8\"\n" +
+            "    ],\n" +
+            "    \"test-augment:cont5\": {\n" +
+            "        \"leaf13\": \"true\"\n" +
+            "    }";
+
+    static final String ENCODE_TO_JSON_YANG_AUG_POST = "{\n" +
+            "    \"test-yang:leaf10\": \"abc\"," +
+            ENCODE_TO_JSON_YANG_COMMON + "\n}";
+
     static final String ENCODE_TO_JSON_YANG = "{\n" +
             "    \"test-yang:cont2\": {\n" +
             "        \"list1\": [\n" +
@@ -177,41 +217,8 @@ public final class DataFormatUtilsTest {
             "            \"abc\"\n" +
             "        ],\n" +
             "        \"cont4\": {\n" +
-            "            \"leaf10\": \"abc\",\n" +
-            "            \"test-augment:cont13\": {\n" +
-            "                \"ll9\": [\n" +
-            "                    \"abc\",\n" +
-            "                    \"abc\"\n" +
-            "                ],\n" +
-            "                \"list9\": [\n" +
-            "                    {\n" +
-            "                        \"leaf27\": \"abc\"\n" +
-            "                    },\n" +
-            "                    {\n" +
-            "                        \"leaf27\": \"abc\"\n" +
-            "                    }\n" +
-            "                ],\n" +
-            "                \"leaf28\": \"abc\",\n" +
-            "                \"cont12\": {\n" +
-            "                    \"leaf26\": \"abc\"\n" +
-            "                }\n" +
-            "            },\n" +
-            "            \"test-augment:list7\": [\n" +
-            "                {\n" +
-            "                    \"leaf14\": \"test\"\n" +
-            "                },\n" +
-            "                {\n" +
-            "                    \"leaf14\": \"create\"\n" +
-            "                }\n" +
-            "            ],\n" +
-            "            \"test-augment:leaf15\": \"abc\",\n" +
-            "            \"test-augment:ll6\": [\n" +
-            "                \"unbounded\",\n" +
-            "                \"8\"\n" +
-            "            ],\n" +
-            "            \"test-augment:cont5\": {\n" +
-            "                \"leaf13\": \"true\"\n" +
-            "            }\n" +
+            "            \"leaf10\": \"abc\"," +
+            addSpace(ENCODE_TO_JSON_YANG_COMMON, 8) + "\n" +
             "        },\n" +
             "        \"ll4\": [\n" +
             "            \"abc\",\n" +
@@ -501,4 +508,19 @@ public final class DataFormatUtilsTest {
             "        <leaf28>abc</leaf28>\n" +
             "    </cont13>\n" +
             "</output>";
+
+    /**
+     * Adds the specified number of space required for a req in each line.
+     *
+     * @param req request message
+     * @param i   number of space
+     * @return space appended string
+     */
+    private static String addSpace(String req, int i) {
+        StringBuilder space = new StringBuilder("");
+        for (int sp = 0; sp < i; sp++) {
+            space = space.append(" ");
+        }
+        return req.replaceAll("\n", "\n" + space.toString());
+    }
 }
