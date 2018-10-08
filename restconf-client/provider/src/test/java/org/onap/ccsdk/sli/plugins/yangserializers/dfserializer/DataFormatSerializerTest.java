@@ -42,19 +42,24 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.GET;
+import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PATCH;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.POST;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PUT;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.parseUrl;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_FROM_JSON_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_FROM_XML_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_ID;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_ID_PUT;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_YANG;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_YANG_AUG_POST;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_YANG_PUT;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_ID;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_ID_PUT;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG_AUG_POST;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG_PUT;
 
 
 /**
@@ -102,6 +107,9 @@ public class DataFormatSerializerTest {
         doAnswer(dfCaptor).when(restconf).serializeRequest(
                 any(Map.class), any(YangParameters.class), any(String.class),
                 any(InstanceIdentifierContext.class));
+        doAnswer(dfCaptor).when(restconf).updateReq(
+                any(String.class), any(YangParameters.class),
+                any(InstanceIdentifierContext.class));
     }
 
     /**
@@ -141,6 +149,46 @@ public class DataFormatSerializerTest {
     }
 
     /**
+     * Verifies encoding of parameters to JSON data format with identity-ref
+     * and inter-file linking for put operation-type.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToJsonIdWithPut() throws SvcLogicException {
+        String pre = "identity-test:test.";
+        SvcLogicContext ctx = createAttList(pre);
+        ctx.setAttribute(pre + "l", "abc");
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "put");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/identity-test:test");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_ID_PUT));
+    }
+
+    /**
+     * Verifies encoding of parameters to JSON data format with identity-ref
+     * and inter-file linking for patch operation-type.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToJsonIdWithPatch() throws SvcLogicException {
+        String pre = "identity-test:test.";
+        SvcLogicContext ctx = createAttList(pre);
+        ctx.setAttribute(pre + "l", "abc");
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "patch");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/identity-test:test");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_ID_PUT));
+    }
+
+    /**
      * Verifies encoding of parameters to XML data format with identity-ref
      * and inter-file linking.
      *
@@ -157,6 +205,44 @@ public class DataFormatSerializerTest {
                 ".com/restconf/operations/identity-test:test");
         restconf.sendRequest(p, ctx);
         assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_ID));
+    }
+
+    /**
+     * Verifies encoding of parameters to XML data format with identity-ref
+     * and inter-file linking for put operation-type.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToXmlIdWithPut() throws SvcLogicException {
+        String pre = "identity-test:test.";
+        SvcLogicContext ctx = createAttList(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "xml");
+        p.put("httpMethod", "put");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/identity-test:test");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_ID_PUT));
+    }
+
+    /**
+     * Verifies encoding of parameters to XML data format with identity-ref
+     * and inter-file linking for patch operation-type.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToXmlIdWithPatch() throws SvcLogicException {
+        String pre = "identity-test:test.";
+        SvcLogicContext ctx = createAttList(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "xml");
+        p.put("httpMethod", "patch");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/identity-test:test");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_ID_PUT));
     }
 
     /**
@@ -220,6 +306,44 @@ public class DataFormatSerializerTest {
     }
 
     /**
+     * Verifies encoding of parameters to JSON data format with containers,
+     * grouping and augment for put operation-type.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToJsonYangWithPut() throws SvcLogicException {
+        String pre = "test-yang:cont1.cont2.";
+        SvcLogicContext ctx = createAttListYang(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "put");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/test-yang:cont1/cont2/cont4");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_YANG_PUT));
+    }
+
+    /**
+     * Verifies encoding of parameters to JSON data format with containers,
+     * grouping and augment for patch operation-type.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToJsonYangWithPatch() throws SvcLogicException {
+        String pre = "test-yang:cont1.cont2.";
+        SvcLogicContext ctx = createAttListYang(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "patch");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/test-yang:cont1/cont2/cont4");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_YANG_PUT));
+    }
+
+    /**
      * Verifies encoding of parameters to JSON data format with augment as
      * root child.
      *
@@ -275,6 +399,44 @@ public class DataFormatSerializerTest {
                 ".com/restconf/operations/test-yang:cont1");
         restconf.sendRequest(p, ctx);
         assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_YANG));
+    }
+
+    /**
+     * Verifies encoding of parameters to XML data format with containers,
+     * grouping and augment for put operation-type
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToXmlYangWithPut() throws SvcLogicException {
+        String pre = "test-yang:cont1.cont2.";
+        SvcLogicContext ctx = createAttListYang(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "xml");
+        p.put("httpMethod", "put");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/test-yang:cont1/cont2/cont4");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_YANG_PUT));
+    }
+
+    /**
+     * Verifies encoding of parameters to XML data format with containers,
+     * grouping and augment for patch operation-type
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToXmlYangWithPatch() throws SvcLogicException {
+        String pre = "test-yang:cont1.cont2.";
+        SvcLogicContext ctx = createAttListYang(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "xml");
+        p.put("httpMethod", "put");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/test-yang:cont1/cont2/cont4");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_YANG_PUT));
     }
 
     /**
@@ -369,23 +531,24 @@ public class DataFormatSerializerTest {
     @Test
     public void validateUrlParser() throws SvcLogicException {
         String actVal = "identity-test:test";
+        String putId = "/for-put";
         String url1 = "http://echo.getpostman.com/restconf/operations/" +
                 actVal;
         String url2 = "http://echo.getpostman.com/restconf/data/" + actVal;
         String url3 = "https://echo.getpostman.com/restconf/operations/" +
                 actVal;
         String url4 = "https://echo.getpostman.com/restconf/data/" + actVal +
-                "/for-put";
+                putId;
         String url5 = "http://localhost:8282/restconf/operations/" + actVal;
         String url6 = "https://localhost:8282/restconf/operations/" + actVal;
         String url7 = "http://localhost:8282/restconf/data/" + actVal +
-                "/for-put";
+                putId;
         String url8 = "https://localhost:8282/restconf/data/" + actVal;
         String url9 = "http://182.2.61.24:2250/restconf/data/" + actVal;
         String url10 = "https://182.2.61.24:2250/restconf/operations/" + actVal;
         String val1 = parseUrl(url1, POST);
         String val2 = parseUrl(url2, GET);
-        String val3 = parseUrl(url3, POST);
+        String val3 = parseUrl(url3, PATCH);
         String val4 = parseUrl(url4, PUT);
         String val5 = parseUrl(url5, GET);
         String val6 = parseUrl(url6, POST);
@@ -396,10 +559,10 @@ public class DataFormatSerializerTest {
         assertThat(val1, is(actVal));
         assertThat(val2, is(actVal));
         assertThat(val3, is(actVal));
-        assertThat(val4, is(actVal));
+        assertThat(val4, is(actVal + putId));
         assertThat(val5, is(actVal));
         assertThat(val6, is(actVal));
-        assertThat(val7, is(actVal));
+        assertThat(val7, is(actVal + putId));
         assertThat(val8, is(actVal));
         assertThat(val9, is(actVal));
         assertThat(val10, is(actVal));

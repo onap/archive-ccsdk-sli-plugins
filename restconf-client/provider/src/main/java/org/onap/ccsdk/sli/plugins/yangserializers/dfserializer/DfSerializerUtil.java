@@ -68,23 +68,11 @@ public final class DfSerializerUtil {
     static final String XML_LIS_ERR = "The XML serializer doesn't have XML " +
             "listener";
 
-    static final String JSON_TREE_ERR = "Unable to form JSON tree object from" +
-            " the JSON body provided.";
-
-    static final String XML_TREE_ERR = "Unable to form XML tree object from " +
-            "the XML body provided.";
-
-    static final String FORMAT_ERR = "Only JSON and XML formats are supported" +
-            ". %s is not supported";
-
     static final String PROP_NODE_ERR = "The property node doesn't have " +
             "schema node bound to it.";
 
     static final String DF_ERR = "Type mismatch for the node %s. The schema " +
             "node does not match with the data format node type %s.";
-
-    static final String UTF_HEADER = "<?xml version=\"1.0\" " +
-            "encoding=\"UTF-8\"?>";
 
     static final String XML_PREFIX = "yangid";
 
@@ -98,6 +86,30 @@ public final class DfSerializerUtil {
 
     private static final String URI_ERR = "Unable to parse the URI";
 
+    /**
+     * Data format error message for unsupported types.
+     */
+    public static final String FORMAT_ERR = "Only JSON and XML formats are " +
+            "supported. %s is not supported";
+
+    /**
+     * UTF header message for XML data format message.
+     */
+    public static final String UTF_HEADER = "<?xml version=\"1.0\" " +
+            "encoding=\"UTF-8\"?>";
+
+    /**
+     * Error message when a JSON tree creation fails.
+     */
+    public static final String JSON_TREE_ERR = "Unable to form JSON tree " +
+            "object from the JSON body provided.";
+
+    /**
+     * Error message when a XML tree creation fails.
+     */
+    public static final String XML_TREE_ERR = "Unable to form XML tree object" +
+            " from the XML body provided.";
+
     //No instantiation.
     private DfSerializerUtil() {
     }
@@ -110,7 +122,7 @@ public final class DfSerializerUtil {
      * @return writer with XML
      * @throws SvcLogicException when transformation of source fails
      */
-    static Writer getXmlWriter(String input, String indent) 
+    public static Writer getXmlWriter(String input, String indent)
             throws SvcLogicException {
         try {
             Transformer transformer = TransformerFactory.newInstance()
