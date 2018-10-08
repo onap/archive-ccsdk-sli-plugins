@@ -210,11 +210,10 @@ public final class DfSerializerUtil {
      * @return base type definition
      */
     static TypeDefinition<?> resolveBaseTypeFrom(TypeDefinition<?> type) {
-        TypeDefinition superType;
-        for(superType = type; superType.getBaseType() != null;
-            superType = superType.getBaseType()) {
+        TypeDefinition superType = type;
+        while (superType.getBaseType() != null) {
+            superType = superType.getBaseType();
         }
         return superType;
     }
-
 }

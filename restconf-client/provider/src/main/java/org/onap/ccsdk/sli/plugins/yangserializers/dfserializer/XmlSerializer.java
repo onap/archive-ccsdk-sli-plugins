@@ -61,7 +61,7 @@ public class XmlSerializer extends DataFormatSerializer {
         PropertiesNodeXmlListener xmlListener = new PropertiesNodeXmlListener();
         nodeWalker.walk(xmlListener, propNode);
         Writer writer = xmlListener.getWriter();
-        return writer.toString();
+        return removeRootNode(writer.toString(), propNode.name());
     }
 
     @Override
@@ -84,5 +84,21 @@ public class XmlSerializer extends DataFormatSerializer {
 
         return serializerContext().getPropNodeSerializer().decode(
                 listener.serializerHelper().getPropertiesNode());
+    }
+
+    /**
+     * Removes root node from the XML data format message and makes the
+     * string to be pretty print.
+     *
+     * @param xml      XML data format message
+     * @param rootName root node name
+     * @return pretty print format XML message
+     */
+    private static String removeRootNode(String xml, String rootName) {
+        xml = xml.replace("\n<" + rootName + ">", "\n");
+        xml = xml.replace("</" + rootName + ">" + "\n", "");
+        xml = xml.replaceAll("\n" + "    ", "\n");
+        xml = xml.replaceFirst("\n", "");
+        return xml;
     }
 }

@@ -249,6 +249,47 @@ public final class DataFormatUtilsTest {
             "    }\n" +
             "}";
 
+    static final String ENCODE_TO_XML_YANG_COMMON = "\n" +
+            "<cont13 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
+            "augment\">\n" +
+            "    <ll9>abc</ll9>\n" +
+            "    <ll9>abc</ll9>\n" +
+            "    <list9>\n" +
+            "        <leaf27>abc</leaf27>\n" +
+            "    </list9>\n" +
+            "    <list9>\n" +
+            "        <leaf27>abc</leaf27>\n" +
+            "    </list9>\n" +
+            "    <leaf28>abc</leaf28>\n" +
+            "    <cont12>\n" +
+            "        <leaf26>abc</leaf26>\n" +
+            "    </cont12>\n" +
+            "</cont13>\n" +
+            "<list7 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
+            "ugment\">\n" +
+            "    <leaf14>test</leaf14>\n" +
+            "</list7>\n" +
+            "<list7 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
+            "ugment\">\n" +
+            "    <leaf14>create</leaf14>\n" +
+            "</list7>\n" +
+            "<leaf15 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
+            "augment\">abc</leaf15>\n" +
+            "<ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
+            "ment\">unbounded</ll6>\n" +
+            "<ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
+            "ment\">8</ll6>\n" +
+            "<cont5 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
+            "ugment\">\n" +
+            "    <leaf13>true</leaf13>\n" +
+            "</cont5>";
+
+    static final String ENCODE_TO_XML_YANG_AUG_POST = "<?xml version=\"1.0\"" +
+            " encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<leaf10 xmlns=\"urn:opendaylight:params:xml:ns:yang:test\">abc" +
+            "</leaf10>" +
+            ENCODE_TO_XML_YANG_COMMON + "\n";
+
     static final String ENCODE_TO_XML_YANG = "<?xml version=\"1.0\" encoding" +
             "=\"UTF-8\" standalone=\"no\"?>\n" +
             "<cont2 xmlns=\"urn:opendaylight:params:xml:ns:yang:test\">\n" +
@@ -305,40 +346,8 @@ public final class DataFormatUtilsTest {
             "    <ll5>abc</ll5>\n" +
             "    <ll5>abc</ll5>\n" +
             "    <cont4>\n" +
-            "        <leaf10>abc</leaf10>\n" +
-            "        <cont13 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
-            "augment\">\n" +
-            "            <ll9>abc</ll9>\n" +
-            "            <ll9>abc</ll9>\n" +
-            "            <list9>\n" +
-            "                <leaf27>abc</leaf27>\n" +
-            "            </list9>\n" +
-            "            <list9>\n" +
-            "                <leaf27>abc</leaf27>\n" +
-            "            </list9>\n" +
-            "            <leaf28>abc</leaf28>\n" +
-            "            <cont12>\n" +
-            "                <leaf26>abc</leaf26>\n" +
-            "            </cont12>\n" +
-            "        </cont13>\n" +
-            "        <list7 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
-            "ugment\">\n" +
-            "            <leaf14>test</leaf14>\n" +
-            "        </list7>\n" +
-            "        <list7 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
-            "ugment\">\n" +
-            "            <leaf14>create</leaf14>\n" +
-            "        </list7>\n" +
-            "        <leaf15 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
-            "augment\">abc</leaf15>\n" +
-            "        <ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
-            "ment\">unbounded</ll6>\n" +
-            "        <ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
-            "ment\">8</ll6>\n" +
-            "        <cont5 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
-            "ugment\">\n" +
-            "            <leaf13>true</leaf13>\n" +
-            "        </cont5>\n" +
+            "        <leaf10>abc</leaf10>"+
+            addSpace(ENCODE_TO_XML_YANG_COMMON, 8) + "\n" +
             "    </cont4>\n" +
             "    <ll4>abc</ll4>\n" +
             "    <ll4>abc</ll4>\n" +
@@ -361,7 +370,6 @@ public final class DataFormatUtilsTest {
             "        <leaf11>abc</leaf11>\n" +
             "    </list6>\n" +
             "</cont2>\n";
-
 
     static final String ENCODE_TO_JSON_RPC = "{\n" +
             "    \"test-yang:input\": {\n" +
