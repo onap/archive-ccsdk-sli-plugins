@@ -98,6 +98,14 @@ public final class DfSerializerUtil {
 
     private static final String URI_ERR = "Unable to parse the URI";
 
+    private static final String OPEN_TAG = "<";
+
+    private static final String END_TAG = ">";
+
+    private static final String CLOSE_TAG = "</";
+
+    private static final String NEW_LINE = "\n";
+    
     //No instantiation.
     private DfSerializerUtil() {
     }
@@ -210,11 +218,26 @@ public final class DfSerializerUtil {
      * @return base type definition
      */
     static TypeDefinition<?> resolveBaseTypeFrom(TypeDefinition<?> type) {
-        TypeDefinition superType;
-        for(superType = type; superType.getBaseType() != null;
-            superType = superType.getBaseType()) {
+        TypeDefinition superType = type;
+        while (superType.getBaseType() != null) {
+            superType = superType.getBaseType();
         }
         return superType;
     }
 
+    /**
+     * Removes root node from the XML data format message and makes the
+     * string to be pretty print.
+     *
+     * @param xml      XML data format message
+     * @param rootName root node name
+     * @return pretty print format XML message
+     */
+    static String removeRootNode(String xml, String rootName) {
+        xml = xml.replace(NEW_LINE + OPEN_TAG + rootName + END_TAG, NEW_LINE);
+        xml = xml.replace(CLOSE_TAG + rootName + END_TAG + NEW_LINE, "");
+        xml = xml.replaceAll(NEW_LINE + "    ", NEW_LINE);
+        xml = xml.replaceFirst(NEW_LINE, "");
+        return xml;
+    }
 }

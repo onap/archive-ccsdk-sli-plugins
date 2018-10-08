@@ -78,11 +78,13 @@ public class PropertiesNodeXmlListener implements PropertiesNodeListener {
 
     @Override
     public void start(PropertiesNode node) {
-        //Do Nothing.
+        rootElement = addElement(null, node);
+        elementStack.push(rootElement);
     }
 
     @Override
     public void end(PropertiesNode node) throws SvcLogicException {
+        xmlData = rootElement.asXML();
         xmlData = UTF_HEADER + xmlData;
         writer = getXmlWriter(xmlData, "4");
     }
@@ -113,9 +115,6 @@ public class PropertiesNodeXmlListener implements PropertiesNodeListener {
                         NODE_TYPE_ERR, node.nodeType().toString()));
         }
         if (element != null) {
-            if (elementStack.isEmpty()) {
-                rootElement = element;
-            }
             elementStack.push(element);
         }
     }
@@ -133,10 +132,7 @@ public class PropertiesNodeXmlListener implements PropertiesNodeListener {
             case MULTI_INSTANCE_NODE:
             case MULTI_INSTANCE_LEAF_NODE:
             case SINGLE_INSTANCE_LEAF_NODE:
-                if (!elementStack.isEmpty() &&
-                        elementStack.peek().equals(rootElement)) {
-                    xmlData = rootElement.asXML();
-                } else {
+                if (!elementStack.isEmpty()) {
                     elementStack.pop();
                 }
                 break;

@@ -35,6 +35,7 @@ import java.util.Map;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat.XML;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.XML_LIS_ERR;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.XML_TREE_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.removeRootNode;
 
 /**
  * Representation of XML serializer which encodes properties to XML and
@@ -61,7 +62,7 @@ public class XmlSerializer extends DataFormatSerializer {
         PropertiesNodeXmlListener xmlListener = new PropertiesNodeXmlListener();
         nodeWalker.walk(xmlListener, propNode);
         Writer writer = xmlListener.getWriter();
-        return writer.toString();
+        return removeRootNode(writer.toString(), propNode.name());
     }
 
     @Override

@@ -54,6 +54,7 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_ID;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG_AUG_POST;
 
 
 /**
@@ -274,6 +275,25 @@ public class DataFormatSerializerTest {
                 ".com/restconf/operations/test-yang:cont1");
         restconf.sendRequest(p, ctx);
         assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_YANG));
+    }
+
+    /**
+     * Verifies encoding of parameters to XML data format with augment as
+     * root child.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeToXmlWithAugAsRootChild() throws SvcLogicException {
+        String pre = "test-yang:cont1.cont2.";
+        SvcLogicContext ctx = createAttListYang(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "xml");
+        p.put("httpMethod", "post");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/restconf/operations/test-yang:cont1/cont2/cont4");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_XML_YANG_AUG_POST));
     }
 
     /**
