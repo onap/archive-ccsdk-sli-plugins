@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_2c8d1e7c",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/yangserializers/dfserializer/DfSerializerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-10-08T10:56:21Z",
+      "side": 1,
+      "message": "this is specific to Xml serializer wherein mutiple top level nodes can come in a body. It will be better to keep it in XmlSerializer as DfSerializerUtil is a common util for xml and json",
+      "range": {
+        "startLine": 236,
+        "startChar": 18,
+        "endLine": 236,
+        "endChar": 32
+      },
+      "revId": "7ea7aa1993941456e66a5b2aca5949a27185cb32",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
