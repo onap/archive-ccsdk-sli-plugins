@@ -32,6 +32,12 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializ
 public final class DfListenerFactory {
 
     /**
+     * Creates a new DfListenerFactory.
+     */
+    private DfListenerFactory() {
+    }
+
+    /**
      * Returns the instance of the data format listener factory.
      *
      * @return instance of the data format listener factory

@@ -32,6 +32,12 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializ
 public final class DfSerializerFactory {
 
     /**
+     * Creates a new DfSerializerFactory.
+     */
+    private DfSerializerFactory() {
+    }
+
+    /**
      * Returns the instance of the data format serializer factory.
      *
      * @return instance of the data format serializer factory
