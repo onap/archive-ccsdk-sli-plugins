@@ -24,12 +24,21 @@ import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.restapicall.Parameters;
+import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
 import org.slf4j.Logger;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -115,9 +124,11 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
     class PersistentConnection implements Runnable {
         private String url;
         private volatile boolean running = true;
+        private Map<String, String> paramMap;
 
-        PersistentConnection(String url) {
+        PersistentConnection(String url, Map<String, String> paramMap) {
             this.url = url;
+            this.paramMap = paramMap;
         }
 
         private void terminate() {
@@ -126,15 +137,26 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
 
         @Override
         public void run() {
-            Client client = ClientBuilder.newBuilder()
-                    .register(SseFeature.class).build();
-            WebTarget target = client.target(url);
+            Parameters p;
+            WebTarget target = null;
+            try {
+                RestapiCallNode restapi = restconfApiCallNode.getRestapiCallNode();
+                p = restapi.getParameters(paramMap, new Parameters());
+                Client client =  ignoreSslClient().register(SseFeature.class);
+                target = restapi.addAuthType(client, p).target(url);
+            } catch (SvcLogicException e) {
+                log.error("Exception occured!", e);
+                Thread.currentThread().interrupt();
+            }
+
+            target = addToken(target, paramMap.get("customHttpHeaders"));
             EventSource eventSource = EventSource.target(target).build();
             eventSource.register(new EventHandler(RestconfDiscoveryNode.this));
             eventSource.open();
             log.info("Connected to SSE source");
             while (running) {
                 try {
+                    log.info("SSE state " + eventSource.isOpen());
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     log.error("Interrupted!", e);
@@ -144,6 +166,49 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
             eventSource.close();
             log.info("Closed connection to SSE source");
         }
+    }
+
+    private Client ignoreSslClient() {
+        SSLContext sslcontext = null;
+
+        try {
+            sslcontext = SSLContext.getInstance("TLS");
+            sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+            } }, new java.security.SecureRandom());
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true).build();
+    }
+
+    protected String getTokenId(String customHttpHeaders) {
+        if (customHttpHeaders.contains("=")) {
+            String s[] = customHttpHeaders.split("=");
+            return s[1];
+        }
+        return customHttpHeaders;
+    }
+
+    protected WebTarget addToken(WebTarget target, String customHttpHeaders) {
+        if (customHttpHeaders == null) {
+            return target;
+        }
+
+        return new AdditionalHeaderWebTarget(
+                target, getTokenId(customHttpHeaders));
     }
 
     /**
@@ -167,7 +232,7 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
         subscriptionInfoMap.put(id, info);
 
         String url = paramMap.get(SSE_URL);
-        PersistentConnection connection = new PersistentConnection(url);
+        PersistentConnection connection = new PersistentConnection(url, paramMap);
         runnableInfo.put(id, connection);
         executor.execute(connection);
     }

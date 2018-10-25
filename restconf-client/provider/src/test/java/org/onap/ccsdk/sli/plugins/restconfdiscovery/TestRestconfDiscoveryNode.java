@@ -57,6 +57,13 @@ public class TestRestconfDiscoveryNode {
         p.put("sseConnectURL", "http://localhost:8080/events");
         p.put("subscriberId", "networkId");
         p.put("responsePrefix", "restapi-result");
+        p.put("restapiUser", "access");
+        p.put("restapiPassword", "abc@123");
+        p.put("customHttpHeaders", "X-ACCESS-TOKEN=x-ik2ps4ikvzupbx0486ft" +
+                "1ebzs7rt85futh9ho6eofy3wjsap7wqktemlqm4bbsmnar3vrtbyrzuk" +
+                "bv5itd6m1cftldpjarnyle3sdcqq9hftc4lebz464b5ffxmlbvg9");
+        p.put("restapiUrl", "https://localhost:8080/restconf/operations/" +
+                "ietf-subscribed-notifications:establish-subscription");
         RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
                 new RestconfApiCallNode(new RestapiCallNode()));
         rdn.establishPersistentConnection(p, ctx, "networkId");
@@ -110,5 +117,19 @@ public class TestRestconfDiscoveryNode {
                 new RestconfApiCallNode(new RestapiCallNode()));
         assertThat(rdn.getOutputIdentifier("restapi-result", ctx),
                    is("89"));
+    }
+
+    @Test
+    public void testGetTokenId() {
+        String customHttpHeaders = "X-ACCESS-TOKEN=x-ik2ps4ikvzupbx0486ft1ebzs7rt85" +
+                "futh9ho6eofy3wjsap7wqktemlqm4bbsmnar3vrtbyrzukbv5itd6m1cftldpjarny" +
+                "le3sdcqq9hftc4lebz464b5ffxmlbvg9";
+        RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
+                new RestconfApiCallNode(new RestapiCallNode()));
+
+        assertThat(rdn.getTokenId(customHttpHeaders),
+                   is("x-ik2ps4ikvzupbx0486ft1ebzs7rt85futh9ho6eofy3wjsap7wqkt" +
+                              "emlqm4bbsmnar3vrtbyrzukbv5itd6m1cftldpjarnyle3sdcqq9h" +
+                              "ftc4lebz464b5ffxmlbvg9"));
     }
 }
