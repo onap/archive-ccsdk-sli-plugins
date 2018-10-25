@@ -35,7 +35,7 @@ public class SseServerMock {
     @Produces(SseFeature.SERVER_SENT_EVENTS)
     public EventOutput getServerSentEvents() throws IOException {
         String data = "{" +
-                "\"ietf-notification:notification\" : {" +
+                "\"ietf-restconf:notification\" : {" +
                 "  \"eventTime\" : \"2017-10-25T08:22:33.44Z\"," +
                 "    \"ietf-yang-push:push-change-update\": {" +
                 "\"subscription-id\":\"89\"," +

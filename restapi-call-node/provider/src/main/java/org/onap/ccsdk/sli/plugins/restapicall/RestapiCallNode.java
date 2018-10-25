@@ -543,7 +543,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return addAuthType(c, p);
     }
 
-    protected Client addAuthType(Client client, Parameters p) throws SvcLogicException {
+    public Client addAuthType(Client client, Parameters p) throws SvcLogicException {
         if (p.authtype == AuthType.Unspecified) {
             if (p.restapiUser != null && p.restapiPassword != null) {
                 client.register(HttpAuthenticationFeature.basic(p.restapiUser, p.restapiPassword));
