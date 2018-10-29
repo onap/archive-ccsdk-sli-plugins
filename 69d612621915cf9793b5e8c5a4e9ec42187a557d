@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Gaurav Agrawal <gaurav.agrawal@huawei.com>
+Code-Review+2: Dan Timoney <dtimoney@att.com>
+Submitted-by: Dan Timoney <dtimoney@att.com>
+Submitted-at: Mon, 29 Oct 2018 12:37:42 +0000
+Reviewed-on: https://gerrit.onap.org/r/71224
+Project: ccsdk/sli/plugins
+Branch: refs/heads/master
