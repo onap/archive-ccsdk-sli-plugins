@@ -45,19 +45,36 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         Properties prop = new Properties();
         try {
             File file = new File(param.fileName);
-            InputStream in = new FileInputStream(file);
-            Map<String, String> mm = null;
-            String pfx = param.contextPrefix != null ? param.contextPrefix + '.' : "";
-            if(param.fileBasedParsing){
-                byte[] data = new byte[(int) file.length()];
-                if ("json".equalsIgnoreCase(getFileExtension(param.fileName))) {
-                    in.read(data);
-                    String str = new String(data, "UTF-8");
-                    mm = JsonParser.convertToProperties(str);
-                } else if ("xml".equalsIgnoreCase(getFileExtension(param.fileName))) {
-                    in.read(data);
-                    String str = new String(data, "UTF-8");
-                    mm = XmlParser.convertToProperties(str, param.listNameList);
+            try(InputStream in = new FileInputStream(file)){
+                Map<String, String> mm = null;
+                String pfx = param.contextPrefix != null ? param.contextPrefix + '.' : "";
+                if(param.fileBasedParsing){
+                    byte[] data = new byte[(int) file.length()];
+                    if ("json".equalsIgnoreCase(getFileExtension(param.fileName))) {
+                        in.read(data);
+                        String str = new String(data, "UTF-8");
+                        mm = JsonParser.convertToProperties(str);
+                    } else if ("xml".equalsIgnoreCase(getFileExtension(param.fileName))) {
+                        in.read(data);
+                        String str = new String(data, "UTF-8");
+                        mm = XmlParser.convertToProperties(str, param.listNameList);
+                    } else {
+                        prop.load(in);
+                        for (Object key : prop.keySet()) {
+                            String name = (String) key;
+                            String value = prop.getProperty(name);
+                            if (value != null && value.trim().length() > 0) {
+                                ctx.setAttribute(pfx + name, value.trim());
+                                log.info("+++ " + pfx + name + ": [" + value + "]");
+                            }
+                        }
+                    }
+                    if (mm != null){
+                        for (Map.Entry<String,String> entry : mm.entrySet()){
+                            ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
+                            log.info("+++ " + pfx + entry.getKey() + ": [" + entry.getValue() + "]");
+                        }
+                    }
                 } else {
                     prop.load(in);
                     for (Object key : prop.keySet()) {
@@ -69,24 +86,7 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                         }
                     }
                 }
-                if (mm != null){
-                    for (Map.Entry<String,String> entry : mm.entrySet()){
-                        ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
-                        log.info("+++ " + pfx + entry.getKey() + ": [" + entry.getValue() + "]");
-                    }
-                }
-            } else {
-                prop.load(in);
-                for (Object key : prop.keySet()) {
-                    String name = (String) key;
-                    String value = prop.getProperty(name);
-                    if (value != null && value.trim().length() > 0) {
-                        ctx.setAttribute(pfx + name, value.trim());
-                        log.info("+++ " + pfx + name + ": [" + value + "]");
-                    }
-                }
             }
-            in.close();
         } catch (IOException e) {
             throw new SvcLogicException("Cannot read property file: " + param.fileName + ": " + e.getMessage(), e);
         }
