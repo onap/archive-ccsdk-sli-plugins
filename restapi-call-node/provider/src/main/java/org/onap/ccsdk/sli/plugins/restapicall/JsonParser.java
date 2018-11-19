@@ -55,12 +55,17 @@ public final class JsonParser {
             Iterator<String> ii = json.keys();
             while (ii.hasNext()) {
                 String key1 = ii.next();
-                wm.put(key1, json.get(key1));
+                String[] subKey = key1.split(":");
+                if (subKey.length == 2) {
+                    wm.put(subKey[1], json.get(key1));
+                } else {
+                    wm.put(key1, json.get(key1));
+                }
             }
 
             Map<String, String> mm = new HashMap<>();
 
-            while (!wm.isEmpty())
+            while (!wm.isEmpty()) {
                 for (String key : new ArrayList<>(wm.keySet())) {
                     Object o = wm.get(key);
                     wm.remove(key);
@@ -74,7 +79,12 @@ public final class JsonParser {
                         Iterator<String> i = jo.keys();
                         while (i.hasNext()) {
                             String key1 = i.next();
-                            wm.put(key + "." + key1, jo.get(key1));
+                            String[] subKey = key1.split(":");
+                            if (subKey.length == 2) {
+                                wm.put(key + "." + subKey[1], jo.get(key1));
+                            } else {
+                                wm.put(key + "." + key1, jo.get(key1));
+                            }
                         }
                     } else if (o instanceof JSONArray) {
                         JSONArray ja = (JSONArray) o;
@@ -82,10 +92,12 @@ public final class JsonParser {
 
                         log.info("Added property: {}_length: {}", key, String.valueOf(ja.length()));
 
-                        for (int i = 0; i < ja.length(); i++)
+                        for (int i = 0; i < ja.length(); i++) {
                             wm.put(key + '[' + i + ']', ja.get(i));
+                        }
                     }
                 }
+            }
             return mm;
         } catch (JSONException e) {
             throw new SvcLogicException("Unable to convert JSON to properties" + e.getLocalizedMessage(), e);
