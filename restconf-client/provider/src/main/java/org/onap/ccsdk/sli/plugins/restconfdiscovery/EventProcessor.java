@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static org.onap.ccsdk.sli.plugins.prop.JsonParser.convertToProperties;
+import static org.onap.ccsdk.sli.plugins.restapicall.JsonParser.convertToProperties;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -38,8 +38,8 @@ class EventProcessor implements Runnable {
     private static final Logger log = getLogger(EventProcessor.class);
     private RestconfDiscoveryNode node;
 
-    private static final String EVENT_SUBSCRIPTION_ID = "ietf-restconf:" +
-            "notification.ietf-yang-push:push-change-update.subscription-id";
+    private static final String EVENT_SUBSCRIPTION_ID = "notification." +
+            "push-change-update.subscription-id";
 
     public EventProcessor(RestconfDiscoveryNode node) {
         this.node = node;
