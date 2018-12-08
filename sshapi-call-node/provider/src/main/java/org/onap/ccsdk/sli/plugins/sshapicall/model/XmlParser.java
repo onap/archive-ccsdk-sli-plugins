@@ -3,6 +3,8 @@
  * openECOMP : SDN-C
  * ================================================================================
  * Copyright (C) 2017-2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Copyright (C) 2018 Samsung Electronics. All rights
  * 			reserved.
@@ -79,15 +81,15 @@ public final class XmlParser {
             return properties;
         }
 
+        StringBuilder currentName = new StringBuilder();
+        StringBuilder currentValue = new StringBuilder();
+
         public Handler(Set<String> listNameList) {
             super();
             this.listNameList = listNameList;
             if (this.listNameList == null)
                 this.listNameList = new HashSet<>();
         }
-
-        StringBuilder currentName = new StringBuilder();
-        StringBuilder currentValue = new StringBuilder();
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
