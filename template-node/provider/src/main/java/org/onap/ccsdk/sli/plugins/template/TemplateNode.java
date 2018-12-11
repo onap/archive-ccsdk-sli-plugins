@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +38,9 @@ import org.slf4j.LoggerFactory;
 
 public class TemplateNode implements SvcLogicJavaPlugin {
     private static final Logger logger = LoggerFactory.getLogger(TemplateNode.class);
-    public final static String TEMPLATE_PATH = "templatePath";
-    public final static String OUTPUT_PATH_KEY = "output";
-    public final static String PREFIX_KEY = "prefix";
+    public static final String TEMPLATE_PATH = "templatePath";
+    public static final String OUTPUT_PATH_KEY = "output";
+    public static final String PREFIX_KEY = "prefix";
     public final static String REQUIRED_PARAMETERS_ERROR_MESSAGE = "templateName & outputPath are required fields";
     protected static final String TEMPLATE_PROPERTIES_FILE_NAME = "template-node.properties";
     protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
