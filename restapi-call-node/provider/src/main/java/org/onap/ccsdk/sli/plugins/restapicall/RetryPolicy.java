@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * 	Modifications Copyright © 2018 IBM
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +24,12 @@ package org.onap.ccsdk.sli.plugins.restapicall;
 
 public class RetryPolicy {
     private String[] hostnames;
-    private Integer maximumRetries;  
+    private Integer maximumRetries;
+
+    public RetryPolicy(String[] hostnames, Integer maximumRetries){
+        this.hostnames = hostnames;
+        this.maximumRetries = maximumRetries;
+    }
 
     public Integer getMaximumRetries() {
         return maximumRetries;
@@ -50,11 +56,5 @@ public class RetryPolicy {
         }
         return hostnames[position];
     }
-
-    public RetryPolicy(String[] hostnames, Integer maximumRetries){
-        this.hostnames = hostnames;
-        this.maximumRetries = maximumRetries;
-    }
-    
 
 }
