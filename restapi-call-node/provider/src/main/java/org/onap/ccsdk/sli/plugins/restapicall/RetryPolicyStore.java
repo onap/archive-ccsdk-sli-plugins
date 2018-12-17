@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RetryPolicyStore {
-    private static final Logger log = LoggerFactory.getLogger(RetryPolicyStore.class);
-
     HashMap<String, RetryPolicy> retryPolicies;
     public String proxyServers;
+
+    public RetryPolicyStore() {
+        retryPolicies = new HashMap<>();
+    }
 
     public String getProxyServers() {
         return proxyServers;
@@ -41,10 +44,6 @@ public class RetryPolicyStore {
         String[] adminServersArray = admServers.split(",");
         RetryPolicy adminPortalRetry = new RetryPolicy(adminServersArray, adminServersArray.length);
         retryPolicies.put("dme2proxy", adminPortalRetry);
-    }
-
-    public RetryPolicyStore() {
-        retryPolicies = new HashMap<>();
     }
     
     public RetryPolicy getRetryPolicy(String policyName) {
