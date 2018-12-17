@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * 	Modifications Copyright © 2018 IBM
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,9 +74,8 @@ public final class XmlParser {
 
         private Map<String, String> properties = new HashMap<>();
 
-        public Map<String, String> getProperties() {
-            return properties;
-        }
+        StringBuilder currentName = new StringBuilder();
+        StringBuilder currentValue = new StringBuilder();
 
         public Handler(Set<String> listNameList) {
             super();
@@ -84,8 +84,9 @@ public final class XmlParser {
                 this.listNameList = new HashSet<>();
         }
 
-        StringBuilder currentName = new StringBuilder();
-        StringBuilder currentValue = new StringBuilder();
+        public Map<String, String> getProperties() {
+            return properties;
+        }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
