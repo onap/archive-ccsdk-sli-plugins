@@ -73,10 +73,6 @@ public final class XmlParser {
 
         private Map<String, String> properties = new HashMap<>();
 
-        public Map<String, String> getProperties() {
-            return properties;
-        }
-
         StringBuilder currentName = new StringBuilder();
         StringBuilder currentValue = new StringBuilder();
 
@@ -85,6 +81,10 @@ public final class XmlParser {
             this.listNameList = listNameList;
             if (this.listNameList == null)
                 this.listNameList = new HashSet<>();
+        }
+
+        public Map<String, String> getProperties() {
+            return properties;
         }
 
         @Override
