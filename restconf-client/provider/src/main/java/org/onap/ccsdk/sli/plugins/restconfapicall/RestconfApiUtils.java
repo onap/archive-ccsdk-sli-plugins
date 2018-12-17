@@ -3,6 +3,8 @@
  * ONAP - CCSDK
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -240,7 +242,7 @@ public final class RestconfApiUtils {
      * @return updated XML request message
      */
     static String getUpdatedXmlReq(String req, String nodeName, String modNs) {
-        String rootNode = "\n<" + nodeName + " xmlns=\"" + modNs.toString() +
+        String rootNode = "\n<" + nodeName + " xmlns=\"" + modNs +
                 "\">\n";
         req = req.replaceFirst("\n", rootNode);
         req = req + "</" + nodeName + ">";
