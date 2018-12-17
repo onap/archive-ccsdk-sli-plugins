@@ -2,8 +2,7 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- *
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. *
  * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,10 +72,6 @@ public final class XmlParser {
 
         private Map<String, String> properties = new HashMap<>();
 
-        public Map<String, String> getProperties() {
-            return properties;
-        }
-
         StringBuilder currentName = new StringBuilder();
         StringBuilder currentValue = new StringBuilder();
 
@@ -85,6 +80,10 @@ public final class XmlParser {
             this.listNameList = listNameList;
             if (this.listNameList == null)
                 this.listNameList = new HashSet<>();
+        }
+
+        public Map<String, String> getProperties() {
+            return properties;
         }
 
         @Override
