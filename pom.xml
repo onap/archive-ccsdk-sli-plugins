@@ -25,8 +25,9 @@
         <module>restapi-call-node</module>
         <module>sshapi-call-node</module>
         <module>restconf-client</module>
-        <module>features</module>
         <module>template-node</module>
+        <module>features</module>
+        <module>artifacts</module>
     </modules>
 
     <scm>
