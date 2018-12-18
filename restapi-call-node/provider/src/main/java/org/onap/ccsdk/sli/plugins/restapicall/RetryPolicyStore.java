@@ -24,9 +24,6 @@ package org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class RetryPolicyStore {
     HashMap<String, RetryPolicy> retryPolicies;
     public String proxyServers;
