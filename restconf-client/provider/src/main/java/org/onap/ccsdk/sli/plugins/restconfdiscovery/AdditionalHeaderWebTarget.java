@@ -3,6 +3,8 @@
  * ONAP - CCSDK
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +37,8 @@ class AdditionalHeaderWebTarget implements WebTarget {
     private WebTarget base;
     private String token;
 
+    private String accessToken = "X-ACCESS-TOKEN";
+
     public AdditionalHeaderWebTarget(WebTarget target, String token) {
         base = target;
         this.token = token;
@@ -42,17 +46,17 @@ class AdditionalHeaderWebTarget implements WebTarget {
 
     @Override
     public Invocation.Builder request() {
-        return base.request().header("X-ACCESS-TOKEN", token);
+        return base.request().header(accessToken, token);
     }
 
     @Override
     public Invocation.Builder request(String... acceptedResponseTypes) {
-        return base.request().header("X-ACCESS-TOKEN", token);
+        return base.request().header(accessToken, token);
     }
 
     @Override
     public Invocation.Builder request(MediaType... acceptedResponseTypes) {
-        return base.request().header("X-ACCESS-TOKEN", token);
+        return base.request().header(accessToken, token);
     }
 
     @Override
