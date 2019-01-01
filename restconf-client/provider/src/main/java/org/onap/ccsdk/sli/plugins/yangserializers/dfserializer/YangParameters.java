@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright © 2018 IBM
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +28,10 @@ import org.onap.ccsdk.sli.plugins.restapicall.Parameters;
  * Representation of the YANG parameters for the restconf api call node.
  */
 public class YangParameters extends Parameters {
+    /**
+     * Directory path of the YANG file.
+     */
+    public String dirPath;
 
     /**
      * Creates an instance of the YANG parameters.
@@ -33,9 +39,4 @@ public class YangParameters extends Parameters {
     public YangParameters() {
         super();
     }
-
-    /**
-     * Directory path of the YANG file.
-     */
-    public String dirPath;
 }
