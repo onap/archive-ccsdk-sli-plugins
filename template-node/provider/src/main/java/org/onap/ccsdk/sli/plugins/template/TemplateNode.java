@@ -41,7 +41,7 @@ public class TemplateNode implements SvcLogicJavaPlugin {
     public static final String TEMPLATE_PATH = "templatePath";
     public static final String OUTPUT_PATH_KEY = "output";
     public static final String PREFIX_KEY = "prefix";
-    public final static String REQUIRED_PARAMETERS_ERROR_MESSAGE = "templateName & outputPath are required fields";
+    public static final String REQUIRED_PARAMETERS_ERROR_MESSAGE = "templateName & outputPath are required fields";
     protected static final String TEMPLATE_PROPERTIES_FILE_NAME = "template-node.properties";
     protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
     protected static final String PROPERTIES_DIR_KEY = "SDNC_CONFIG_DIR";
