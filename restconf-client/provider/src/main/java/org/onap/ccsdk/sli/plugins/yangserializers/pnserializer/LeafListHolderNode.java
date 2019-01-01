@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright © 2018 IBM
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +30,8 @@ import org.onap.ccsdk.sli.core.sli.SvcLogicException;
  */
 public class LeafListHolderNode extends HolderNode<LeafListHolderChild> implements DataNodeChild {
 
+    private static final String node = " holder node";
+
     /**
      * Creates an instance of LeafListHolderNode.
      *
@@ -50,7 +54,7 @@ public class LeafListHolderNode extends HolderNode<LeafListHolderChild> implemen
                                    Namespace valueNs,
                                    Object appInfo) throws SvcLogicException {
         throw new SvcLogicException("Leaf cannot be child of leaf-list" +
-                                                   " holder node");
+                                                   node);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class LeafListHolderNode extends HolderNode<LeafListHolderChild> implemen
                                    NodeType type,
                                    Object appInfo) throws SvcLogicException {
         throw new SvcLogicException("Container cannot be child of leaf-list" +
-                                                   " holder node");
+                                                   node);
     }
 
     @Override
@@ -67,7 +71,7 @@ public class LeafListHolderNode extends HolderNode<LeafListHolderChild> implemen
                                    NodeType type,
                                    Object appInfo) throws SvcLogicException {
         throw new SvcLogicException("List cannot be child of leaf-list" +
-                                                   " holder node");
+                                                   node);
     }
 
     @Override
