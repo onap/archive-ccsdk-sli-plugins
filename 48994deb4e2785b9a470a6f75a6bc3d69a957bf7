@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_1eaf952b",
+        "filename": "restconf-client/provider/src/main/java/org/onap/ccsdk/sli/plugins/yangserializers/pnserializer/LeafNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3293
+      },
+      "writtenOn": "2019-01-03T22:32:45Z",
+      "side": 1,
+      "message": "Why not private static final ?",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 36
+      },
+      "revId": "48994deb4e2785b9a470a6f75a6bc3d69a957bf7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
