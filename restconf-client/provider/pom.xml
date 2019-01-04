@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>binding-parent</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>restconf-client-provider</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>ccsdk-sli-plugins :: restconf-client :: ${project.artifactId}</name>
@@ -18,8 +18,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ccsdk.sli.plugins.version>${project.version}</ccsdk.sli.plugins.version>
     </properties>
+    
+    <dependencyManagement>
+    	<dependencies>
+    		<dependency>
+    			<groupId>org.onap.ccsdk.sli.core</groupId>
+    			<artifactId>sli-core-artifacts</artifactId>
+    			<version>${ccsdk.sli.core.version}</version>
+    			<type>pom</type>
+    			<scope>import</scope>
+    		</dependency>
+    	</dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -39,7 +50,7 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>
             <artifactId>properties-node-provider</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -63,18 +74,22 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>
             <artifactId>restapi-call-node-provider</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>restconf-nb-rfc8040</artifactId>
-            <version>${odl.mdsal.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-impl</artifactId>
             <version>2.0.6.1</version>
         </dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
         <!-- For test -->
         <dependency>
