@@ -97,6 +97,10 @@ public class TemplateNode implements SvcLogicJavaPlugin {
                 VelocityContext context = new VelocityContext();
                 context.put("ctx", ctx);
                 context.put("params", params);
+                //Adding these values directly to context makes working with the values cleaner
+                for (Entry<String, String> entry : params.entrySet()) {
+                    context.put(entry.getKey(), entry.getValue());
+                }
                 StringWriter sw = new StringWriter();
                 template.merge(context, sw);
                 ctx.setAttribute(outputPath, sw.toString());
