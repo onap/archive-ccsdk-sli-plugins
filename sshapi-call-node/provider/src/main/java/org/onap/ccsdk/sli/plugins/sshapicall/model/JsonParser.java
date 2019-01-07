@@ -7,6 +7,8 @@
  * Copyright (C) 2018 Samsung Electronics. All rights
  * 			reserved.
  * ================================================================================
+ * Modifications Copyright © 2018 IBM
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +35,6 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
