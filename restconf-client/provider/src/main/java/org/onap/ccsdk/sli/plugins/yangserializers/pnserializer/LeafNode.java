@@ -3,6 +3,8 @@
  * ONAP - CCSDK
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +31,7 @@ public class LeafNode extends PropertiesNode implements LeafListHolderChild, Dat
 
     private String value;
     private Namespace valueNs;
+    private static final String svcLogicException = "Leaf cannot hold child nodes";
 
     /**
      * Creates an instance of leaf node.
@@ -89,7 +92,7 @@ public class LeafNode extends PropertiesNode implements LeafListHolderChild, Dat
     public PropertiesNode addChild(String name, Namespace namespace,
                                    NodeType type,
                                    Object appInfo) throws SvcLogicException {
-        throw new SvcLogicException("Leaf cannot hold child nodes");
+        throw new SvcLogicException(svcLogicException);
     }
 
     @Override
@@ -97,7 +100,7 @@ public class LeafNode extends PropertiesNode implements LeafListHolderChild, Dat
                                    NodeType type, String value,
                                    Namespace valueNs,
                                    Object appInfo) throws SvcLogicException {
-        throw new SvcLogicException("Leaf cannot hold child nodes");
+        throw new SvcLogicException(svcLogicException);
     }
 
     @Override
@@ -105,7 +108,7 @@ public class LeafNode extends PropertiesNode implements LeafListHolderChild, Dat
                                    Namespace namespace,
                                    NodeType type,
                                    Object appInfo) throws SvcLogicException {
-        throw new SvcLogicException("Leaf cannot hold child nodes");
+        throw new SvcLogicException(svcLogicException);
     }
 
     @Override
