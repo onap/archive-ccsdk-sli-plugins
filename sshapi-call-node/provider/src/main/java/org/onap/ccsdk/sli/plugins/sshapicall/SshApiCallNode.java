@@ -6,7 +6,9 @@
  * =============================================================================
  * Copyright (C) 2018 Samsung Electronics. All rights
   			reserved.
-*  * ================================================================================
+ * ================================================================================
+ * Modifications Copyright © 2018 IBM
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,16 +26,9 @@
 
 package org.onap.ccsdk.sli.plugins.sshapicall;
 
-//import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.ByteArrayOutputStream;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import com.google.common.base.Strings;
-import org.json.JSONObject;
 import org.onap.appc.adapter.ssh.SshAdapter;
 import org.onap.appc.adapter.ssh.SshConnection;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -77,6 +72,10 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
      */
     private int DEF_SUCCESS_STATUS = 0;
 
+
+
+    private SshAdapter sshAdapter;
+
     /**
      * Used for jUnit test and testing interface
      */
@@ -87,8 +86,6 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
     public SshApiCallNode() {
         PARAM_TEST_MODE = false;
     }
-
-    private SshAdapter sshAdapter;
 
     public void setSshAdapter(SshAdapter sshAdapter) {
         this.sshAdapter = sshAdapter;
@@ -138,7 +135,8 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
         int status = -1;
         ByteArrayOutputStream stdout = new ByteArrayOutputStream();
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-        String stdoutRes = "", stderrRes = "";
+        String stdoutRes = "";
+        String stderrRes = "";
         try {
             if (!PARAM_TEST_MODE) {
                 sshConnection = getSshConnection(p);
@@ -156,7 +154,7 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
                 stderrRes = stderr.toString();
 
             } else {
-                if (params.get("TestFail").equalsIgnoreCase("true"))
+                if (("true").equalsIgnoreCase(params.get("TestFail")))
                     status = 202;
                 else
                     status = DEF_SUCCESS_STATUS;
@@ -183,11 +181,9 @@ public class SshApiCallNode implements SvcLogicJavaPlugin {
             return sshAdapter.getConnection(p.sshapiUrl, p.sshapiPort, p.sshapiUser, p.sshapiPassword);
         // This is not supported yet in the API, patch has already been added to APPC
         else if (p.authtype == AuthType.KEY){
-            //return sshAdapter.getConnection(p.sshapiUrl, p.sshapiPort, p.sshKey);
             throw new SvcLogicException("SSH Key based Auth method not supported");
         }
         else if (p.authtype == AuthType.NONE){
-            //return sshAdapter.getConnection(p.sshapiUrl, p.sshapiPort, p.sshKey);
             throw new SvcLogicException("SSH Auth type required, BASIC auth in support");
         }
         else if (p.authtype == AuthType.UNSPECIFIED){
