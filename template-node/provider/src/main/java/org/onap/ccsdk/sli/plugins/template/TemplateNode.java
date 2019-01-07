@@ -25,6 +25,7 @@ package org.onap.ccsdk.sli.plugins.template;
 import java.io.FileInputStream;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -52,6 +53,7 @@ public class TemplateNode implements SvcLogicJavaPlugin {
         ve = new VelocityEngine();
         setProperties();
         ve.init();
+        ve.loadDirective("org.onap.ccsdk.sli.plugins.template.HideNullJson");
     }
 
     protected void setProperties() {
@@ -97,6 +99,10 @@ public class TemplateNode implements SvcLogicJavaPlugin {
                 VelocityContext context = new VelocityContext();
                 context.put("ctx", ctx);
                 context.put("params", params);
+                //Adding these values directly to context makes working with the values cleaner
+                for (Entry<String, String> entry : params.entrySet()) {
+                    context.put(entry.getKey(), entry.getValue());
+                }
                 StringWriter sw = new StringWriter();
                 template.merge(context, sw);
                 ctx.setAttribute(outputPath, sw.toString());
