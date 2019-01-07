@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +79,13 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     private String uebServers;
     private String defaultUebTemplateFileName = "/opt/bvc/restapi/templates/default-ueb-message.json";
 
+    private String responseReceivedMessage = "Response received. Time: {}";
+    private String responseHttpCodeMessage = "HTTP response code: {}";
+    private String requestPostingException = "Exception while posting http request to client ";
+    private static String skipSendingMessage = "skipSending";
+    private static String responsePrefix = "responsePrefix";
+    private static String restapiUrlString = "restapiUrl";
+
     public RestapiCallNode() {
         String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
 
@@ -115,7 +123,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.templateFileName = parseParam(paramMap, "templateFileName",
             false, null);
         p.requestBody = parseParam(paramMap, "requestBody", false, null);
-        p.restapiUrl = parseParam(paramMap, "restapiUrl", true, null);
+        p.restapiUrl = parseParam(paramMap, restapiUrlString, true, null);
         validateUrl(p.restapiUrl);
         p.restapiUser = parseParam(paramMap, "restapiUser", false, null);
         p.restapiPassword = parseParam(paramMap, "restapiPassword", false,
@@ -134,9 +142,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             "unspecified"));
         p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod",
             false, "post"));
-        p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
+        p.responsePrefix = parseParam(paramMap, responsePrefix, false, null);
         p.listNameList = getListNameList(paramMap);
-        String skipSendingStr = paramMap.get("skipSending");
+        String skipSendingStr = paramMap.get(skipSendingMessage);
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         p.convertResponse = valueOf(parseParam(paramMap, "convertResponse",
             false, "true"));
@@ -344,8 +352,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             }
 
             log.error("Error sending the request: " + e.getMessage(), e);
-            String prefix = parseParam(paramMap, "responsePrefix", false, null);
-            if (retryPolicy == null || shouldRetry == false) {
+            String prefix = parseParam(paramMap, responsePrefix, false, null);
+            if (retryPolicy == null || !shouldRetry) {
                 setFailureResponseStatus(ctx, prefix, e.getMessage(), r);
             } else {
                 if (retryCount == null) {
@@ -357,13 +365,13 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 try {
                     retryCount = retryCount + 1;
                     if (retryCount < retryPolicy.getMaximumRetries() + 1) {
-                        URI uri = new URI(paramMap.get("restapiUrl"));
+                        URI uri = new URI(paramMap.get(restapiUrlString));
                         String hostname = uri.getHost();
                         String retryString = retryPolicy.getNextHostName(uri.toString());
                         URI uriTwo = new URI(retryString);
                         URI retryUri = UriBuilder.fromUri(uri).host(uriTwo.getHost()).port(uriTwo.getPort()).scheme(
                             uriTwo.getScheme()).build();
-                        paramMap.put("restapiUrl", retryUri.toString());
+                        paramMap.put(restapiUrlString, retryUri.toString());
                         log.debug("URL was set to {}", retryUri.toString());
                         log.debug("Failed to communicate with host {}. Request will be re-attempted using the host {}.",
                             hostname, retryString);
@@ -417,7 +425,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             String var1 = template.substring(i1 + 2, i2);
             String value1 = format == Format.XML ? XmlJsonUtil.getXml(mm, var1) : XmlJsonUtil.getJson(mm, var1);
-            // log.info(" " + var1 + ": " + value1);
             if (value1 == null || value1.trim().length() == 0) {
                 // delete the whole element (line)
                 int i3 = template.lastIndexOf('\n', i1);
@@ -653,7 +660,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             try {
                 response = invocationBuilder.method(p.httpMethod.toString(), entity(request, tt1));
             } catch (ProcessingException | IllegalStateException e) {
-                throw new SvcLogicException("Exception while posting http request to client " +
+                throw new SvcLogicException(requestPostingException +
                     e.getLocalizedMessage(), e);
             }
 
@@ -669,8 +676,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: {}", (t2 - t1));
-        log.info("HTTP response code: {}", r.code);
+        log.info(responseReceivedMessage, (t2 - t1));
+        log.info(responseHttpCodeMessage, r.code);
         log.info("HTTP response message: {}", r.message);
         logHeaders(r.headers);
         log.info("HTTP response: {}", r.body);
@@ -731,7 +738,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             r = new HttpResponse();
             r.code = 500;
             r.message = e.getMessage();
-            String prefix = parseParam(paramMap, "responsePrefix", false, null);
+            String prefix = parseParam(paramMap, responsePrefix, false, null);
             setResponseStatus(ctx, prefix, r);
         }
 
@@ -747,8 +754,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.user = parseParam(paramMap, "user", false, null);
         p.password = parseParam(paramMap, "password", false, null);
         p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod", false, "post"));
-        p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
-        String skipSendingStr = paramMap.get("skipSending");
+        p.responsePrefix = parseParam(paramMap, responsePrefix, false, null);
+        String skipSendingStr = paramMap.get(skipSendingMessage);
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey", false, null);
         p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
@@ -788,7 +795,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             r = new HttpResponse();
             r.code = 500;
             r.message = e.getMessage();
-            String prefix = parseParam(paramMap, "responsePrefix", false, null);
+            String prefix = parseParam(paramMap, responsePrefix, false, null);
             setResponseStatus(ctx, prefix, r);
         }
 
@@ -825,7 +832,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
                 }
             } catch (ProcessingException e) {
-                throw new SvcLogicException("Exception while posting http request to client " +
+                throw new SvcLogicException(requestPostingException +
                     e.getLocalizedMessage(), e);
             }
 
@@ -856,7 +863,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
                     }
                 } catch (ProcessingException e) {
-                    throw new SvcLogicException("Exception while posting http request to client " +
+                    throw new SvcLogicException(requestPostingException +
                         e.getLocalizedMessage(), e);
                 }
 
@@ -872,8 +879,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: {}", (t2 - t1));
-        log.info("HTTP response code: {}", r.code);
+        log.info(responseReceivedMessage, (t2 - t1));
+        log.info(responseHttpCodeMessage, r.code);
         log.info("HTTP response message: {}", r.message);
         logHeaders(r.headers);
         log.info("HTTP response: {}", r.body);
@@ -886,8 +893,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.topic = parseParam(paramMap, "topic", true, null);
         p.templateFileName = parseParam(paramMap, "templateFileName", false, null);
         p.rootVarName = parseParam(paramMap, "rootVarName", false, null);
-        p.responsePrefix = parseParam(paramMap, "responsePrefix", false, null);
-        String skipSendingStr = paramMap.get("skipSending");
+        p.responsePrefix = parseParam(paramMap, responsePrefix, false, null);
+        String skipSendingStr = paramMap.get(skipSendingMessage);
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         return p;
     }
@@ -954,7 +961,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             try {
                 response = invocationBuilder.post(Entity.entity(request, tt1));
             } catch (ProcessingException e) {
-                throw new SvcLogicException("Exception while posting http request to client " +
+                throw new SvcLogicException(requestPostingException +
                     e.getLocalizedMessage(), e);
             }
             r.code = response.getStatus();
@@ -965,8 +972,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Response received. Time: {}", (t2 - t1));
-        log.info("HTTP response code: {}", r.code);
+        log.info(responseReceivedMessage, (t2 - t1));
+        log.info(responseHttpCodeMessage, r.code);
         logHeaders(r.headers);
         log.info("HTTP response:\n {}", r.body);
 
