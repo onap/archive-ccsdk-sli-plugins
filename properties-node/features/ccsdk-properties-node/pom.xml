@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>single-feature-parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
-        <relativePath />
+        <version>1.2.0</version>
+        <relativePath/>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
@@ -18,10 +18,13 @@
 
 
 
+    <properties>
+        <ccsdk.sli.plugins.version>${project.version}</ccsdk.sli.plugins.version>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-		     <dependency>
+    <dependencyManagement>
+        <dependencies>
+             <dependency>
                 <groupId>org.opendaylight.mdsal.model</groupId>
                 <artifactId>mdsal-model-artifacts</artifactId>
                 <version>${odl.mdsal.model.version}</version>
@@ -35,9 +38,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-		</dependencies>
-	</dependencyManagement>
-	
+        </dependencies>
+    </dependencyManagement>
+    
     <dependencies>
 
         <dependency>
