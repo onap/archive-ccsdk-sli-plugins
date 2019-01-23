@@ -26,6 +26,7 @@
         <module>sshapi-call-node</module>
         <module>restconf-client</module>
         <module>template-node</module>
+        <module>grToolkit</module>
         <module>features</module>
         <module>artifacts</module>
     </modules>
