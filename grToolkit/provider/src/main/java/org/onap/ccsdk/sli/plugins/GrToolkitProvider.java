@@ -384,49 +384,51 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
             return Futures.immediateFuture(RpcResultBuilder.<FailoverOutput>status(true).withResult(outputBuilder.build()).build());
         }
 
-        // Halt akka traffic
-        log.info("Halting Akka traffic...");
-        for(ClusterActor actor : standbySite) {
-            try {
-                log.info("Halting Akka traffic for: " + actor.getNode());
-                // Build JSON with activeSite actor.getNode() and actor.getAkkaPort();
-                JSONObject akkaInput = new JSONObject();
-                JSONObject inputBlock = new JSONObject();
-                JSONArray votingStateArray = new JSONArray();
-                JSONObject nodeInfo;
-                for(ClusterActor node : activeSite) {
-                    nodeInfo = new JSONObject();
-                    nodeInfo.put("node", node.getNode());
-                    nodeInfo.put("port", node.getAkkaPort());
-                    votingStateArray.put(nodeInfo);
+        if(Boolean.parseBoolean(input.getIsolate())) {
+            log.info("Halting Akka traffic...");
+            for(ClusterActor actor : standbySite) {
+                try {
+                    log.info("Halting Akka traffic for: " + actor.getNode());
+                    // Build JSON with activeSite actor.getNode() and actor.getAkkaPort();
+                    JSONObject akkaInput = new JSONObject();
+                    JSONObject inputBlock = new JSONObject();
+                    JSONArray votingStateArray = new JSONArray();
+                    JSONObject nodeInfo;
+                    for(ClusterActor node : activeSite) {
+                        nodeInfo = new JSONObject();
+                        nodeInfo.put("node", node.getNode());
+                        nodeInfo.put("port", node.getAkkaPort());
+                        votingStateArray.put(nodeInfo);
+                    }
+                    inputBlock.put("node-info", votingStateArray);
+                    akkaInput.put("input", inputBlock);
+                    getRequestContent(HTTP_PROTOCOL + actor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:halt-akka-traffic", HttpMethod.Post, akkaInput.toString());
+                } catch(IOException e) {
+                    log.error("Could not halt Akka traffic for: " + actor.getNode(), e);
                 }
-                inputBlock.put("node-info", votingStateArray);
-                akkaInput.put("input", inputBlock);
-                getRequestContent(HTTP_PROTOCOL + actor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:halt-akka-traffic", HttpMethod.Post, akkaInput.toString());
-            } catch(IOException e) {
-                log.error("Could not halt Akka traffic for: " + actor.getNode(), e);
             }
-        }
 
-        // Set unreachable
-        log.info("Setting site unreachable...");
-        JSONObject jolokiaInput = new JSONObject();
-        jolokiaInput.put("type", "EXEC");
-        jolokiaInput.put("mbean", "akka:type=Cluster");
-        jolokiaInput.put("operation", "down");
-        JSONArray arguments = new JSONArray();
-        for(ClusterActor actor : activeSite) {
-            // Build Jolokia input
-            //TODO: May need to change from akka port to actor.getAkkaPort()
-            arguments.put("akka.tcp://opendaylight-cluster-data@" + actor.getNode() + ":" + properties.getProperty("controller.port.akka"));
-        }
-        jolokiaInput.put("arguments", arguments);
-        log.debug(jolokiaInput.toString(2));
-        try {
-            log.info("Setting nodes unreachable");
-            getRequestContent(HTTP_PROTOCOL + standbySite.get(0).getNode() + ":" + port + "/jolokia", HttpMethod.Post, jolokiaInput.toString());
-        } catch(IOException e) {
-            log.error("Error setting nodes unreachable", e);
+            if(Boolean.parseBoolean(input.getDownUnreachable())) {
+                log.info("Setting site unreachable...");
+                JSONObject jolokiaInput = new JSONObject();
+                jolokiaInput.put("type", "EXEC");
+                jolokiaInput.put("mbean", "akka:type=Cluster");
+                jolokiaInput.put("operation", "down");
+                JSONArray arguments = new JSONArray();
+                for(ClusterActor actor : activeSite) {
+                    // Build Jolokia input
+                    //TODO: May need to change from akka port to actor.getAkkaPort()
+                    arguments.put("akka.tcp://opendaylight-cluster-data@" + actor.getNode() + ":" + properties.getProperty("controller.port.akka"));
+                }
+                jolokiaInput.put("arguments", arguments);
+                log.debug(jolokiaInput.toString(2));
+                try {
+                    log.info("Setting nodes unreachable");
+                    getRequestContent(HTTP_PROTOCOL + standbySite.get(0).getNode() + ":" + port + "/jolokia", HttpMethod.Post, jolokiaInput.toString());
+                } catch(IOException e) {
+                    log.error("Error setting nodes unreachable", e);
+                }
+            }
         }
 
         log.info(appName + ":failover complete.");

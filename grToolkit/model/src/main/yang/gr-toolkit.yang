@@ -142,7 +142,7 @@ module gr-toolkit{
 
   rpc halt-akka-traffic {
     description
-      "Invokes a utility script to halt traffic to the akka port.";
+      "Executes IP Tables commands to halt traffic to the akka port.";
     input {
       list node-info {
         uses node;
@@ -155,7 +155,7 @@ module gr-toolkit{
 
   rpc resume-akka-traffic {
     description
-      "Invokes a utility script to resume traffic to the akka port.";
+      "Executes IP Tables commands to resume traffic to the akka port.";
     input {
       list node-info {
         uses node;
@@ -171,6 +171,14 @@ module gr-toolkit{
       "Performs a failover from primary site to standby site.";
     input {
       leaf backupData {
+        type string;
+        default "false";
+      }
+      leaf isolate {
+        type string;
+        default "false";
+      }
+      leaf downUnreachable {
         type string;
         default "false";
       }
