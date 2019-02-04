@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8c2eb2b_f169afce",
+        "filename": "grToolkit/features/ccsdk-gr-toolkit/src/main/feature/feature.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2019-02-04T16:54:48Z",
+      "side": 1,
+      "message": "Should this really use the name ccsdk-restapi-call-node? Should you use a unique name like ccsdk-gr-toolkit?",
+      "revId": "4fc631ccf42b2eccd506a94c955cfed5aae40e7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
