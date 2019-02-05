@@ -53,7 +53,6 @@ public class TemplateNode implements SvcLogicJavaPlugin {
         ve = new VelocityEngine();
         setProperties();
         ve.init();
-        ve.loadDirective("org.onap.ccsdk.sli.plugins.template.HideNullJson");
     }
 
     protected void setProperties() {
@@ -63,7 +62,7 @@ public class TemplateNode implements SvcLogicJavaPlugin {
         try (FileInputStream in = new FileInputStream(configDir + "/" + TEMPLATE_PROPERTIES_FILE_NAME)) {
             props.load(in);
         } catch (Exception e) {
-            logger.error("Caught exception loading properties!", e);
+            logger.warn("Properties not loaded for template node, using sensible defaults", e);
         }
 
         // give sensible defaults for required properties
