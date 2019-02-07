@@ -25,7 +25,7 @@
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
-		<!--  Current breaks container due to jersey version conflict
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ccsdk-restapi-call-node</artifactId>
@@ -33,7 +33,7 @@
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
-		-->
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ccsdk-template-node</artifactId>
