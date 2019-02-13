@@ -189,10 +189,8 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         log.info("Cluster member: " + member);
 
         log.info("Parsing akka.conf for cluster members...");
-        try {
-            File akkaConfig = new File(AKKA_CONFIG);
-            FileReader fileReader = new FileReader(akkaConfig);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+        File akkaConfig = new File(AKKA_CONFIG);
+        try(FileReader fileReader = new FileReader(akkaConfig);BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
             while((line = bufferedReader.readLine()) != null) {
                 if(line.contains("seed-nodes =")) {

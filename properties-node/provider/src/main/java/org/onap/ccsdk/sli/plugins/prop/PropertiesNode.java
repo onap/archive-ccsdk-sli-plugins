@@ -51,13 +51,18 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                 if(param.fileBasedParsing){
                     byte[] data = new byte[(int) file.length()];
                     if ("json".equalsIgnoreCase(getFileExtension(param.fileName))) {
-                        in.read(data);
-                        String str = new String(data, "UTF-8");
-                        mm = JsonParser.convertToProperties(str);
+                    	int count = 0;
+                    	while((count = in.read(data))>0) {
+                    		String str = new String(data, "UTF-8");
+                            mm = JsonParser.convertToProperties(str);
+                    	}
                     } else if ("xml".equalsIgnoreCase(getFileExtension(param.fileName))) {
-                        in.read(data);
-                        String str = new String(data, "UTF-8");
-                        mm = XmlParser.convertToProperties(str, param.listNameList);
+                    	int count = 0;
+                    	while((count = in.read(data))>0) {
+                    		String str = new String(data, "UTF-8");
+                            mm = XmlParser.convertToProperties(str, param.listNameList);
+                    	}
+                        
                     } else {
                         prop.load(in);
                         for (Object key : prop.keySet()) {
