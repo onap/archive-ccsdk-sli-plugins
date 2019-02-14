@@ -165,6 +165,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             false, null));
         p.returnRequestPayload = valueOf(parseParam(
             paramMap, "returnRequestPayload", false, null));
+        p.accept = parseParam(paramMap, "accept",
+                false, null);
         return p;
     }
 
@@ -631,14 +633,16 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         r.code = 200;
 
         if (!p.skipSending) {
-            String tt = p.format == Format.XML ? "application/xml" : "application/json";
-            String tt1 = tt + ";charset=UTF-8";
-            if (p.contentType != null) {
-                tt = p.contentType;
-                tt1 = p.contentType;
+            String accept = p.accept;
+            if(accept == null) {
+                accept = p.format == Format.XML ? "application/xml" : "application/json";
+            }
+            String contentType = p.contentType;
+            if(contentType == null) {
+                contentType = accept + ";charset=UTF-8";
             }
 
-            Invocation.Builder invocationBuilder = webTarget.request(tt1).accept(tt);
+            Invocation.Builder invocationBuilder = webTarget.request(contentType).accept(accept);
 
             if (p.format == Format.NONE) {
                 invocationBuilder.header("", "");
@@ -658,7 +662,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             Response response;
 
             try {
-                response = invocationBuilder.method(p.httpMethod.toString(), entity(request, tt1));
+                response = invocationBuilder.method(p.httpMethod.toString(), entity(request, contentType));
             } catch (ProcessingException | IllegalStateException e) {
                 throw new SvcLogicException(requestPostingException +
                     e.getLocalizedMessage(), e);
