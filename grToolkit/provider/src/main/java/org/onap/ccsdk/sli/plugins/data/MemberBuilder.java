@@ -23,16 +23,12 @@ package org.onap.ccsdk.sli.plugins.data;
 
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.cluster.health.output.MembersBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.CommitStatusBuilder;
-import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.CommitStatus;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.ReplicasBuilder;
-import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.Replicas;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.LeaderBuilder;
-import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.Leader;
 
-
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MemberBuilder extends MembersBuilder {
     public MemberBuilder(ClusterActor actor) {
@@ -45,12 +41,11 @@ public class MemberBuilder extends MembersBuilder {
         populateReplicas(actor.getReplicaShards());
         populateCommits(actor.getCommits());
         populateLeader(actor.getShardLeader());
-        //actor.getNonReplicaShards();
     }
 
-    private void populateLeader(ArrayList<String> shardLeader) {
+    private void populateLeader(List<String> shardLeader) {
         LeaderBuilder builder;
-        this.setLeader((List) new ArrayList<Leader>());
+        this.setLeader(new ArrayList<>());
         for(String leader : shardLeader) {
             builder = new LeaderBuilder();
             builder.setShard(leader);
@@ -58,22 +53,24 @@ public class MemberBuilder extends MembersBuilder {
         }
     }
 
-    private void populateCommits(HashMap<String, Integer> commits) {
+    private void populateCommits(Map<String, Integer> commits) {
         CommitStatusBuilder builder;
-        this.setCommitStatus((List) new ArrayList<CommitStatus>());
-        for(String key : commits.keySet()) {
-            if(commits.get(key) != 0) {
+        this.setCommitStatus(new ArrayList<>());
+        for(Map.Entry<String, Integer> entry : commits.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            if(value != 0) {
                 builder = new CommitStatusBuilder();
                 builder.setShard(key);
-                builder.setDelta(commits.get(key));
+                builder.setDelta(value);
                 this.getCommitStatus().add(builder.build());
             }
         }
     }
 
-    private void populateReplicas(ArrayList<String> replicaShards) {
+    private void populateReplicas(List<String> replicaShards) {
         ReplicasBuilder builder;
-        this.setReplicas((List) new ArrayList<Replicas>());
+        this.setReplicas(new ArrayList<>());
         for(String shard : replicaShards) {
             builder = new ReplicasBuilder();
             builder.setShard(shard);

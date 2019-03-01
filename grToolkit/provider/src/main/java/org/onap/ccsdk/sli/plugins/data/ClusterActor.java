@@ -23,6 +23,8 @@ package org.onap.ccsdk.sli.plugins.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ClusterActor {
     private String node;
@@ -109,36 +111,36 @@ public class ClusterActor {
         this.unreachable = unreachable;
     }
 
-    public ArrayList<String> getShardLeader() {
+    public List<String> getShardLeader() {
         return shardLeader;
     }
 
-    public void setShardLeader(ArrayList<String> shardLeader) {
-        this.shardLeader = shardLeader;
+    public void setShardLeader(List<String> shardLeader) {
+        this.shardLeader = (ArrayList<String>) shardLeader;
     }
 
-    public ArrayList<String> getReplicaShards() {
+    public List<String> getReplicaShards() {
         return replicaShards;
     }
 
-    public void setReplicaShards(ArrayList<String> replicaShards) {
-        this.replicaShards = replicaShards;
+    public void setReplicaShards(List<String> replicaShards) {
+        this.replicaShards = (ArrayList<String>) replicaShards;
     }
 
-    public ArrayList<String> getNonReplicaShards() {
+    public List<String> getNonReplicaShards() {
         return nonReplicaShards;
     }
 
-    public void setNonReplicaShards(ArrayList<String> nonReplicaShards) {
-        this.nonReplicaShards = nonReplicaShards;
+    public void setNonReplicaShards(List<String> nonReplicaShards) {
+        this.nonReplicaShards = (ArrayList<String>) nonReplicaShards;
     }
 
-    public HashMap<String, Integer> getCommits() {
+    public Map<String, Integer> getCommits() {
         return commits;
     }
 
-    public void setCommits(HashMap<String, Integer> commits) {
-        this.commits = commits;
+    public void setCommits(Map<String, Integer> commits) {
+        this.commits = (HashMap<String, Integer>) commits;
     }
 
     public void flush() {
@@ -189,8 +191,9 @@ public class ClusterActor {
             builder.append("\n");
         }
 
-        for(String key : commits.keySet()) {
-            int value = commits.get(key);
+        for(Map.Entry<String, Integer> entry : commits.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue();
             if(value > 0) {
                 builder.append("\t");
                 builder.append(value);
