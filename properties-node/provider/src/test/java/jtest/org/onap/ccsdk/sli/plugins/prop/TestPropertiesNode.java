@@ -293,7 +293,7 @@ public class TestPropertiesNode {
         assertEquals(ctx.getAttribute("test-xml.project.dependencies.dependency.scope"),"provided");
         assertEquals(ctx.getAttribute("test-xml.project.build.pluginManagement.plugins.plugin.configuration" +
                                               ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
-                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100,)");
         assertEquals(ctx.getAttribute("test-xml.project.build.plugins.plugin.configuration." +
                                               "instructions.Import-Package"),"*");
     }
@@ -314,7 +314,7 @@ public class TestPropertiesNode {
         assertEquals(ctx.getAttribute("project.dependencies.dependency.scope"),"provided");
         assertEquals(ctx.getAttribute("project.build.pluginManagement.plugins.plugin.configuration" +
                                               ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
-                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100,)");
         assertEquals(ctx.getAttribute("project.build.plugins.plugin.configuration." +
                                               "instructions.Import-Package"),"*");
     }
@@ -334,7 +334,7 @@ public class TestPropertiesNode {
         assertEquals(ctx.getAttribute("project.dependencies.dependency.scope"),"provided");
         assertEquals(ctx.getAttribute("project.build.pluginManagement.plugins.plugin.configuration" +
                                               ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
-                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100,)");
         assertEquals(ctx.getAttribute("project.build.plugins.plugin.configuration." +
                                               "instructions.Import-Package"),"*");
     }
@@ -355,7 +355,7 @@ public class TestPropertiesNode {
         assertEquals(ctx.getAttribute("project.dependencies.dependency.scope"),"provided");
         assertEquals(ctx.getAttribute("project.build.pluginManagement.plugins.plugin.configuration" +
                                               ".lifecycleMappingMetadata.pluginExecutions.pluginExecution." +
-                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100-SNAPSHOT,)");
+                                              "pluginExecutionFilter.versionRange"),"[1.2.0.100,)");
         assertEquals(ctx.getAttribute("project.build.plugins.plugin.configuration." +
                                               "instructions.Import-Package"),"*");
         assertEquals(ctx.getAttribute("tmp.sdn-circuit-req-row_length"),"1");
