@@ -36,11 +36,20 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>ccsdk-restconf-client</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>ccsdk-template-node</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>
 		</dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ccsdk-sshapi-call-node</artifactId>
