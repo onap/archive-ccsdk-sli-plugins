@@ -58,6 +58,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth1.ConsumerCredentials;
 import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
@@ -622,6 +623,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 .build();
         }
         client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        // Needed to support additional HTTP methods such as PATCH
+        client.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
 
         WebTarget webTarget = addAuthType(client, p).target(p.restapiUrl);
 
