@@ -20,20 +20,25 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.opendaylight.restconf.common.errors.RestconfDocumentedException;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
-import java.util.Map;
-
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.DOT_REGEX;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.SLASH;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getChildSchemaNode;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getIndex;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getListName;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getNodeType;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getParsedValue;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getProcessedPath;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getRevision;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getValueNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.resolveName;
@@ -70,6 +75,8 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
         String rootUri = uri().replaceAll("\\/", "\\.");
         node = createRootNode(lastNodeName, rootUri);
 
+        paramMap = convertToValidParam(paramMap);
+
         for (Map.Entry<String, String> entry : paramMap.entrySet()) {
             String[] names = entry.getKey().split("\\.");
             for (int i = 0; i < names.length; i++) {
@@ -84,6 +91,30 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
             }
         }
         return node;
+    }
+
+    /**
+     * Converts all the params in the svc logic context into a valid param by
+     * replacing the underscore in module name to colon at necessary places.
+     *
+     * @param paramMap list of invalid parameters
+     * @return list of partially valid parameters
+     */
+    private Map<String, String> convertToValidParam(Map<String, String> paramMap) {
+        Map<String, String> fixedParams = new HashMap<>();
+        for(Map.Entry<String, String> entry : paramMap.entrySet()) {
+            String key = entry.getKey().replaceAll(DOT_REGEX, SLASH);
+            try {
+                SchemaPathHolder fixedUrl = getProcessedPath(key, schemaCtx());
+                String fixedUri = fixedUrl.getUri().replaceAll(
+                        SLASH, DOT_REGEX);
+                fixedParams.put(fixedUri, entry.getValue());
+            } catch (IllegalArgumentException | RestconfDocumentedException
+                    | NullPointerException e) {
+                fixedParams.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return fixedParams;
     }
 
     @Override
@@ -104,8 +135,10 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
 
     private void createPropertyNode(int index, int length, String name,
                                     String value) throws SvcLogicException {
-        String localName = resolveName(name);
-        Namespace ns = getNamespace(getListName(name), schemaCtx(), node);
+
+        Namespace ns = getNamespace(getListName(name), schemaCtx(),
+                                    node, curSchema);
+        String localName = resolveName(ns, name);
         SchemaNode schema = getChildSchemaNode(curSchema, localName, ns);
         if (schema == null) {
             return;

@@ -19,15 +19,6 @@
  */
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
-import org.opendaylight.restconf.nb.rfc8040.utils.parser.ParserIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -36,6 +27,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
+import org.opendaylight.restconf.nb.rfc8040.utils.parser.ParserIdentifier;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -53,39 +52,39 @@ public final class PropertiesSerializerTest {
     public void testBasicConstructs() throws SvcLogicException {
         String uri = "test-yang:cont1/cont2";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont1.cont2.cont3.leaf10", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].leaf1", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].leaf2", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].leaf3", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].ll1[0]", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].ll1[1]", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].ll2[0]", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].ll2[1]", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].cont4.leaf11", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].list4[0].leaf8", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].list4[1].leaf8", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].list5[0].leaf9", "abc");
-        params.put("test-yang:cont1.cont2.list1[0].list5[1].leaf9", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].leaf1", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].leaf2", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].leaf3", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].ll1[0]", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].ll1[1]", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].ll2[0]", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].ll2[1]", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].cont4.leaf11", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].list4[0].leaf8", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].list4[1].leaf8", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].list5[0].leaf9", "abc");
-        params.put("test-yang:cont1.cont2.list1[1].list5[1].leaf9", "abc");
-        params.put("test-yang:cont1.cont2.list2[0].leaf4", "abc");
-        params.put("test-yang:cont1.cont2.list2[1].leaf4", "abc");
-        params.put("test-yang:cont1.cont2.leaf5", "abc");
-        params.put("test-yang:cont1.cont2.leaf6", "abc");
-        params.put("test-yang:cont1.cont2.ll3[0]", "abc");
-        params.put("test-yang:cont1.cont2.ll3[1]", "abc");
-        params.put("test-yang:cont1.cont2.ll4[0]", "abc");
-        params.put("test-yang:cont1.cont2.ll4[1]", "abc");
+        params.put("test-yang_cont1.cont2.cont3.leaf10", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].leaf1", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].leaf2", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].leaf3", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].ll1[0]", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].ll1[1]", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].ll2[0]", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].ll2[1]", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].cont4.leaf11", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].list4[0].leaf8", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].list4[1].leaf8", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].list5[0].leaf9", "abc");
+        params.put("test-yang_cont1.cont2.list1[0].list5[1].leaf9", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].leaf1", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].leaf2", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].leaf3", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].ll1[0]", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].ll1[1]", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].ll2[0]", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].ll2[1]", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].cont4.leaf11", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].list4[0].leaf8", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].list4[1].leaf8", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].list5[0].leaf9", "abc");
+        params.put("test-yang_cont1.cont2.list1[1].list5[1].leaf9", "abc");
+        params.put("test-yang_cont1.cont2.list2[0].leaf4", "abc");
+        params.put("test-yang_cont1.cont2.list2[1].leaf4", "abc");
+        params.put("test-yang_cont1.cont2.leaf5", "abc");
+        params.put("test-yang_cont1.cont2.leaf6", "abc");
+        params.put("test-yang_cont1.cont2.ll3[0]", "abc");
+        params.put("test-yang_cont1.cont2.ll3[1]", "abc");
+        params.put("test-yang_cont1.cont2.ll4[0]", "abc");
+        params.put("test-yang_cont1.cont2.ll4[1]", "abc");
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
 
@@ -283,18 +282,18 @@ public final class PropertiesSerializerTest {
     public void testAugment() throws SvcLogicException {
         String uri = "test-yang:cont1/cont2";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont1.cont2.cont4.leaf10", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:cont5.leaf13", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:list7[0].leaf14", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:list7[1].leaf14", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:leaf15", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:ll6[0]", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:ll6[1]", "abc");
-        params.put("test-yang:cont1.cont2.list6[0].leaf11", "abc");
-        params.put("test-yang:cont1.cont2.list6[1].leaf11", "abc");
-        params.put("test-yang:cont1.cont2.leaf12", "abc");
-        params.put("test-yang:cont1.cont2.ll5[0]", "abc");
-        params.put("test-yang:cont1.cont2.ll5[1]", "abc");
+        params.put("test-yang_cont1.cont2.cont4.leaf10", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_cont5.leaf13", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_list7[0].leaf14", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_list7[1].leaf14", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_leaf15", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_ll6[0]", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_ll6[1]", "abc");
+        params.put("test-yang_cont1.cont2.list6[0].leaf11", "abc");
+        params.put("test-yang_cont1.cont2.list6[1].leaf11", "abc");
+        params.put("test-yang_cont1.cont2.leaf12", "abc");
+        params.put("test-yang_cont1.cont2.ll5[0]", "abc");
+        params.put("test-yang_cont1.cont2.ll5[1]", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -397,12 +396,12 @@ public final class PropertiesSerializerTest {
     public void testChoiceCase1() throws SvcLogicException {
         String uri = "test-yang:cont8";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont8.cont6.leaf16", "abc");
-        params.put("test-yang:cont8.list8[0].leaf18", "abc");
-        params.put("test-yang:cont8.list8[1].leaf18", "abc");
-        params.put("test-yang:cont8.leaf19", "abc");
-        params.put("test-yang:cont8.ll7[0]", "abc");
-        params.put("test-yang:cont8.ll7[1]", "abc");
+        params.put("test-yang_cont8.cont6.leaf16", "abc");
+        params.put("test-yang_cont8.list8[0].leaf18", "abc");
+        params.put("test-yang_cont8.list8[1].leaf18", "abc");
+        params.put("test-yang_cont8.leaf19", "abc");
+        params.put("test-yang_cont8.ll7[0]", "abc");
+        params.put("test-yang_cont8.ll7[1]", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -459,9 +458,9 @@ public final class PropertiesSerializerTest {
     public void testChoiceCase2() throws SvcLogicException {
         String uri = "test-yang:cont9";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont9.leaf20", "abc");
-        params.put("test-yang:cont9.ll8[0]", "abc");
-        params.put("test-yang:cont9.cont11.leaf25", "abc");
+        params.put("test-yang_cont9.leaf20", "abc");
+        params.put("test-yang_cont9.ll8[0]", "abc");
+        params.put("test-yang_cont9.cont11.leaf25", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -499,7 +498,7 @@ public final class PropertiesSerializerTest {
     public void testChoiceCase3() throws SvcLogicException {
         String uri = "test-yang:cont8/cont6";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont8.cont6.test-augment:leaf21", "abc");
+        params.put("test-yang_cont8.cont6.test-augment_leaf21", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -538,10 +537,10 @@ public final class PropertiesSerializerTest {
     public void testGrouping() throws SvcLogicException {
         String uri = "test-yang:cont13";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont13.cont12.leaf26", "abc");
-        params.put("test-yang:cont13.list9[0].leaf27", "abc");
-        params.put("test-yang:cont13.leaf28", "abc");
-        params.put("test-yang:cont13.ll9[0]", "abc");
+        params.put("test-yang_cont13.cont12.leaf26", "abc");
+        params.put("test-yang_cont13.list9[0].leaf27", "abc");
+        params.put("test-yang_cont13.leaf28", "abc");
+        params.put("test-yang_cont13.ll9[0]", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -587,11 +586,11 @@ public final class PropertiesSerializerTest {
     public void testGrouping2() throws SvcLogicException {
         String uri = "test-yang:cont9/cont11";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont9.cont11.leaf25", "abc");
-        params.put("test-yang:cont9.cont11.cont13.cont12.leaf26", "abc");
-        params.put("test-yang:cont9.cont11.cont13.list9[0].leaf27", "abc");
-        params.put("test-yang:cont9.cont11.cont13.leaf28", "abc");
-        params.put("test-yang:cont9.cont11.cont13.ll9[0]", "abc");
+        params.put("test-yang_cont9.cont11.leaf25", "abc");
+        params.put("test-yang_cont9.cont11.cont13.cont12.leaf26", "abc");
+        params.put("test-yang_cont9.cont11.cont13.list9[0].leaf27", "abc");
+        params.put("test-yang_cont9.cont11.cont13.leaf28", "abc");
+        params.put("test-yang_cont9.cont11.cont13.ll9[0]", "abc");
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
         PropertiesNodeSerializer ser = new MdsalPropertiesNodeSerializer(
@@ -642,10 +641,10 @@ public final class PropertiesSerializerTest {
     public void testGrouping3() throws SvcLogicException {
         String uri = "test-augment:cont13";
         Map<String, String> params = new HashMap<>();
-        params.put("test-augment:cont13.cont12.leaf26", "abc");
-        params.put("test-augment:cont13.list9[0].leaf27", "abc");
-        params.put("test-augment:cont13.leaf28", "abc");
-        params.put("test-augment:cont13.ll9[0]", "abc");
+        params.put("test-augment_cont13.cont12.leaf26", "abc");
+        params.put("test-augment_cont13.list9[0].leaf27", "abc");
+        params.put("test-augment_cont13.leaf28", "abc");
+        params.put("test-augment_cont13.ll9[0]", "abc");
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
         PropertiesNodeSerializer ser = new MdsalPropertiesNodeSerializer(
@@ -693,10 +692,10 @@ public final class PropertiesSerializerTest {
     public void testGrouping4() throws SvcLogicException {
         String uri = "test-yang:cont1/cont2/cont4";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont1.cont2.cont4.test-augment:cont13.cont12.leaf26", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:cont13.list9[0].leaf27", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:cont13.leaf28", "abc");
-        params.put("test-yang:cont1.cont2.cont4.test-augment:cont13.ll9[0]", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_cont13.cont12.leaf26", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_cont13.list9[0].leaf27", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_cont13.leaf28", "abc");
+        params.put("test-yang_cont1.cont2.cont4.test-augment_cont13.ll9[0]", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -755,16 +754,16 @@ public final class PropertiesSerializerTest {
     public void testRpcInput() throws SvcLogicException {
         String uri = "test-yang:create-sfc";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:create-sfc.input.cont14.leaf28", "abc");
-        params.put("test-yang:create-sfc.input.list10[0].leaf29", "abc");
-        params.put("test-yang:create-sfc.input.leaf30", "abc");
-        params.put("test-yang:create-sfc.input.ll10[0]", "abc");
-        params.put("test-yang:create-sfc.input.cont15.leaf31", "abc");
-        params.put("test-yang:create-sfc.input.cont13.cont12.leaf26", "abc");
-        params.put("test-yang:create-sfc.input.cont13.list9[0].leaf27", "abc");
-        params.put("test-yang:create-sfc.input.cont13.leaf28", "abc");
-        params.put("test-yang:create-sfc.input.cont13.ll9[0]", "abc");
-        params.put("test-yang:create-sfc.input.test-augment:leaf36", "abc");
+        params.put("test-yang_create-sfc.input.cont14.leaf28", "abc");
+        params.put("test-yang_create-sfc.input.list10[0].leaf29", "abc");
+        params.put("test-yang_create-sfc.input.leaf30", "abc");
+        params.put("test-yang_create-sfc.input.ll10[0]", "abc");
+        params.put("test-yang_create-sfc.input.cont15.leaf31", "abc");
+        params.put("test-yang_create-sfc.input.cont13.cont12.leaf26", "abc");
+        params.put("test-yang_create-sfc.input.cont13.list9[0].leaf27", "abc");
+        params.put("test-yang_create-sfc.input.cont13.leaf28", "abc");
+        params.put("test-yang_create-sfc.input.cont13.ll9[0]", "abc");
+        params.put("test-yang_create-sfc.input.test-augment_leaf36", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -869,16 +868,16 @@ public final class PropertiesSerializerTest {
     public void testRpcOutput() throws SvcLogicException {
         String uri = "test-yang:create-sfc";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:create-sfc.output.cont16.leaf32", "abc");
-        params.put("test-yang:create-sfc.output.list11[0].leaf33", "abc");
-        params.put("test-yang:create-sfc.output.leaf34", "abc");
-        params.put("test-yang:create-sfc.output.ll11[0]", "abc");
-        params.put("test-yang:create-sfc.output.cont17.leaf35", "abc");
-        params.put("test-yang:create-sfc.output.cont13.cont12.leaf26", "abc");
-        params.put("test-yang:create-sfc.output.cont13.list9[0].leaf27", "abc");
-        params.put("test-yang:create-sfc.output.cont13.leaf28", "abc");
-        params.put("test-yang:create-sfc.output.cont13.ll9[0]", "abc");
-        params.put("test-yang:create-sfc.output.test-augment:leaf37", "abc");
+        params.put("test-yang_create-sfc.output.cont16.leaf32", "abc");
+        params.put("test-yang_create-sfc.output.list11[0].leaf33", "abc");
+        params.put("test-yang_create-sfc.output.leaf34", "abc");
+        params.put("test-yang_create-sfc.output.ll11[0]", "abc");
+        params.put("test-yang_create-sfc.output.cont17.leaf35", "abc");
+        params.put("test-yang_create-sfc.output.cont13.cont12.leaf26", "abc");
+        params.put("test-yang_create-sfc.output.cont13.list9[0].leaf27", "abc");
+        params.put("test-yang_create-sfc.output.cont13.leaf28", "abc");
+        params.put("test-yang_create-sfc.output.cont13.ll9[0]", "abc");
+        params.put("test-yang_create-sfc.output.test-augment_leaf37", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -983,10 +982,10 @@ public final class PropertiesSerializerTest {
     public void testContainerSameName() throws SvcLogicException {
         String uri = "test-yang:cont18";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont18.cont18.list12[0].list12[0].leaf36", "abc");
-        params.put("test-yang:cont18.cont18.list12[0].leaf36", "hi");
-        params.put("test-yang:cont18.cont18.list12[1].list12[0].leaf36", "xyz");
-        params.put("test-yang:cont18.cont18.list12[1].list12[1].leaf36", "hey!");
+        params.put("test-yang_cont18.cont18.list12[0].list12[0].leaf36", "abc");
+        params.put("test-yang_cont18.cont18.list12[0].leaf36", "hi");
+        params.put("test-yang_cont18.cont18.list12[1].list12[0].leaf36", "xyz");
+        params.put("test-yang_cont18.cont18.list12[1].list12[1].leaf36", "hey!");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -1055,9 +1054,9 @@ public final class PropertiesSerializerTest {
     public void testPropertiesWithoutSchema() throws SvcLogicException {
         String uri = "test-yang:cont18";
         Map<String, String> params = new HashMap<>();
-        params.put("test-yang:cont18.leaf40", "abc");
+        params.put("test-yang_cont18.leaf40", "abc");
         params.put("leaf41", "hi");
-        params.put("test-yang:cont18.leaf41", "abc");
+        params.put("test-yang_cont18.leaf41", "abc");
 
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
@@ -1075,11 +1074,12 @@ public final class PropertiesSerializerTest {
     public void testIdentityRef() throws SvcLogicException {
         String uri = "identity-test:test";
         Map<String, String> params = new HashMap<>();
-        params.put("identity-test:test.con1.interface", "identity-types:physical");
-        params.put("identity-test:test.con1.interfaces.int-list[0].iden", "identity-test:Giga");
-        params.put("identity-test:test.con1.interfaces.int-list[0].available.ll[0]", "identity-types:Loopback");
-        params.put("identity-test:test.con1.interfaces.int-list[0].available.leaf1", "identity-types-second:Ethernet");
-        params.put("identity-test:test.con1.interfaces.int-list[0].available.leaf2", "identity-types-second:iden2");
+        params.put("identity-test_test.con1.interface", "identity-types" +
+                ":physical");
+        params.put("identity-test_test.con1.interfaces.int-list[0].iden", "identity-test:Giga");
+        params.put("identity-test_test.con1.interfaces.int-list[0].available.ll[0]", "identity-types:Loopback");
+        params.put("identity-test_test.con1.interfaces.int-list[0].available.leaf1", "identity-types-second:Ethernet");
+        params.put("identity-test_test.con1.interfaces.int-list[0].available.leaf2", "identity-types-second:iden2");
         InstanceIdentifierContext<?> iCtx = ParserIdentifier
                 .toInstanceIdentifier(uri, context, null);
 

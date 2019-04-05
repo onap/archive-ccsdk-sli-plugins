@@ -22,15 +22,6 @@
 
 package org.onap.ccsdk.sli.plugins.restconfapicall;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.restapicall.HttpMethod;
-import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.YangParameters;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -42,6 +33,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.restapicall.HttpMethod;
+import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.YangParameters;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 import static org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode.getParameters;
 import static org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode.parseParam;
@@ -156,6 +156,7 @@ public final class RestconfApiUtils {
      */
     private static String getParsedPath(String path) {
         String firstHalf;
+        String secondHalf;
         if (path.contains(COLON)) {
             String[] p = path.split(COLON);
             if (p[0].contains(SLASH)) {
@@ -164,7 +165,8 @@ public final class RestconfApiUtils {
             } else {
                 firstHalf = p[0];
             }
-            return firstHalf + COLON + p[1];
+            secondHalf = path.substring(p[0].length() + 1);
+            return firstHalf + COLON + secondHalf;
         }
         return path;
     }

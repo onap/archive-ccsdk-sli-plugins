@@ -20,6 +20,9 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -30,9 +33,6 @@ import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
 import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -136,7 +136,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonId() throws SvcLogicException {
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         SvcLogicContext ctx = createAttList(pre);
         ctx.setAttribute(pre + "l", "abc");
         p.put("dirPath", "src/test/resources");
@@ -156,7 +156,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonIdWithPut() throws SvcLogicException {
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         SvcLogicContext ctx = createAttList(pre);
         ctx.setAttribute(pre + "l", "abc");
         p.put("dirPath", "src/test/resources");
@@ -176,7 +176,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonIdWithPatch() throws SvcLogicException {
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         SvcLogicContext ctx = createAttList(pre);
         ctx.setAttribute(pre + "l", "abc");
         p.put("dirPath", "src/test/resources");
@@ -196,7 +196,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlId() throws SvcLogicException {
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         SvcLogicContext ctx = createAttList(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -215,7 +215,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlIdWithPut() throws SvcLogicException {
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         SvcLogicContext ctx = createAttList(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -234,7 +234,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlIdWithPatch() throws SvcLogicException {
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         SvcLogicContext ctx = createAttList(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -255,7 +255,7 @@ public class DataFormatSerializerTest {
     public void decodeToJsonId() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_JSON_ID);
         SvcLogicContext ctx = new SvcLogicContext();
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
         p.put("httpMethod", "get");
@@ -276,7 +276,7 @@ public class DataFormatSerializerTest {
     public void decodeToXmlId() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_XML_ID);
         SvcLogicContext ctx = new SvcLogicContext();
-        String pre = "identity-test:test.";
+        String pre = "identity-test_test.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
         p.put("httpMethod", "get");
@@ -294,7 +294,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonYang() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -313,7 +313,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonYangWithPut() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -332,7 +332,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonYangWithPatch() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -351,7 +351,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToJsonWithAugAsRootChild() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -372,7 +372,7 @@ public class DataFormatSerializerTest {
     public void decodeToJsonYang() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_JSON_YANG);
         SvcLogicContext ctx = new SvcLogicContext();
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
         p.put("httpMethod", "get");
@@ -390,7 +390,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlYang() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -409,7 +409,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlYangWithPut() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -428,7 +428,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlYangWithPatch() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -447,7 +447,7 @@ public class DataFormatSerializerTest {
      */
     @Test
     public void encodeToXmlWithAugAsRootChild() throws SvcLogicException {
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         SvcLogicContext ctx = createAttListYang(pre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -468,7 +468,7 @@ public class DataFormatSerializerTest {
     public void decodeToXmlYang() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_XML_YANG);
         SvcLogicContext ctx = new SvcLogicContext();
-        String pre = "test-yang:cont1.cont2.";
+        String pre = "test-yang_cont1.cont2.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
         p.put("httpMethod", "get");
@@ -487,8 +487,8 @@ public class DataFormatSerializerTest {
     @Test
     public void codecToJsonRpc() throws SvcLogicException {
         createMockForDecode(DECODE_FROM_JSON_RPC);
-        String inPre = "test-yang:create-sfc.input.";
-        String outPre = "test-yang:create-sfc.output.";
+        String inPre = "test-yang_create-sfc.input.";
+        String outPre = "test-yang_create-sfc.output.";
         SvcLogicContext ctx = createAttListRpc(inPre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -509,8 +509,8 @@ public class DataFormatSerializerTest {
     @Test
     public void codecToXmlRpc() throws SvcLogicException {
         createMockForDecode(DECODE_FROM_XML_RPC);
-        String inPre = "test-yang:create-sfc.input.";
-        String outPre = "test-yang:create-sfc.output.";
+        String inPre = "test-yang_create-sfc.input.";
+        String outPre = "test-yang_create-sfc.output.";
         SvcLogicContext ctx = createAttListRpc(inPre);
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -650,21 +650,21 @@ public class DataFormatSerializerTest {
         ctx.setAttribute(pre + "leaf12", "abc");
         ctx.setAttribute(pre + "ll5[0]", "abc");
         ctx.setAttribute(pre + "ll5[1]", "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:cont5.leaf13", "true");
-        ctx.setAttribute(pre + "cont4.test-augment:list7[0].leaf14", "test");
-        ctx.setAttribute(pre + "cont4.test-augment:list7[1].leaf14", "create");
-        ctx.setAttribute(pre + "cont4.test-augment:leaf15", "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:ll6[0]", "unbounded");
-        ctx.setAttribute(pre + "cont4.test-augment:ll6[1]", "8");
-        ctx.setAttribute(pre + "cont4.test-augment:cont13.cont12.leaf26",
+        ctx.setAttribute(pre + "cont4.test-augment_cont5.leaf13", "true");
+        ctx.setAttribute(pre + "cont4.test-augment_list7[0].leaf14", "test");
+        ctx.setAttribute(pre + "cont4.test-augment_list7[1].leaf14", "create");
+        ctx.setAttribute(pre + "cont4.test-augment_leaf15", "abc");
+        ctx.setAttribute(pre + "cont4.test-augment_ll6[0]", "unbounded");
+        ctx.setAttribute(pre + "cont4.test-augment_ll6[1]", "8");
+        ctx.setAttribute(pre + "cont4.test-augment_cont13.cont12.leaf26",
                          "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:cont13.list9[0].leaf27",
+        ctx.setAttribute(pre + "cont4.test-augment_cont13.list9[0].leaf27",
                          "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:cont13.list9[1].leaf27",
+        ctx.setAttribute(pre + "cont4.test-augment_cont13.list9[1].leaf27",
                          "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:cont13.leaf28", "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:cont13.ll9[0]", "abc");
-        ctx.setAttribute(pre + "cont4.test-augment:cont13.ll9[1]", "abc");
+        ctx.setAttribute(pre + "cont4.test-augment_cont13.leaf28", "abc");
+        ctx.setAttribute(pre + "cont4.test-augment_cont13.ll9[0]", "abc");
+        ctx.setAttribute(pre + "cont4.test-augment_cont13.ll9[1]", "abc");
         return ctx;
     }
 
@@ -785,29 +785,29 @@ public class DataFormatSerializerTest {
         assertThat(ctx.getAttribute(pre + "leaf12"), is("abc"));
         assertThat(ctx.getAttribute(pre + "ll5[0]"), is("abc"));
         assertThat(ctx.getAttribute(pre + "ll5[1]"), is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont5.leaf13"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont5.leaf13"),
                    is("true"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:list7[0].leaf14"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_list7[0].leaf14"),
                    is("test"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:list7[1].leaf14"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_list7[1].leaf14"),
                    is("create"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:leaf15"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_leaf15"),
                    is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:ll6[0]"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_ll6[0]"),
                    is("unbounded"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:ll6[1]"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_ll6[1]"),
                    is("8"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont13" +
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont13" +
                                             ".cont12.leaf26"), is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont13.list9[0]" +
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont13.list9[0]" +
                                             ".leaf27"), is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont13.list9[1]" +
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont13.list9[1]" +
                                             ".leaf27"), is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont13.leaf28"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont13.leaf28"),
                    is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont13.ll9[0]"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont13.ll9[0]"),
                    is("abc"));
-        assertThat(ctx.getAttribute(pre + "cont4.test-augment:cont13.ll9[1]"),
+        assertThat(ctx.getAttribute(pre + "cont4.test-augment_cont13.ll9[1]"),
                    is("abc"));
     }
 

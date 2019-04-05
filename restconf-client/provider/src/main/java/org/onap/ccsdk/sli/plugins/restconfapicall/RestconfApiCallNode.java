@@ -25,6 +25,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
+
+import javax.ws.rs.core.UriBuilder;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.SocketException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -54,17 +66,6 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.UriBuilder;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import static com.google.common.base.Strings.repeat;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -91,8 +92,8 @@ import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.RES_PR
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.RETRY_COUNT;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.RETRY_FAIL;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.UPDATED_URL;
-import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getUpdatedXmlReq;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getSchemaCtxFromDir;
+import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getUpdatedXmlReq;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.getYangParameters;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.parseUrl;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfListenerFactory.instance;

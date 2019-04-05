@@ -121,7 +121,11 @@ public final class DataFormatUtilsTest {
             "</test>\n";
 
     static final String ENCODE_TO_JSON_YANG_COMMON = "\n    " +
-            "\"test-augment:cont13\": {\n" +
+            "\"test-augment:ll6\": [\n" +
+            "        \"unbounded\",\n" +
+            "        \"8\"\n" +
+            "    ],\n" +
+            "    \"test-augment:cont13\": {\n" +
             "        \"ll9\": [\n" +
             "            \"abc\",\n" +
             "            \"abc\"\n" +
@@ -148,10 +152,6 @@ public final class DataFormatUtilsTest {
             "        }\n" +
             "    ],\n" +
             "    \"test-augment:leaf15\": \"abc\",\n" +
-            "    \"test-augment:ll6\": [\n" +
-            "        \"unbounded\",\n" +
-            "        \"8\"\n" +
-            "    ],\n" +
             "    \"test-augment:cont5\": {\n" +
             "        \"leaf13\": \"true\"\n" +
             "    }";
@@ -277,6 +277,10 @@ public final class DataFormatUtilsTest {
             "}";
 
     static final String ENCODE_TO_XML_YANG_COMMON = "\n" +
+            "<ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
+            "ment\">unbounded</ll6>\n" +
+            "<ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
+            "ment\">8</ll6>\n" +
             "<cont13 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
             "augment\">\n" +
             "    <ll9>abc</ll9>\n" +
@@ -302,10 +306,6 @@ public final class DataFormatUtilsTest {
             "</list7>\n" +
             "<leaf15 xmlns=\"urn:opendaylight:params:xml:ns:yang:" +
             "augment\">abc</leaf15>\n" +
-            "<ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
-            "ment\">unbounded</ll6>\n" +
-            "<ll6 xmlns=\"urn:opendaylight:params:xml:ns:yang:aug" +
-            "ment\">8</ll6>\n" +
             "<cont5 xmlns=\"urn:opendaylight:params:xml:ns:yang:a" +
             "ugment\">\n" +
             "    <leaf13>true</leaf13>\n" +
@@ -557,8 +557,8 @@ public final class DataFormatUtilsTest {
      * @param i   number of space
      * @return space appended string
      */
-    private static String addSpace(String req, int i) {
-        StringBuilder space = new StringBuilder("");
+    public static String addSpace(String req, int i) {
+        StringBuilder space = new StringBuilder();
         for (int sp = 0; sp < i; sp++) {
             space = space.append(" ");
         }

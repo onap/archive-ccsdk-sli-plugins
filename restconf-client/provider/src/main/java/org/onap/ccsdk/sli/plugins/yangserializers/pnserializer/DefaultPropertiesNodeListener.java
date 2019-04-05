@@ -20,12 +20,14 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.COLON;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.UNDERSCORE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_LEAF_NODE;
 
@@ -56,9 +58,10 @@ public class DefaultPropertiesNodeListener implements PropertiesNodeListener {
                 || node.nodeType() == MULTI_INSTANCE_LEAF_NODE) {
             String val = ((LeafNode) node).value();
             if (((LeafNode) node).valueNs() != null) {
-                val = ((LeafNode) node).valueNs().moduleName() + ":" + val;
+                val = ((LeafNode) node).valueNs().moduleName() + COLON + val;
             }
-            params.put(node.uri(), val);
+            String uri = node.uri().replaceAll(COLON, UNDERSCORE);
+            params.put(uri, val);
         }
     }
 
