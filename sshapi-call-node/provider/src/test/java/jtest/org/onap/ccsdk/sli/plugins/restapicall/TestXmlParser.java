@@ -21,7 +21,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
+package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

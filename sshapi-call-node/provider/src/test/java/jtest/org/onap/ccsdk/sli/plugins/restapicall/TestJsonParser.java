@@ -21,7 +21,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
+package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.io.BufferedReader;
 import java.io.IOException;

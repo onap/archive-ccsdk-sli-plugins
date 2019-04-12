@@ -2,9 +2,7 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * Copyright (C) 2017-2018 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Copyright (C) 2018 Samsung Electronics. All rights
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,14 +19,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
+package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.onap.ccsdk.sli.plugins.sshapicall.model.XmlJsonUtil;
+import org.onap.ccsdk.sli.plugins.restapicall.XmlJsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,7 +254,7 @@ public class TestXmlJsonUtil {
                 "}\r\n" +
                 "";
 
-        String xmlout = XmlJsonUtil.removeEmptyStructJson(xmlin);
+        String xmlout = XmlJsonUtil.removeEmptyStructJson(null, xmlin);
         log.info(xmlout);
 
         Assert.assertEquals(xmloutexpected, xmlout);

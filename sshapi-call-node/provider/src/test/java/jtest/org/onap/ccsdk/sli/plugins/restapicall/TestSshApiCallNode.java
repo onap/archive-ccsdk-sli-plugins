@@ -1,4 +1,4 @@
-package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
+package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
 import org.junit.After;
 import org.junit.Before;
@@ -6,16 +6,11 @@ import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.sshapicall.SshApiCallNode;
-import org.onap.ccsdk.sli.plugins.sshapicall.model.XmlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
