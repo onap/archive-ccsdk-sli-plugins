@@ -21,15 +21,22 @@
 
 package jtest.org.onap.ccsdk.sli.plugins.sshapicall;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class TestRestapiCallNode {
 
@@ -653,5 +660,25 @@ public class TestRestapiCallNode {
 
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testMultipartFormData() throws SvcLogicException {
+        final ResourceConfig resourceConfig = new ResourceConfig(
+                MultipartServerMock.class, MultiPartFeature.class);
+        GrizzlyHttpServerFactory.createHttpServer(
+                URI.create("http://localhost:8080/"),resourceConfig);
+
+        Map<String, String> p = new HashMap<>();
+        p.put("multipartFormData", "true");
+        p.put("format", "none");
+        p.put("multipartFile", "src/test/resources/test-template.json");
+        p.put("restapiUrl", "http://localhost:8080/file-upload/upload");
+
+        SvcLogicContext ctx = new SvcLogicContext();
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+        assertThat(ctx.getAttribute("response-code"), is("200"));
+        assertThat(ctx.getAttribute("httpResponse"), is( "test-template.json"));
     }
 }
