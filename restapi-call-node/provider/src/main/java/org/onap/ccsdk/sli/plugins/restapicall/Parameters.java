@@ -51,4 +51,6 @@ public class Parameters {
     public AuthType authtype;
     public Boolean returnRequestPayload;
     public String accept;
+    public boolean multipartFormData;
+    public String multipartFile;
 }

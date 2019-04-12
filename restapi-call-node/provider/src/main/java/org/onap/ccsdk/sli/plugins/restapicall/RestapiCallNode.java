@@ -26,6 +26,7 @@ import static java.lang.Boolean.valueOf;
 import static javax.ws.rs.client.Entity.entity;
 import static org.onap.ccsdk.sli.plugins.restapicall.AuthType.fromString;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.SocketException;
@@ -51,16 +52,16 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth1.ConsumerCredentials;
 import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
@@ -166,6 +167,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.returnRequestPayload = valueOf(parseParam(
             paramMap, "returnRequestPayload", false, null));
         p.accept = parseParam(paramMap, "accept",
+                false, null);
+        p.multipartFormData = valueOf(parseParam(paramMap, "multipartFormData",
+                false, "false"));
+        p.multipartFile = parseParam(paramMap, "multipartFile",
                 false, null);
         return p;
     }
@@ -632,15 +637,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         HttpResponse r = new HttpResponse();
         r.code = 200;
 
-        if (!p.skipSending) {
-            String accept = p.accept;
-            if(accept == null) {
-                accept = p.format == Format.XML ? "application/xml" : "application/json";
-            }
-            String contentType = p.contentType;
-            if(contentType == null) {
-                contentType = accept + ";charset=UTF-8";
-            }
+        String accept = p.accept;
+        if(accept == null) {
+            accept = p.format == Format.XML ? "application/xml" : "application/json";
+        }
+
+        String contentType = p.contentType;
+        if(contentType == null) {
+            contentType = accept + ";charset=UTF-8";
+        }
+
+        if (!p.skipSending && !p.multipartFormData) {
 
             Invocation.Builder invocationBuilder = webTarget.request(contentType).accept(accept);
 
@@ -677,6 +684,55 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (response.hasEntity() && r.code != 204) {
                 r.body = response.readEntity(String.class);
             }
+        } else if (!p.skipSending && p.multipartFormData) {
+
+            WebTarget wt = client.register(MultiPartFeature.class).target(p.restapiUrl);
+
+            MultiPart multiPart = new MultiPart();
+            multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+            FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
+                    new File(p.multipartFile),
+                    MediaType.APPLICATION_OCTET_STREAM_TYPE);
+            multiPart.bodyPart(fileDataBodyPart);
+
+
+            Invocation.Builder invocationBuilder = wt.request(contentType).accept(accept);
+
+            if (p.format == Format.NONE) {
+                invocationBuilder.header("", "");
+            }
+
+            if (p.customHttpHeaders != null && p.customHttpHeaders.length() > 0) {
+                String[] keyValuePairs = p.customHttpHeaders.split(",");
+                for (String singlePair : keyValuePairs) {
+                    int equalPosition = singlePair.indexOf('=');
+                    invocationBuilder.header(singlePair.substring(0, equalPosition),
+                            singlePair.substring(equalPosition + 1, singlePair.length()));
+                }
+            }
+
+            invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
+
+            Response response;
+
+            try {
+                response = invocationBuilder.method(p.httpMethod.toString(), entity(multiPart, multiPart.getMediaType()));
+            } catch (ProcessingException | IllegalStateException e) {
+                throw new SvcLogicException(requestPostingException +
+                        e.getLocalizedMessage(), e);
+            }
+
+            r.code = response.getStatus();
+            r.headers = response.getStringHeaders();
+            EntityTag etag = response.getEntityTag();
+            if (etag != null) {
+                r.message = etag.getValue();
+            }
+            if (response.hasEntity() && r.code != 204) {
+                r.body = response.readEntity(String.class);
+            }
+
         }
 
         long t2 = System.currentTimeMillis();
@@ -855,7 +911,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
                 log.info("Got response code 301. Sending same request to URL: {}", newUrl);
 
-                webTarget = client.target(newUrl);
+                    webTarget = client.target(newUrl);
                 invocationBuilder = webTarget.request(tt).accept(tt);
 
                 try {
