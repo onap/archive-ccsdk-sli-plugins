@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Test;
@@ -666,7 +667,7 @@ public class TestRestapiCallNode {
     public void testMultipartFormData() throws SvcLogicException {
         final ResourceConfig resourceConfig = new ResourceConfig(
                 MultipartServerMock.class, MultiPartFeature.class);
-        GrizzlyHttpServerFactory.createHttpServer(
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(
                 URI.create("http://localhost:8080/"),resourceConfig);
 
         Map<String, String> p = new HashMap<>();
@@ -680,5 +681,27 @@ public class TestRestapiCallNode {
         rcn.sendRequest(p, ctx);
         assertThat(ctx.getAttribute("response-code"), is("200"));
         assertThat(ctx.getAttribute("httpResponse"), is( "test-template.json"));
+        server.shutdownNow();
+    }
+
+    @Test
+    public void testCookieResponse() throws SvcLogicException {
+        final ResourceConfig resourceConfig = new ResourceConfig(
+                MockCookieAuthServer.class);
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(
+                URI.create("http://localhost:8080/"),resourceConfig);
+
+        Map<String, String> p = new HashMap<>();
+        p.put("format", "none");
+        p.put("httpMethod", "get");
+        p.put("restapiUrl", "http://localhost:8080/get-cookie/cookie");
+        p.put("dumpHeaders", "true");
+
+        SvcLogicContext ctx = new SvcLogicContext();
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+        assertThat(ctx.getAttribute("response-code"), is("200"));
+        assertThat(ctx.getAttribute("header.Set-Cookie"), is("cookieResponse=cookieValueInReturn;Version=1"));
+        server.shutdownNow();
     }
 }
