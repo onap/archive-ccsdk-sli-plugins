@@ -38,6 +38,12 @@ import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
+import java.net.URI;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
 public class TestRestapiCallNode {
 
     private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
@@ -680,5 +686,25 @@ public class TestRestapiCallNode {
         rcn.sendRequest(p, ctx);
         assertThat(ctx.getAttribute("response-code"), is("200"));
         assertThat(ctx.getAttribute("httpResponse"), is( "test-template.json"));
+    }
+
+    @Test
+    public void testCookieResponse() throws SvcLogicException {
+        final ResourceConfig resourceConfig = new ResourceConfig(
+                MockCookieAuthServer.class);
+        GrizzlyHttpServerFactory.createHttpServer(
+                URI.create("http://localhost:8080/"),resourceConfig);
+
+        Map<String, String> p = new HashMap<>();
+        p.put("format", "none");
+        p.put("httpMethod", "get");
+        p.put("restapiUrl", "http://localhost:8080/get-cookie/cookie");
+        p.put("dumpHeaders", "true");
+
+        SvcLogicContext ctx = new SvcLogicContext();
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+        assertThat(ctx.getAttribute("response-code"), is("200"));
+        assertThat(ctx.getAttribute("header.Set-Cookie"), is("cookieResponse=cookieValueInReturn;Version=1"));
     }
 }
