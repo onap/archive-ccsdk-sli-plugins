@@ -177,17 +177,20 @@ public final class MdsalPropertiesNodeUtils {
     public static PropertiesNode getAugmentationNode(
             AugmentationSchemaNode augSchema,
             PropertiesNode parent, String name) {
-        if (augSchema != null) {
-            Collection<PropertiesNode> childsFromAugmentation = parent
-                    .augmentations().get(augSchema);
-            if (!childsFromAugmentation.isEmpty()) {
-                for (PropertiesNode pNode : childsFromAugmentation) {
-                    if (pNode.name().equals(name)) {
-                        return pNode;
-                    }
+        if (augSchema == null) {
+            return null;
+        }
+
+        Collection<PropertiesNode> childsFromAugmentation = parent
+            .augmentations().get(augSchema);
+        if (!childsFromAugmentation.isEmpty()) {
+            for (PropertiesNode pNode : childsFromAugmentation) {
+                if (pNode.name().equals(name)) {
+                    return pNode;
                 }
             }
         }
+
         return null;
     }
 
@@ -221,7 +224,8 @@ public final class MdsalPropertiesNodeUtils {
      */
     public static PropertiesNode createNode(String name, Namespace namespace,
                                             String uri, PropertiesNode parent,
-                                            Object appInfo, NodeType type) {
+                                            Object appInfo, NodeType type)
+            throws SvcLogicException {
         switch (type) {
             case SINGLE_INSTANCE_NODE:
                 return new SingleInstanceNode(name, namespace, uri, parent, appInfo, type);
@@ -230,7 +234,7 @@ public final class MdsalPropertiesNodeUtils {
             case MULTI_INSTANCE_LEAF_HOLDER_NODE:
                 return new LeafListHolderNode(name, namespace, uri, parent, appInfo, type);
             default:
-                throw new RuntimeException("Invalid node type");
+                throw new SvcLogicException("Invalid node type " + type);
         }
     }
 
@@ -265,6 +269,9 @@ public final class MdsalPropertiesNodeUtils {
             return new SchemaPathHolder(id, uri1);
         } catch (IllegalArgumentException | RestconfDocumentedException
                 | NullPointerException e) {
+            log.info("Exception while converting uri to instance identifier" +
+                " context. Process each node in uri to get instance identifier" +
+                " context " + e);
             return processNodesAndAppendPath(uri, context);
         }
     }
@@ -294,6 +301,7 @@ public final class MdsalPropertiesNodeUtils {
             try {
                 id = processIdentifier(uriParts[i], context, actPath);
             } catch (IllegalArgumentException e) {
+                log.info(format(EXC_MSG, e));
                 id.setUri(actPath+ uriParts[i] + sec);
                 return id;
             }
@@ -340,7 +348,7 @@ public final class MdsalPropertiesNodeUtils {
                 return new SchemaPathHolder(id, val);
             } catch (IllegalArgumentException | RestconfDocumentedException |
                     NullPointerException e) {
-                log.info(format(INFO_MSG, val));
+                log.info(format(INFO_MSG, val, e));
             }
             firstHalf.append(values[i]).append(UNDERSCORE);
             secondHalf = secondHalf.replaceFirst(
