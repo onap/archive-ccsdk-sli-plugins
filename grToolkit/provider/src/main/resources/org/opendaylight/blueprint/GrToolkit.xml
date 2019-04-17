@@ -21,7 +21,7 @@
     <reference id="configDatastore" interface="org.opendaylight.controller.cluster.datastore.DistributedDataStoreInterface"
                odl:type="distributed-config"/>
 
-    <bean id="provider" class="org.onap.ccsdk.sli.plugins.GrToolkitProvider">
+    <bean id="provider" class="org.onap.ccsdk.sli.plugins.grtoolkit.GrToolkitProvider">
         <argument ref="dataBroker" />
         <argument ref="notificationService" />
         <argument ref="rpcRegistry" />

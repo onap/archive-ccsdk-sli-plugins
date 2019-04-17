@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.data;
+package org.onap.ccsdk.sli.plugins.grtoolkit.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;

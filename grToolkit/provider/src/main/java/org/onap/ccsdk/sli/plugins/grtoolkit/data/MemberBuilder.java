@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins.data;
+package org.onap.ccsdk.sli.plugins.grtoolkit.data;
 
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.cluster.health.output.MembersBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.member.CommitStatusBuilder;
