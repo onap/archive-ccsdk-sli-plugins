@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.DOT_REGEX;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.SLASH;
@@ -52,6 +54,8 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.S
  */
 public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<SchemaNode, SchemaContext> {
 
+    private static final Logger log = LoggerFactory.getLogger(
+            MdsalPropertiesNodeSerializer.class);
     private SchemaNode curSchema;
     private PropertiesNode node;
 
@@ -111,6 +115,8 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
                 fixedParams.put(fixedUri, entry.getValue());
             } catch (IllegalArgumentException | RestconfDocumentedException
                     | NullPointerException e) {
+                log.info("Exception while processing properties by replacing " +
+                    "underscore with colon. Process the properties as it is." + e);
                 fixedParams.put(entry.getKey(), entry.getValue());
             }
         }
@@ -158,26 +164,45 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
                 break;
 
             case SINGLE_INSTANCE_LEAF_NODE:
-                Namespace valNs = getValueNamespace(value, schemaCtx());
-                value = getParsedValue(valNs, value);
-                node = node.addChild(localName, ns, SINGLE_INSTANCE_LEAF_NODE,
-                                     value, valNs, schema);
-                node = node.endNode();
-                curSchema = ((SchemaNode) node.appInfo());
+                addLeafNode(value, SINGLE_INSTANCE_LEAF_NODE, localName,
+                               ns, schema, name);
                 break;
 
             case MULTI_INSTANCE_LEAF_NODE:
-                valNs = getValueNamespace(value, schemaCtx());
-                value = getParsedValue(valNs, value);
-                node = node.addChild(getIndex(name), localName, ns,
-                                     MULTI_INSTANCE_LEAF_NODE, value,
-                                     valNs, schema);
-                node = node.endNode();
-                curSchema = ((SchemaNode) node.appInfo());
+                addLeafNode(value, MULTI_INSTANCE_LEAF_NODE, localName,
+                               ns, schema, name);
                 break;
 
             default:
                 throw new SvcLogicException("Invalid node type");
         }
+    }
+
+    /**
+     * Adds leaf property node to the current node.
+     *
+     * @param value value of the leaf node
+     * @param type single instance or multi instance leaf node
+     * @param localName name of the leaf node
+     * @param ns namespace of the leaf node
+     * @param schema schema of the leaf node
+     * @param name name of the leaf in properties
+     * @throws SvcLogicException exception while adding leaf node
+     */
+    private void addLeafNode(String value, NodeType type,
+                                String localName, Namespace ns,
+                                SchemaNode schema, String name) throws SvcLogicException {
+        Namespace valNs = getValueNamespace(value, schemaCtx());
+        value = getParsedValue(valNs, value);
+        if (SINGLE_INSTANCE_LEAF_NODE == type) {
+            node = node.addChild(localName, ns, SINGLE_INSTANCE_LEAF_NODE,
+                                 value, valNs, schema);
+        } else {
+            node = node.addChild(getIndex(name), localName, ns,
+                                 MULTI_INSTANCE_LEAF_NODE, value,
+                                 valNs, schema);
+        }
+        node = node.endNode();
+        curSchema = ((SchemaNode) node.appInfo());
     }
 }
