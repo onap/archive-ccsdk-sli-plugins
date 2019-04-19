@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.ccsdk.sli.plugins;
+package org.onap.ccsdk.sli.plugins.grtoolkit;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,9 +48,10 @@ import javax.annotation.Nonnull;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.onap.ccsdk.sli.core.dblib.DBLibConnection;
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
-import org.onap.ccsdk.sli.plugins.data.ClusterActor;
-import org.onap.ccsdk.sli.plugins.data.MemberBuilder;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.MemberBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -195,6 +197,8 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
             }
         } catch(IOException e) {
             log.error("Couldn't load akka", e);
+        } catch(NullPointerException e) {
+            log.error("akkaConfig is null. Check properties file and restart {} bundle.", APP_NAME);
         }
         log.info("self:\n{}", self);
     }
@@ -831,13 +835,16 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     private String getDatabaseHealth() {
         log.info("Determining database health...");
         try {
+            Connection connection = dbLib.getConnection();
             log.info("DBLib isActive(): {}", dbLib.isActive());
-            log.info("DBLib isReadOnly(): {}", dbLib.getConnection().isReadOnly());
-            log.info("DBLib isClosed(): {}", dbLib.getConnection().isClosed());
-            if(!dbLib.isActive() || dbLib.getConnection().isClosed() || dbLib.getConnection().isReadOnly()) {
+            log.info("DBLib isReadOnly(): {}", connection.isReadOnly());
+            log.info("DBLib isClosed(): {}", connection.isClosed());
+            if(!dbLib.isActive() || connection.isClosed() || connection.isReadOnly()) {
                 log.warn("Database is FAULTY");
+                connection.close();
                 return FAULTY;
             }
+            connection.close();
             log.info("Database is HEALTHY");
         } catch(SQLException e) {
             log.error("Database is FAULTY");
@@ -914,18 +921,18 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         return connection;
     }
 
-    private enum IpTables {
+    enum IpTables {
         ADD,
         DELETE
     }
 
-    private enum SiteConfiguration {
+    enum SiteConfiguration {
         SOLO,
         SINGLE,
         GEO
     }
 
-    private enum HttpMethod {
+    enum HttpMethod {
         GET("GET"),
         POST("POST");
 
@@ -938,7 +945,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         }
     }
 
-    private class PropertyKeys {
+    class PropertyKeys {
         static final String SITE_IDENTIFIER = "site.identifier";
         static final String CONTROLLER_USE_SSL = "controller.useSsl";
         static final String CONTROLLER_PORT_SSL = "controller.port.ssl";
