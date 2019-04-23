@@ -141,7 +141,7 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
             WebTarget target = null;
             try {
                 RestapiCallNode restapi = restconfApiCallNode.getRestapiCallNode();
-                p = restapi.getParameters(paramMap, new Parameters());
+                p = RestapiCallNode.getParameters(paramMap, new Parameters());
                 Client client =  ignoreSslClient().register(SseFeature.class);
                 target = restapi.addAuthType(client, p).target(url);
             } catch (SvcLogicException e) {
@@ -166,37 +166,37 @@ public class RestconfDiscoveryNode implements SvcLogicDiscoveryPlugin {
             eventSource.close();
             log.info("Closed connection to SSE source");
         }
-    }
 
-    private Client ignoreSslClient() {
-        SSLContext sslcontext = null;
+        private Client ignoreSslClient() {
+            SSLContext sslcontext = null;
 
-        try {
-            sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-                }
+            try {
+                sslcontext = SSLContext.getInstance("TLS");
+                sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                    }
 
-                @Override
-                public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-                }
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+                    }
 
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-            } }, new java.security.SecureRandom());
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new IllegalStateException(e);
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                } }, new java.security.SecureRandom());
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                throw new IllegalStateException(e);
+            }
+
+            return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true).build();
         }
-
-        return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true).build();
     }
 
     protected String getTokenId(String customHttpHeaders) {
         if (customHttpHeaders.contains("=")) {
-            String s[] = customHttpHeaders.split("=");
+            String[] s = customHttpHeaders.split("=");
             return s[1];
         }
         return customHttpHeaders;
