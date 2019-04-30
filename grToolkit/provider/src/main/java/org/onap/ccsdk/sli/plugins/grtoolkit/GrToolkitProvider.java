@@ -244,6 +244,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         DatabaseHealthOutputBuilder outputBuilder = new DatabaseHealthOutputBuilder();
         outputBuilder.setStatus("200");
         outputBuilder.setHealth(getDatabaseHealth());
+        outputBuilder.setServedBy(member);
 
         return Futures.immediateFuture(RpcResultBuilder.<DatabaseHealthOutput>status(true).withResult(outputBuilder.build()).build());
     }
@@ -254,6 +255,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         AdminHealthOutputBuilder outputBuilder = new AdminHealthOutputBuilder();
         outputBuilder.setStatus("200");
         outputBuilder.setHealth(getAdminHealth());
+        outputBuilder.setServedBy(member);
 
         return Futures.immediateFuture(RpcResultBuilder.<AdminHealthOutput>status(true).withResult(outputBuilder.build()).build());
     }
@@ -264,6 +266,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         HaltAkkaTrafficOutputBuilder outputBuilder = new HaltAkkaTrafficOutputBuilder();
         outputBuilder.setStatus("200");
         modifyIpTables(IpTables.ADD, input.getNodeInfo().toArray());
+        outputBuilder.setServedBy(member);
 
         return Futures.immediateFuture(RpcResultBuilder.<HaltAkkaTrafficOutput>status(true).withResult(outputBuilder.build()).build());
     }
@@ -274,6 +277,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         ResumeAkkaTrafficOutputBuilder outputBuilder = new ResumeAkkaTrafficOutputBuilder();
         outputBuilder.setStatus("200");
         modifyIpTables(IpTables.DELETE, input.getNodeInfo().toArray());
+        outputBuilder.setServedBy(member);
 
         return Futures.immediateFuture(RpcResultBuilder.<ResumeAkkaTrafficOutput>status(true).withResult(outputBuilder.build()).build());
     }
@@ -284,6 +288,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         SiteIdentifierOutputBuilder outputBuilder = new SiteIdentifierOutputBuilder();
         outputBuilder.setStatus("200");
         outputBuilder.setId(siteIdentifier);
+        outputBuilder.setServedBy(member);
 
         return Futures.immediateFuture(RpcResultBuilder.<SiteIdentifierOutput>status(true).withResult(outputBuilder.build()).build());
     }
@@ -292,6 +297,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     public ListenableFuture<RpcResult<FailoverOutput>> failover(FailoverInput input) {
         log.info("{}:failover invoked.", APP_NAME);
         FailoverOutputBuilder outputBuilder = new FailoverOutputBuilder();
+        outputBuilder.setServedBy(member);
         if(siteConfiguration != SiteConfiguration.GEO) {
             log.info("Cannot failover non-GEO site.");
             outputBuilder.setMessage("Failover aborted. This is not a GEO configuration.");
@@ -476,6 +482,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
             outputBuilder.setSite2Health(FAULTY);
         }
 
+        outputBuilder.setServedBy(member);
         RpcResult<ClusterHealthOutput> rpcResult = RpcResultBuilder.<ClusterHealthOutput>status(true).withResult(outputBuilder.build()).build();
         return Futures.immediateFuture(rpcResult);
     }
@@ -589,6 +596,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
             }
         }
 
+        outputBuilder.setServedBy(member);
         RpcResult<SiteHealthOutput> rpcResult = RpcResultBuilder.<SiteHealthOutput>status(true).withResult(outputBuilder.build()).build();
         return Futures.immediateFuture(rpcResult);
     }
@@ -836,9 +844,9 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         log.info("Determining database health...");
         try {
             Connection connection = dbLib.getConnection();
-            log.info("DBLib isActive(): {}", dbLib.isActive());
-            log.info("DBLib isReadOnly(): {}", connection.isReadOnly());
-            log.info("DBLib isClosed(): {}", connection.isClosed());
+            log.debug("DBLib isActive(): {}", dbLib.isActive());
+            log.debug("DBLib isReadOnly(): {}", connection.isReadOnly());
+            log.debug("DBLib isClosed(): {}", connection.isClosed());
             if(!dbLib.isActive() || connection.isClosed() || connection.isReadOnly()) {
                 log.warn("Database is FAULTY");
                 connection.close();
@@ -876,7 +884,10 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         }
         bufferedReader.close();
         connection.disconnect();
-        return content.toString();
+
+        String response = content.toString();
+        log.debug("getRequestContent(): Response:\n{}", response);
+        return response;
     }
 
     private int getRequestStatus(String path, HttpMethod method) throws IOException {
