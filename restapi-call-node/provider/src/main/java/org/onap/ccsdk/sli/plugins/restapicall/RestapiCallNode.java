@@ -25,7 +25,6 @@ package org.onap.ccsdk.sli.plugins.restapicall;
 import static java.lang.Boolean.valueOf;
 import static javax.ws.rs.client.Entity.entity;
 import static org.onap.ccsdk.sli.plugins.restapicall.AuthType.fromString;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,8 +51,12 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.*;
-
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
@@ -94,8 +97,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         try (FileInputStream in = new FileInputStream(configDir + "/" + DME2_PROPERTIES_FILE_NAME)) {
             Properties props = new Properties();
             props.load(in);
-            this.retryPolicyStore = new RetryPolicyStore();
-            this.retryPolicyStore.setProxyServers(props.getProperty("proxyUrl"));
+            retryPolicyStore = new RetryPolicyStore();
+            retryPolicyStore.setProxyServers(props.getProperty("proxyUrl"));
             log.info("DME2 support enabled");
         } catch (Exception e) {
             log.warn("DME2 properties could not be read, DME2 support will not be enabled.", e);
@@ -104,7 +107,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         try (FileInputStream in = new FileInputStream(configDir + "/" + UEB_PROPERTIES_FILE_NAME)) {
             Properties props = new Properties();
             props.load(in);
-            this.uebServers = props.getProperty("servers");
+            uebServers = props.getProperty("servers");
             log.info("UEB support enabled");
         } catch (Exception e) {
             log.warn("UEB properties could not be read, UEB support will not be enabled.", e);
@@ -462,7 +465,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info("Building {} completed. Time: {}", format, (t2 - t1));
+        log.info("Building {} completed. Time: {}", format, t2 - t1);
 
         return req;
     }
@@ -669,6 +672,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
             invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
 
+            invocationBuilder.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
+
             Response response;
 
             try {
@@ -739,7 +744,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info(responseReceivedMessage, (t2 - t1));
+        log.info(responseReceivedMessage, t2 - t1);
         log.info(responseHttpCodeMessage, r.code);
         log.info("HTTP response message: {}", r.message);
         logHeaders(r.headers);
@@ -942,7 +947,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info(responseReceivedMessage, (t2 - t1));
+        log.info(responseReceivedMessage, t2 - t1);
         log.info(responseHttpCodeMessage, r.code);
         log.info("HTTP response message: {}", r.message);
         logHeaders(r.headers);
@@ -1035,7 +1040,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         long t2 = System.currentTimeMillis();
-        log.info(responseReceivedMessage, (t2 - t1));
+        log.info(responseReceivedMessage, t2 - t1);
         log.info(responseHttpCodeMessage, r.code);
         logHeaders(r.headers);
         log.info("HTTP response:\n {}", r.body);
