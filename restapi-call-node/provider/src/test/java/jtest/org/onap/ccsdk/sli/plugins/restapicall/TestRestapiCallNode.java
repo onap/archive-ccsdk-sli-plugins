@@ -21,23 +21,21 @@
 
 package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 public class TestRestapiCallNode {
 
@@ -48,7 +46,26 @@ public class TestRestapiCallNode {
     public void testDelete() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "pwd1");
+        p.put("httpMethod", "delete");
+        p.put("skipSending", "true");
+
+        RestapiCallNode rcn = new RestapiCallNode();
+        rcn.sendRequest(p, ctx);
+    }
+
+    @Test
+    public void testDeleteWithPayload() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        ctx.setAttribute("prop.name", "site1");
+
+
+        Map<String, String> p = new HashMap<>();
+        p.put("templateFileName", "src/test/resources/sdwan-site.json");
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("restapiUser", "user1");
         p.put("restapiPassword", "pwd1");
@@ -79,7 +96,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.siteAttachement[1].roles_length", "1");
         ctx.setAttribute("prop.siteAttachement[1].roles[0]", "role2");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/sdwan-vpn-topology.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -100,7 +117,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.name", "site1");
 
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/sdwan-site.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -140,7 +157,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row[2].service-clfi", "testClfi1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[2].clci", "clci");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/test-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -166,7 +183,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/test-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -192,7 +209,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resourcess/test-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -218,7 +235,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/test-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -244,7 +261,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/test-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -272,7 +289,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/test-template.json");
         p.put("restapiUrl", "http://echo.  getpostman.com");
         p.put("restapiUser", "user1");
@@ -292,7 +309,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/l3smvpntemplate.json");
         p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vpn-services");
         p.put("restapiUser", "admin");
@@ -338,7 +355,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.peer2-ip", "192.168.1.7");
         ctx.setAttribute("prop.l3vpn.ac2_protocol_bgp_as", "200");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/l3smsitetemplate.json");
         p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/sites");
         p.put("restapiUser", "admin");
@@ -362,7 +379,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.vpn-policy2-id", "10000000-0000-0000-0000-000000000006");
         ctx.setAttribute("prop.l3vpn.pe2_id", "a8098c1a-f86e-11da-bd1a-00112444be1a");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/l3smvrftemplate.json");
         p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vrf-attributes");
         p.put("restapiUser", "admin");
@@ -382,7 +399,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         //p.put("templateFileName", "src/test/resources/l3smvpntemplate.json");
         p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vpn-services"
             + "/vpnservice=10000000-0000-0000-0000-000000000001");
@@ -410,7 +427,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.dci-connects.evpn_erts[1]", "200:2");
         ctx.setAttribute("prop.dci-connects.vni", "1");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/l2-dci-connects-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -438,7 +455,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.dci-connects.evpn_erts[1]", "200:2");
         ctx.setAttribute("prop.dci-connects.vni", "1");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/l3-dci-connects-template.json");
         p.put("restapiUrl", "http://echo.getpostman.com");
         p.put("restapiUser", "user1");
@@ -459,7 +476,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.sdncRestApi.thirdpartySdnc.user", "admin");
         ctx.setAttribute("prop.sdncRestApi.thirdpartySdnc.password", "admin123");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/actokentemplate.json");
         p.put("restapiUrl", "https://ipwan:18002/controller/v2/tokens");
         p.put("format", "json");
@@ -476,7 +493,7 @@ public class TestRestapiCallNode {
     public void testDeleteNoneAsContentType() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("restapiUser", "user1");
         p.put("restapiPassword", "pwd1");
@@ -494,7 +511,7 @@ public class TestRestapiCallNode {
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/l3smvpntemplate.json");
         p.put("restapiUrl", "http://ipwan:18002/restconf/data/huawei-ac-net-l3vpn-svc:l3vpn-svc-cfg/vpn-services");
         p.put("restapiUser", "admin");
@@ -512,7 +529,7 @@ public class TestRestapiCallNode {
     public void testDeleteOAuthType() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
         p.put("oAuthConsumerSecret", "secret");
@@ -530,7 +547,7 @@ public class TestRestapiCallNode {
     public void testDeleteAuthTypeBasic() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("authType", "basic");
         p.put("restapiUser", "admin");
@@ -547,7 +564,7 @@ public class TestRestapiCallNode {
     public void testDeleteAuthTypeDigest() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("authType", "digest");
         p.put("restapiUser", "admin");
@@ -564,7 +581,7 @@ public class TestRestapiCallNode {
     public void testDeleteAuthTypeOAuth() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("authType", "oauth");
         p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
@@ -583,7 +600,7 @@ public class TestRestapiCallNode {
     public void testDeleteAuthTypeNoneOAuth() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
         p.put("oAuthConsumerSecret", "secret");
@@ -600,7 +617,7 @@ public class TestRestapiCallNode {
     public void testDeleteAuthTypeNoneBasic() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("restapiUser", "admin");
         p.put("restapiPassword", "admin123");
@@ -616,7 +633,7 @@ public class TestRestapiCallNode {
     public void testInvalidDeleteAuthTypeOAuth() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("authType", "oauth");
         p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
@@ -633,7 +650,7 @@ public class TestRestapiCallNode {
     public void testInvalidDeleteAuthTypeBasic() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("authType", "basic");
         p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
@@ -650,7 +667,7 @@ public class TestRestapiCallNode {
     public void testInvalidDeleteAuthTypeDigest() throws SvcLogicException {
         SvcLogicContext ctx = new SvcLogicContext();
 
-        Map<String, String> p = new HashMap<String, String>();
+        Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("authType", "digest");
         p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
