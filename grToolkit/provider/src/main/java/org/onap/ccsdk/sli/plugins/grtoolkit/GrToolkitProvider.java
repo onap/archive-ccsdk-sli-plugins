@@ -48,7 +48,6 @@ import javax.annotation.Nonnull;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import org.onap.ccsdk.sli.core.dblib.DBLibConnection;
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.MemberBuilder;
@@ -103,6 +102,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     private static final String HEALTHY = "HEALTHY";
     private static final String FAULTY = "FAULTY";
     private static final String VALUE = "value";
+    private static final String OUTPUT = "output";
     private String akkaConfig;
     private String jolokiaClusterPath;
     private String shardManagerPath;
@@ -540,12 +540,13 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                             if(!performedCrossSiteHealthCheck) {
                                 try {
                                     String content = getRequestContent(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:site-identifier", HttpMethod.POST);
-                                    crossSiteIdentifier = new JSONObject(content).getJSONObject("output").getString("id");
+                                    crossSiteIdentifier = new JSONObject(content).getJSONObject(OUTPUT).getString("id");
                                     crossSiteDbHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:database-health");
                                     crossSiteAdminHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:admin-health");
                                     performedCrossSiteHealthCheck = true;
                                 } catch(Exception e) {
-                                    log.info("Cannot get site identifier from {}", clusterActor.getNode());
+                                    log.info("Cannot get cross site health from {}", clusterActor.getNode());
+                                    log.info("siteIdentifier: {} | dbHealth: {} | adminHealth: {}", crossSiteIdentifier, crossSiteDbHealthy, crossSiteAdminHealthy);
                                     log.error("Site Health Error", e);
                                 }
                             }
@@ -570,12 +571,13 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                             if(!performedCrossSiteHealthCheck) {
                                 try {
                                     String content = getRequestContent(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:site-identifier", HttpMethod.POST);
-                                    crossSiteIdentifier = new JSONObject(content).getJSONObject("output").getString("id");
+                                    crossSiteIdentifier = new JSONObject(content).getJSONObject(OUTPUT).getString("id");
                                     crossSiteDbHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:database-health");
                                     crossSiteAdminHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:admin-health");
                                     performedCrossSiteHealthCheck = true;
                                 } catch(Exception e) {
-                                    log.info("Cannot get site identifier from {}", clusterActor.getNode());
+                                    log.info("Cannot get cross site health from {}", clusterActor.getNode());
+                                    log.info("siteIdentifier: {} | dbHealth: {} | adminHealth: {}", crossSiteIdentifier, crossSiteDbHealthy, crossSiteAdminHealthy);
                                     log.error("Site Health Error", e);
                                 }
                             }
@@ -815,7 +817,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         String content = getRequestContent(path, HttpMethod.POST);
         try {
             JSONObject responseJson = new JSONObject(content);
-            JSONObject responseValue = responseJson.getJSONObject(VALUE);
+            JSONObject responseValue = responseJson.getJSONObject(OUTPUT);
             return HEALTHY.equals(responseValue.getString("health"));
         } catch(JSONException e) {
             log.error("Error parsing JSON", e);
