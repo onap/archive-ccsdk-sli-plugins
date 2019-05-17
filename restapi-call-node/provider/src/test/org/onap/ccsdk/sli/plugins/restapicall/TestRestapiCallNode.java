@@ -27,13 +27,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.codehaus.jettison.json.JSONObject;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ResourceConfig;
-
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -45,6 +38,7 @@ public class TestRestapiCallNode {
 
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
+
 
     @Test
     public void testDelete() throws SvcLogicException {
@@ -514,20 +508,4 @@ public class TestRestapiCallNode {
 	assertEquals(first,next);
 	assertEquals(2,p.getRetryCount());
     }
-
-    @Test
-    public void testEmbeddedJsonTemplate() throws Exception {
-        SvcLogicContext ctx = new SvcLogicContext();
-	String complexObj = "{\"image_name\":\"Ubuntu 14.04\",\"service-instance-id\":\"1\",\"vnf-model-customization-uuid\":\"2f\",\"vnf-id\":\"3b\"}";
-	ctx.setAttribute("reqId", "1235");
-        ctx.setAttribute("subReqId", "054243");
-        ctx.setAttribute("actionName", "CREATE");
-        ctx.setAttribute("myPrefix", "2016-09-09 16:30:35.0");
-        ctx.setAttribute("complexObj", complexObj);
-        RestapiCallNode rcn = new RestapiCallNode();
-        String request = rcn.buildXmlJsonRequest(ctx, rcn.readFile("src/test/resources/testEmbeddedTemplate.json"), Format.JSON);
-        //This will throw a JSONException and fail the test case if rest api call node doesn't form valid JSON
-        JSONObject requestObj = new JSONObject(request);
-    }
-
 }
