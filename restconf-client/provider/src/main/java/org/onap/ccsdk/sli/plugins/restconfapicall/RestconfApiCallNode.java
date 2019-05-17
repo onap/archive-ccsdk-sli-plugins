@@ -45,8 +45,6 @@ import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
 import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
-import org.onap.ccsdk.sli.plugins.restapicall.RetryException;
-import org.onap.ccsdk.sli.plugins.restapicall.RetryPolicy;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatSerializer;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatSerializerContext;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerFactory;
@@ -163,14 +161,9 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
     public void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx,
                             Integer retryCount) throws SvcLogicException {
         RestapiCallNode rest = getRestapiCallNode();
-        RetryPolicy retryPolicy = null;
         HttpResponse r = new HttpResponse();
         try {
             YangParameters p = getYangParameters(paramMap);
-            if (p.partner != null) {
-                retryPolicy = rest.getRetryPolicyStore()
-                        .getRetryPolicy(p.partner);
-            }
 
             String pp = p.responsePrefix != null ? p.responsePrefix + '.' : "";
             Map<String, String> props = new HashMap<>((Map)ctx.toProperties());
@@ -209,30 +202,7 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
 
             log.error(REQ_ERR + e.getMessage(), e);
             String prefix = parseParam(paramMap, RES_PRE, false, null);
-            if (retryPolicy == null || !shouldRetry) {
-                setFailureResponseStatus(ctx, prefix, e.getMessage());
-            } else {
-                if (retryCount == null) {
-                    retryCount = 0;
-                }
-                log.debug(format(ATTEMPTS_MSG, retryCount,
-                                 retryPolicy.getMaximumRetries()));
-                try {
-                    retryCount = retryCount + 1;
-                    if (retryCount < retryPolicy.getMaximumRetries() + 1) {
-                        setRetryUri(paramMap, retryPolicy);
-                        log.debug(format(RETRY_COUNT, retryCount, retryPolicy
-                                .getMaximumRetries()));
-                        sendRequest(paramMap, ctx, retryCount);
-                    } else {
-                        log.debug(MAX_RETRY_ERR);
-                        setFailureResponseStatus(ctx, prefix, e.getMessage());
-                    }
-                } catch (Exception ex) {
-                    log.error(NO_MORE_RETRY, ex);
-                    setFailureResponseStatus(ctx, prefix, RETRY_FAIL);
-                }
-            }
+            setFailureResponseStatus(ctx, prefix, e.getMessage());
         }
 
         if (r != null && r.code >= 300) {
@@ -373,31 +343,6 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
         res.message = errMsg;
         ctx.setAttribute(prefix + RES_CODE, valueOf(res.code));
         ctx.setAttribute(prefix + RES_MSG, res.message);
-    }
-
-    /**
-     * Sets the retry URI to the param map from the retry policies different
-     * host.
-     *
-     * @param paramMap            parameter map
-     * @param retryPolicy         retry policy
-     * @throws URISyntaxException when new URI creation fails
-     * @throws RetryException     when retry policy cannot give another host
-     */
-    private void setRetryUri(Map<String, String> paramMap,
-                             RetryPolicy retryPolicy)
-            throws URISyntaxException, RetryException {
-        URI uri = new URI(paramMap.get(REST_API_URL));
-        String hostName = uri.getHost();
-        String retryString = retryPolicy.getNextHostName(uri.toString());
-
-        URI uriTwo = new URI(retryString);
-        URI retryUri = UriBuilder.fromUri(uri).host(uriTwo.getHost()).port(
-                uriTwo.getPort()).scheme(uriTwo.getScheme()).build();
-
-        paramMap.put(REST_API_URL, retryUri.toString());
-        log.debug(UPDATED_URL + retryUri.toString());
-        log.debug(format(COMM_FAIL, hostName, retryString));
     }
 
     /**
