@@ -26,6 +26,7 @@ import java.util.Set;
 public class Parameters {
     public String templateFileName;
     public String restapiUrl;
+    public String restapiUrlSuffix;
     public String restapiUser;
     public String restapiPassword;
     public Format format;
