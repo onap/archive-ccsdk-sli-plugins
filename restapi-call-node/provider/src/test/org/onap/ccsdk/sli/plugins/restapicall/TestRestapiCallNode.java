@@ -19,17 +19,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.restapicall;
+package org.onap.ccsdk.sli.plugins.restapicall;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import java.net.URI;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -39,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public class TestRestapiCallNode {
 
+    @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
 
 
@@ -63,68 +61,12 @@ public class TestRestapiCallNode {
 
         ctx.setAttribute("prop.name", "site1");
 
-
         Map<String, String> p = new HashMap<>();
         p.put("templateFileName", "src/test/resources/sdwan-site.json");
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
         p.put("restapiUser", "user1");
         p.put("restapiPassword", "pwd1");
         p.put("httpMethod", "delete");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test
-    public void testJsonSdwanVpnTopologyTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        ctx.setAttribute("prop.topology", "topoType");
-
-        ctx.setAttribute("prop.roles_length", "1");
-        ctx.setAttribute("prop.roles[0]", "role1");
-
-        ctx.setAttribute("prop.siteAttachement_length", "2");
-
-        ctx.setAttribute("prop.siteAttachement[0].siteId", "site1");
-        ctx.setAttribute("prop.siteAttachement[0].roles_length", "0");
-        ctx.setAttribute("prop.siteAttachement[0].roles[0]", "role1");
-        ctx.setAttribute("prop.siteAttachement[0].roles[1]", "role3");
-
-        ctx.setAttribute("prop.siteAttachement[1].siteId", "site2");
-        ctx.setAttribute("prop.siteAttachement[1].roles_length", "1");
-        ctx.setAttribute("prop.siteAttachement[1].roles[0]", "role2");
-
-        Map<String, String> p = new HashMap<>();
-        p.put("templateFileName", "src/test/resources/sdwan-vpn-topology.json");
-        p.put("restapiUrl", "http://echo.getpostman.com");
-        p.put("restapiUser", "user1");
-        p.put("restapiPassword", "abc123");
-        p.put("format", "json");
-        p.put("httpMethod", "post");
-        p.put("responsePrefix", "response");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test
-    public void testJsonSdwanSiteTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        ctx.setAttribute("prop.name", "site1");
-
-
-        Map<String, String> p = new HashMap<>();
-        p.put("templateFileName", "src/test/resources/sdwan-site.json");
-        p.put("restapiUrl", "http://echo.getpostman.com");
-        p.put("restapiUser", "user1");
-        p.put("restapiPassword", "abc123");
-        p.put("format", "json");
-        p.put("httpMethod", "post");
-        p.put("responsePrefix", "response");
         p.put("skipSending", "true");
 
         RestapiCallNode rcn = new RestapiCallNode();
@@ -249,33 +191,6 @@ public class TestRestapiCallNode {
         rcn.sendRequest(p, ctx);
     }
 
-    @Test(expected = SvcLogicException.class)
-    public void testFormData() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-        ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-timestamp", "2016-09-09 16:30:35.0");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].request-status", "New");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].processing-status", "New");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].service-clfi", "testClfi1");
-        ctx.setAttribute("tmp.sdn-circuit-req-row[0].clci", "clci");
-
-        Map<String, String> p = new HashMap<>();
-        p.put("templateFileName", "src/test/resources/test-template.json");
-        p.put("restapiUrl", "http://echo.getpostman.com");
-        p.put("restapiUser", "user1");
-        p.put("restapiPassword", "abc123");
-        p.put("format", "json");
-        p.put("httpMethod", "post");
-        p.put("responsePrefix", "response");
-        p.put("skipSending", "false");
-        p.put("multipartFormData", "true");
-        p.put("multipartFile", "src/test/resources/test-template.json");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
 
     @Test(expected = SvcLogicException.class)
     public void testWithInvalidURI() throws SvcLogicException {
@@ -524,201 +439,73 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
     }
-
+    /*
+     * {
+  "partnerOne": {
+    "url": "http://localhost:7001"                                                                                                                                                             4 http://uebsb93kcdc.it.att.com:3904",
+    "test": "/metrics"
+  },
+  "partnerTwo": {
+    "url": "http://localhost:7002",
+    "user": "controller_user",
+    "password": "P@ssword",
+    "test": "/metrics"
+  },
+  "partnerThree": {
+    "url": "http://localhost:7003",
+    "user": "controller_admin"
+  }
+}
+     */
     @Test
-    public void testDeleteOAuthType() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+    public void testPartners() throws Exception{
+	String partnerTwoKey = "partnerTwo";
+	String partnerTwoUsername = "controller_user";
+	String partnerTwoPassword = "P@ssword";
 
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
-        p.put("oAuthConsumerSecret", "secret");
-        p.put("oAuthSignatureMethod", "plainTEXT");
-        p.put("oAuthVersion", "1.0");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
+	System.setProperty("SDNC_CONFIG_DIR", "src/test/resources");
         RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
+        assertNull(rcn.partnerStore.get("partnerOne"));
+        PartnerDetails details = rcn.partnerStore.get(partnerTwoKey);
+        assertEquals(partnerTwoUsername,details.username);
+        assertEquals(partnerTwoPassword,details.password);
+        assertNull(rcn.partnerStore.get("partnerThree"));
+        
+        //In this scenario the caller expects username, password and url to be picked up from the partners json
+        Map<String, String> paramMap = new HashMap<String,String>();
+        paramMap.put("partner", partnerTwoKey);
+	rcn.handlePartner(paramMap );
+        assertEquals(partnerTwoUsername,paramMap.get(rcn.restapiUserKey));
+        assertEquals(partnerTwoPassword,paramMap.get(rcn.restapiPasswordKey));
+        assertEquals("http://localhost:7002",paramMap.get(rcn.restapiUrlString));
 
+        //In this scenario the caller expects username, password and url to be picked up from the partners json
+        //the provided suffix will be appended to the default url from the partners json
+        paramMap = new HashMap<String,String>();
+        paramMap.put("partner", partnerTwoKey);
+        paramMap.put("restapiUrlSuffix", "/networking/v1/instance/3");
+	rcn.handlePartner(paramMap);
+	Parameters p = new Parameters();
+	RestapiCallNode.getParameters(paramMap, p);
+        assertEquals(partnerTwoUsername,p.restapiUser);
+        assertEquals(partnerTwoPassword,p.restapiPassword);
+        assertEquals("http://localhost:7002/networking/v1/instance/3",p.restapiUrl);
+    }
+    
     @Test
-    public void testDeleteAuthTypeBasic() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+    public void retryPolicyBean() throws Exception {
+	Integer retries = 3;
+	String first = "http://localhost:7001";
+	String second = "http://localhost:7001";
 
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("authType", "basic");
-        p.put("restapiUser", "admin");
-        p.put("restapiPassword", "admin123");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test
-    public void testDeleteAuthTypeDigest() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("authType", "digest");
-        p.put("restapiUser", "admin");
-        p.put("restapiPassword", "admin123");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test
-    public void testDeleteAuthTypeOAuth() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("authType", "oauth");
-        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
-        p.put("oAuthConsumerSecret", "secret");
-        p.put("oAuthSignatureMethod", "plainTEXT");
-        p.put("oAuthVersion", "1.0");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test
-    public void testDeleteAuthTypeNoneOAuth() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
-        p.put("oAuthConsumerSecret", "secret");
-        p.put("oAuthSignatureMethod", "plainTEXT");
-        p.put("oAuthVersion", "1.0");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-    @Test
-    public void testDeleteAuthTypeNoneBasic() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("restapiUser", "admin");
-        p.put("restapiPassword", "admin123");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test(expected = SvcLogicException.class)
-    public void testInvalidDeleteAuthTypeOAuth() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("authType", "oauth");
-        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
-        p.put("oAuthConsumerSecret", "secret");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test(expected = SvcLogicException.class)
-    public void testInvalidDeleteAuthTypeBasic() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("authType", "basic");
-        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
-        p.put("oAuthConsumerSecret", "secret");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test(expected = SvcLogicException.class)
-    public void testInvalidDeleteAuthTypeDigest() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
-
-        Map<String, String> p = new HashMap<>();
-        p.put("restapiUrl", "https://echo.getpostman.com/delete");
-        p.put("authType", "digest");
-        p.put("oAuthConsumerKey", "f2a1ed52710d4533bde25be6da03b6e3");
-        p.put("oAuthConsumerSecret", "secret");
-        p.put("httpMethod", "delete");
-        p.put("format", "none");
-        p.put("skipSending", "true");
-
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-    }
-
-    @Test
-    public void testMultipartFormData() throws SvcLogicException {
-        final ResourceConfig resourceConfig = new ResourceConfig(
-                MultipartServerMock.class, MultiPartFeature.class);
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(
-                URI.create("http://localhost:8080/"),resourceConfig);
-
-        Map<String, String> p = new HashMap<>();
-        p.put("multipartFormData", "true");
-        p.put("format", "none");
-        p.put("multipartFile", "src/test/resources/test-template.json");
-        p.put("restapiUrl", "http://localhost:8080/file-upload/upload");
-
-        SvcLogicContext ctx = new SvcLogicContext();
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-        assertThat(ctx.getAttribute("response-code"), is("200"));
-        assertThat(ctx.getAttribute("httpResponse"), is( "test-template.json"));
-        server.shutdownNow();
-    }
-
-    @Test
-    public void testCookieResponse() throws SvcLogicException {
-        final ResourceConfig resourceConfig = new ResourceConfig(
-                MockCookieAuthServer.class);
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(
-                URI.create("http://localhost:8080/"),resourceConfig);
-
-        Map<String, String> p = new HashMap<>();
-        p.put("format", "none");
-        p.put("httpMethod", "get");
-        p.put("restapiUrl", "http://localhost:8080/get-cookie/cookie");
-        p.put("dumpHeaders", "true");
-
-        SvcLogicContext ctx = new SvcLogicContext();
-        RestapiCallNode rcn = new RestapiCallNode();
-        rcn.sendRequest(p, ctx);
-        assertThat(ctx.getAttribute("response-code"), is("200"));
-        assertThat(ctx.getAttribute("header.Set-Cookie"), is("cookieResponse=cookieValueInReturn;Version=1"));
-        server.shutdownNow();
+	RetryPolicy p = new RetryPolicy(new String[] {first,second}, retries);
+	assertEquals(retries,p.getMaximumRetries());
+	assertNotNull(p.getRetryMessage());
+	String next = p.getNextHostName();
+	assertEquals(second,next);
+	assertEquals(1,p.getRetryCount());
+	next = p.getNextHostName();
+	assertEquals(first,next);
+	assertEquals(2,p.getRetryCount());
     }
 }
