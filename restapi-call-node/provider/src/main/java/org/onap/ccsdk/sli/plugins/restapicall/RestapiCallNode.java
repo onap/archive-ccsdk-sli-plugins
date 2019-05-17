@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -57,7 +58,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -66,6 +70,8 @@ import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.glassfish.jersey.client.oauth1.ConsumerCredentials;
+import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
@@ -74,34 +80,36 @@ import org.slf4j.LoggerFactory;
 
 public class RestapiCallNode implements SvcLogicJavaPlugin {
 
-    protected static final String DME2_PROPERTIES_FILE_NAME = "dme2.properties";
+    protected static final String PARTNERS_FILE_NAME = "partners.json";
     protected static final String UEB_PROPERTIES_FILE_NAME = "ueb.properties";
     protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
     protected static final String PROPERTIES_DIR_KEY = "SDNC_CONFIG_DIR";
 
     private static final Logger log = LoggerFactory.getLogger(RestapiCallNode.class);
-    protected RetryPolicyStore retryPolicyStore;
     private String uebServers;
     private String defaultUebTemplateFileName = "/opt/bvc/restapi/templates/default-ueb-message.json";
 
     private String responseReceivedMessage = "Response received. Time: {}";
     private String responseHttpCodeMessage = "HTTP response code: {}";
     private String requestPostingException = "Exception while posting http request to client ";
-    private static String skipSendingMessage = "skipSending";
-    private static String responsePrefix = "responsePrefix";
-    private static String restapiUrlString = "restapiUrl";
+    protected static final String skipSendingMessage = "skipSending";
+    protected static final String responsePrefix = "responsePrefix";
+    protected static final String restapiUrlString = "restapiUrl";
+    protected static final String restapiUserKey = "restapiUser";
+    protected static final String restapiPasswordKey = "restapiPassword";
+
+    protected HashMap<String,PartnerDetails> partnerStore;
 
     public RestapiCallNode() {
-        String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
-
-        try (FileInputStream in = new FileInputStream(configDir + "/" + DME2_PROPERTIES_FILE_NAME)) {
-            Properties props = new Properties();
-            props.load(in);
-            retryPolicyStore = new RetryPolicyStore();
-            retryPolicyStore.setProxyServers(props.getProperty("proxyUrl"));
-            log.info("DME2 support enabled");
+       String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
+        try {
+            String jsonString = readFile(configDir + "/" + PARTNERS_FILE_NAME);
+            JSONObject partners = new JSONObject(jsonString);
+            partnerStore = new HashMap<String,PartnerDetails>();
+            loadPartners(partners);
+            log.info("Partners support enabled");
         } catch (Exception e) {
-            log.warn("DME2 properties could not be read, DME2 support will not be enabled.", e);
+            log.warn("Partners file could not be read, Partner support will not be enabled.", e);
         }
 
         try (FileInputStream in = new FileInputStream(configDir + "/" + UEB_PROPERTIES_FILE_NAME)) {
@@ -112,6 +120,35 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         } catch (Exception e) {
             log.warn("UEB properties could not be read, UEB support will not be enabled.", e);
         }
+    }
+
+    protected void loadPartners(JSONObject partners) {
+	Iterator<String> keys = partners.keys();
+	String partnerUserKey = "user";
+	String partnerPasswordKey = "password";
+	String partnerUrlKey = "url";
+
+	while (keys.hasNext()) {
+	    String partnerKey = keys.next();
+	    try {
+		JSONObject partnerObject = (JSONObject) partners.get(partnerKey);
+		if (partnerObject.has(partnerUserKey) && partnerObject.has(partnerPasswordKey)) {
+		    String url = null;
+		    if (partnerObject.has(partnerUrlKey)) {
+			url = partnerObject.getString(partnerUrlKey);
+		    }
+		    String userName = partnerObject.getString(partnerUserKey);
+		    String password = partnerObject.getString(partnerPasswordKey);
+		    PartnerDetails details = new PartnerDetails(userName, password, url);
+		    partnerStore.put(partnerKey, details);
+		    log.info("mapped partner using partner key " + partnerKey);
+		} else {
+		    log.info("Partner " + partnerKey + " is missing required keys, it won't be mapped");
+		}
+	    } catch (JSONException e) {
+		log.info("Couldn't map the partner using partner key " + partnerKey, e);
+	    }
+	}
     }
 
     /**
@@ -125,14 +162,21 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     public static Parameters getParameters(Map<String, String> paramMap,
         Parameters p)
         throws SvcLogicException {
-        p.templateFileName = parseParam(paramMap, "templateFileName",
+
+	p.templateFileName = parseParam(paramMap, "templateFileName",
             false, null);
         p.requestBody = parseParam(paramMap, "requestBody", false, null);
         p.restapiUrl = parseParam(paramMap, restapiUrlString, true, null);
         validateUrl(p.restapiUrl);
-        p.restapiUser = parseParam(paramMap, "restapiUser", false, null);
-        p.restapiPassword = parseParam(paramMap, "restapiPassword", false,
+        p.restapiUrlSuffix = parseParam(paramMap, "restapiUrlSuffix",
+                false, null);
+        p.restapiUser = parseParam(paramMap, restapiUserKey, false, null);
+        p.restapiPassword = parseParam(paramMap, restapiPasswordKey, false,
             null);
+        if(p.restapiUrlSuffix != null) {
+            p.restapiUrl = p.restapiUrl + p.restapiUrlSuffix;
+            validateUrl(p.restapiUrl);
+        }
         p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey",
             false, null);
         p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret",
@@ -185,14 +229,19 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      * @param restapiUrl rest api URL
      * @throws SvcLogicException when URL validation fails
      */
-    private static void validateUrl(String restapiUrl)
-        throws SvcLogicException {
-        try {
-            URI.create(restapiUrl);
-        } catch (IllegalArgumentException e) {
-            throw new SvcLogicException("Invalid input of url "
-                + e.getLocalizedMessage(), e);
-        }
+    private static void validateUrl(String restapiUrl) throws SvcLogicException {
+	if (restapiUrl.contains(",")) {
+	    String[] urls = restapiUrl.split(",");
+	    for(String url : urls) {
+		validateUrl(url);
+	    }
+	} else {
+	    try {
+		URI.create(restapiUrl);
+	    } catch (IllegalArgumentException e) {
+		throw new SvcLogicException("Invalid input of url " + e.getLocalizedMessage(), e);
+	    }
+	}
     }
 
     /**
@@ -262,14 +311,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return value.toString();
     }
 
-    public RetryPolicyStore getRetryPolicyStore() {
-        return retryPolicyStore;
-    }
-
-    public void setRetryPolicyStore(RetryPolicyStore retryPolicyStore) {
-        this.retryPolicyStore = retryPolicyStore;
-    }
-
     /**
      * Allows Directed Graphs  the ability to interact with REST APIs.
      * @param paramMap HashMap<String,String> of parameters passed by the DG to this function
@@ -293,7 +334,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      *      <tr><td>convertResponse </td><td>Optional</td><td>whether the response should be converted</td><td>true or false</td></tr>
      *      <tr><td>customHttpHeaders</td><td>Optional</td><td>a list additional http headers to be passed in, follow the format in the example</td><td>X-CSI-MessageId=messageId,headerFieldName=headerFieldValue</td></tr>
      *      <tr><td>dumpHeaders</td><td>Optional</td><td>when true writes http header content to context memory</td><td>true or false</td></tr>
-     *      <tr><td>partner</td><td>Optional</td><td>needed for DME2 calls</td><td>dme2proxy</td></tr>
+     *      <tr><td>partner</td><td>Optional</td><td>used to retrieve username, password and url if partner store exists</td><td>aaf</td></tr>
      *      <tr><td>returnRequestPayload</td><td>Optional</td><td>used to return payload built in the request</td><td>true or false</td></tr>
      *  </tbody>
      * </table>
@@ -306,15 +347,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         sendRequest(paramMap, ctx, null);
     }
 
-    public void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx, Integer retryCount)
+    protected void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx, RetryPolicy retryPolicy)
         throws SvcLogicException {
 
-        RetryPolicy retryPolicy = null;
         HttpResponse r = new HttpResponse();
         try {
+            handlePartner(paramMap);           
             Parameters p = getParameters(paramMap, new Parameters());
-            if (p.partner != null) {
-                retryPolicy = retryPolicyStore.getRetryPolicy(p.partner);
+            if(p.restapiUrl.contains(",") && retryPolicy == null) {
+        	String[] urls = p.restapiUrl.split(",");
+        	retryPolicy = new RetryPolicy(urls,urls.length * 2);
+        	p.restapiUrl = urls[0];
             }
             String pp = p.responsePrefix != null ? p.responsePrefix + '.' : "";
 
@@ -367,36 +410,20 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if (retryPolicy == null || !shouldRetry) {
                 setFailureResponseStatus(ctx, prefix, e.getMessage(), r);
             } else {
-                if (retryCount == null) {
-                    retryCount = 0;
-                }
-                String retryMessage = retryCount + " attempts were made out of " + retryPolicy.getMaximumRetries() +
-                    " maximum retries.";
-                log.debug(retryMessage);
+                log.debug(retryPolicy.getRetryMessage());
                 try {
-                    retryCount = retryCount + 1;
-                    if (retryCount < retryPolicy.getMaximumRetries() + 1) {
-                        URI uri = new URI(paramMap.get(restapiUrlString));
-                        String hostname = uri.getHost();
-                        String retryString = retryPolicy.getNextHostName(uri.toString());
-                        URI uriTwo = new URI(retryString);
-                        URI retryUri = UriBuilder.fromUri(uri).host(uriTwo.getHost()).port(uriTwo.getPort()).scheme(
-                            uriTwo.getScheme()).build();
-                        paramMap.put(restapiUrlString, retryUri.toString());
-                        log.debug("URL was set to {}", retryUri.toString());
-                        log.debug("Failed to communicate with host {}. Request will be re-attempted using the host {}.",
-                            hostname, retryString);
-                        log.debug("This is retry attempt {} out of {}", retryCount, retryPolicy.getMaximumRetries());
-                        sendRequest(paramMap, ctx, retryCount);
+                    //calling getNextHostName increments the retry count so it should be called before shouldRetry
+                    String retryString = retryPolicy.getNextHostName();
+                    if (retryPolicy.shouldRetry()) {
+                        paramMap.put(restapiUrlString, retryString);
+                        log.debug("retry attempt {} will use the retry url {}", retryPolicy.getRetryCount(), retryString);
+                        sendRequest(paramMap, ctx, retryPolicy);
                     } else {
-                        log.debug("Maximum retries reached, calling setFailureResponseStatus.");
+                        log.debug("Maximum retries reached, won't attempt to retry. Calling setFailureResponseStatus.");
                         setFailureResponseStatus(ctx, prefix, e.getMessage(), r);
                     }
                 } catch (Exception ex) {
-                    log.error("Could not attempt retry.", ex);
-                    String retryErrorMessage =
-                        "Retry attempt has failed. No further retry shall be attempted, calling " +
-                            "setFailureResponseStatus.";
+                    String retryErrorMessage = "Retry attempt " + retryPolicy.getRetryCount() + "has failed with error message " + ex.getMessage();
                     setFailureResponseStatus(ctx, prefix, retryErrorMessage, r);
                 }
             }
@@ -405,6 +432,18 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         if (r != null && r.code >= 300) {
             throw new SvcLogicException(String.valueOf(r.code) + ": " + r.message);
         }
+    }
+
+    protected void handlePartner(Map<String, String> paramMap) {
+        String partner = paramMap.get("partner");
+	    if (partner != null && partner.length() > 0) {
+		PartnerDetails details = partnerStore.get(partner);
+		paramMap.put(restapiUserKey, details.username);
+		paramMap.put(restapiPasswordKey, details.password);
+		if(paramMap.get(restapiUrlString) == null) {
+		    paramMap.put(restapiUrlString, details.url);
+		}
+	    }	
     }
 
     protected String buildXmlJsonRequest(SvcLogicContext ctx, String template, Format format)
@@ -571,6 +610,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     .builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
                     .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
                 client.register(oAuth1Feature);
+
             }
         } else {
             if (p.authtype == AuthType.DIGEST) {
@@ -636,13 +676,12 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         WebTarget webTarget = addAuthType(client, p).target(p.restapiUrl);
 
-        log.info("Sending request:");
+        log.info("Sending request below to url " + p.restapiUrl);
         log.info(request);
         long t1 = System.currentTimeMillis();
 
         HttpResponse r = new HttpResponse();
         r.code = 200;
-
         String accept = p.accept;
         if(accept == null) {
             accept = p.format == Format.XML ? "application/xml" : "application/json";

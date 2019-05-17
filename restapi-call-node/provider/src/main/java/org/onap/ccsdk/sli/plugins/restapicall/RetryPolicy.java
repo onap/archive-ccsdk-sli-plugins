@@ -21,40 +21,41 @@
  */
 
 package org.onap.ccsdk.sli.plugins.restapicall;
-
 public class RetryPolicy {
     private String[] hostnames;
     private Integer maximumRetries;
-
-    public RetryPolicy(String[] hostnames, Integer maximumRetries){
-        this.hostnames = hostnames;
-        this.maximumRetries = maximumRetries;
+	
+    private int position;
+	
+    private int retryCount;
+    public RetryPolicy(String[] hostnames, Integer maximumRetries) {
+	this.hostnames = hostnames;
+	this.maximumRetries = maximumRetries;
+	
+	this.position = 0;
+	
+	this.retryCount = 0;
     }
-
     public Integer getMaximumRetries() {
-        return maximumRetries;
+	return maximumRetries;
+    }
+    public int getRetryCount() {
+	return retryCount;
+    }
+    public Boolean shouldRetry() {
+	return retryCount < maximumRetries + 1;
+    }
+    public String getRetryMessage() {
+	return retryCount + " retry attempts were made out of " + maximumRetries + " maximum retry attempts.";
     }
     
-    public String getNextHostName(String uri) throws RetryException {
-        Integer position = null;
-
-        for (int i = 0; i < hostnames.length; i++) {
-            if (uri.contains(hostnames[i])) {
-                position = i;
-                break;
-            }
-        }
-
-        if(position == null){
-            throw new RetryException("No match found for the provided uri[" + uri + "] " +
-                    "so the next host name could not be retreived");
-        }
-        position++;
-
-        if (position > hostnames.length - 1) {
-            position = 0;
-        }
-        return hostnames[position];
+    public String getNextHostName() throws RetryException {
+	retryCount++;
+	position++;
+	
+	if (position > hostnames.length - 1) {
+	    position = 0;
+	}
+	return hostnames[position];
     }
-
 }
