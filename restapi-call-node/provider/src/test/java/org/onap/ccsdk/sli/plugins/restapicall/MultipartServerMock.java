@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package jtest.org.onap.ccsdk.sli.plugins.restapicall;
+package org.onap.ccsdk.sli.plugins.restapicall;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;

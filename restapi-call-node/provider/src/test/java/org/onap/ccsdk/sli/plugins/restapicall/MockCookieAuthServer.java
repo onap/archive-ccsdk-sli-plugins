@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package jtest.org.onap.ccsdk.sli.plugins.restapicall;
+package org.onap.ccsdk.sli.plugins.restapicall;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
