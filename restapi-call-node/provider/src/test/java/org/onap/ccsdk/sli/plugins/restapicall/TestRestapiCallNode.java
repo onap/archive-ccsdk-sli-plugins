@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.restapicall;
+package org.onap.ccsdk.sli.plugins.restapicall;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -721,4 +721,20 @@ public class TestRestapiCallNode {
         assertThat(ctx.getAttribute("header.Set-Cookie"), is("cookieResponse=cookieValueInReturn;Version=1"));
         server.shutdownNow();
     }
+
+    @Test
+    public void testEmbeddedJsonTemplate() throws Exception {
+        SvcLogicContext ctx = new SvcLogicContext();
+	String complexObj = "{\"image_name\":\"Ubuntu 14.04\",\"service-instance-id\":\"1\",\"vnf-model-customization-uuid\":\"2f\",\"vnf-id\":\"3b\"}";
+	ctx.setAttribute("reqId", "1235");
+        ctx.setAttribute("subReqId", "054243");
+        ctx.setAttribute("actionName", "CREATE");
+        ctx.setAttribute("myPrefix", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("complexObj", complexObj);
+        RestapiCallNode rcn = new RestapiCallNode();
+        String request = rcn.buildXmlJsonRequest(ctx, rcn.readFile("src/test/resources/testEmbeddedTemplate.json"), Format.JSON);
+        //This will throw a JSONException and fail the test case if rest api call node doesn't form valid JSON
+        JSONObject requestObj = new JSONObject(request);
+    }
+
 }
