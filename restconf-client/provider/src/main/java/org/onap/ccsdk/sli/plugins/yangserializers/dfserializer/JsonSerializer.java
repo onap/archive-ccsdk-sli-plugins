@@ -22,18 +22,20 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
-import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
-import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeWalker;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
+import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeWalker;
+
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat.JSON;
-import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.*;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.JSON_LIS_ERR;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.JSON_TREE_ERR;
 
 /**
  * Representation of JSON serializer which encodes properties to JSON and

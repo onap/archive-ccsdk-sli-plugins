@@ -43,10 +43,12 @@ import org.dom4j.DocumentHelper;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.onap.ccsdk.sli.plugins.restapicall.Format;
 import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.onap.ccsdk.sli.plugins.restapicall.RetryException;
 import org.onap.ccsdk.sli.plugins.restapicall.RetryPolicy;
+import org.onap.ccsdk.sli.plugins.restapicall.XmlParser;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatSerializer;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatSerializerContext;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerFactory;
@@ -195,10 +197,14 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
 
             String response = getResponse(ctx, p, pp, r);
             if (response != null) {
-                Map<String, String> resProp = serializeResponse(
-                        p, uri, response, insIdCtx);
-                for (Map.Entry<String, String> pro : resProp.entrySet()) {
-                    ctx.setAttribute(pro.getKey(), pro.getValue());
+                try {
+                    Map<String, String> resProp = serializeResponse(
+                            p, uri, response, insIdCtx);
+                    for (Map.Entry<String, String> pro : resProp.entrySet()) {
+                        ctx.setAttribute(pro.getKey(), pro.getValue());
+                    }
+                } catch (SvcLogicException e) {
+                    convertToNormalRes(ctx, p, pp, response);
                 }
             }
         } catch (SvcLogicException e) {
@@ -238,6 +244,27 @@ public class RestconfApiCallNode implements SvcLogicJavaPlugin {
         if (r != null && r.code >= 300) {
             throw new SvcLogicException(valueOf(r.code) +
                                                 COLON + " " + r.message);
+        }
+    }
+
+    private void convertToNormalRes(SvcLogicContext ctx ,
+                                    YangParameters p, String pp, String body)
+            throws SvcLogicException {
+        if (p.convertResponse) {
+            Map<String, String> mm = null;
+            if (p.format == Format.XML) {
+                mm = XmlParser.convertToProperties(body, p.listNameList);
+            } else if (p.format == Format.JSON) {
+                mm = org.onap.ccsdk.sli.plugins.restapicall.JsonParser
+                        .convertToProperties(body);
+            }
+
+            if (mm != null) {
+                for (Map.Entry<String, String> entry : mm.entrySet()) {
+                    ctx.setAttribute(pp + entry.getKey(),
+                                     entry.getValue());
+                }
+            }
         }
     }
 

@@ -46,8 +46,10 @@ import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PATCH;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.POST;
 import static org.onap.ccsdk.sli.plugins.restapicall.HttpMethod.PUT;
 import static org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiUtils.parseUrl;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_ANYXML_RESPONSE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_FROM_JSON_RPC;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.DECODE_FROM_XML_RPC;
+import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_ANYXML;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_ID;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_ID_PUT;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_JSON_RPC;
@@ -146,6 +148,24 @@ public class DataFormatSerializerTest {
                 ".com/restconf/operations/identity-test:test");
         restconf.sendRequest(p, ctx);
         assertThat(dfCaptor.getResult(), is(ENCODE_TO_JSON_ID));
+    }
+
+    /**
+     * Verifies encoding of parameters to JSON data format any xml in it.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void encodeForAnyXml() throws SvcLogicException {
+        String pre = "execution-service_process.";
+        SvcLogicContext ctx = createAnyXmlAttList(pre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/api/v1/execution-service/process");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_ANYXML));
     }
 
     /**
@@ -501,6 +521,27 @@ public class DataFormatSerializerTest {
     }
 
     /**
+     * Verifies encoding of and decoding from, JSON for ANYXML.
+     *
+     * @throws SvcLogicException when test case fails
+     */
+    @Test
+    public void codecForNormalAnyXml() throws SvcLogicException {
+        createMockForDecode(DECODE_ANYXML_RESPONSE);
+        String inPre = "execution-service_process.";
+        SvcLogicContext ctx = createAnyXmlAttList(inPre);
+        p.put("dirPath", "src/test/resources");
+        p.put("format", "json");
+        p.put("httpMethod", "post");
+        p.put("responsePrefix", "pp");
+        p.put("restapiUrl", "http://echo.getpostman" +
+                ".com/api/v1/execution-service/process");
+        restconf.sendRequest(p, ctx);
+        assertThat(dfCaptor.getResult(), is(ENCODE_TO_ANYXML));
+        verifyOutputOfAnyXml(ctx);
+    }
+
+    /**
      * Verifies encoding of and decoding from, XML respectively for data
      * format with containers, grouping and augment.
      *
@@ -546,6 +587,12 @@ public class DataFormatSerializerTest {
         String url8 = "https://localhost:8282/restconf/data/" + actVal;
         String url9 = "http://182.2.61.24:2250/restconf/data/" + actVal;
         String url10 = "https://182.2.61.24:2250/restconf/operations/" + actVal;
+        String url11 = "https://182.2.61.24:2250/api/v1/execution-service" +
+                "/process";
+        String url12 = "https://182.2.61.24:2250/api/v1/execution-service" +
+                "/process/payload";
+        String url13 = "https://182.2.61.24:2250/api/v1/execution-service" +
+                "/process/payload/";
         String val1 = parseUrl(url1, POST);
         String val2 = parseUrl(url2, GET);
         String val3 = parseUrl(url3, PATCH);
@@ -556,6 +603,9 @@ public class DataFormatSerializerTest {
         String val8 = parseUrl(url8, POST);
         String val9 = parseUrl(url9, GET);
         String val10 = parseUrl(url10, POST);
+        String val11 = parseUrl(url11, POST);
+        String val12 = parseUrl(url12, POST);
+        String val13 = parseUrl(url13, POST);
         assertThat(val1, is(actVal));
         assertThat(val2, is(actVal));
         assertThat(val3, is(actVal));
@@ -566,6 +616,43 @@ public class DataFormatSerializerTest {
         assertThat(val8, is(actVal));
         assertThat(val9, is(actVal));
         assertThat(val10, is(actVal));
+        assertThat(val11, is("execution-service:process"));
+        assertThat(val12, is("execution-service:process/payload"));
+        assertThat(val13, is("execution-service:process/payload/"));
+    }
+
+    /**
+     * Creates attribute list for encoding JSON or XML with ANYXML YANG
+     * file.
+     *
+     * @param pre prefix
+     * @return service logic context
+     */
+    private SvcLogicContext createAnyXmlAttList(String pre) {
+        SvcLogicContext ctx = new SvcLogicContext();
+        String pre1 = pre + "commonHeader.";
+        String pre2 = pre + "actionIdentifiers.";
+        ctx.setAttribute(pre + "isNonAppend", "true");
+        ctx.setAttribute(pre1 + "originatorId", "SDNC_DG");
+        ctx.setAttribute(pre1 + "requestId", "123456-1000");
+        ctx.setAttribute(pre1 + "subRequestId", "sub-123456-1000");
+        ctx.setAttribute(pre2 + "blueprintName",
+                         "baseconfiguration");
+        ctx.setAttribute(pre2 + "blueprintVersion", "1.0.0");
+        ctx.setAttribute(pre2 + "actionName", "assign-activate");
+        ctx.setAttribute(pre2 + "mode", "sync");
+        ctx.setAttribute(pre + "payload." +
+                                 "template-prefix", "vDNS-test");
+        ctx.setAttribute(pre + "payload.resource-assignment-request" +
+                                 ".resource-assignment-properties",
+                         "{\n" +
+                                 "                \"service-instance-id\": " +
+                                 "\"1234\",\n" +
+                                 "                \"vnf-id\": \"3526\",\n" +
+                                 "                \"customer-name\": \"htipl\",\n" +
+                                 "                \"subscriber-name\": \"huawei\"\n" +
+                                 "            }");
+        return ctx;
     }
 
     /**
@@ -833,6 +920,51 @@ public class DataFormatSerializerTest {
         assertThat(ctx.getAttribute(pre + "cont13.ll9[1]"), is("abc"));
         assertThat(ctx.getAttribute(pre + "cont13.leaf28"), is("abc"));
     }
+
+    /**
+     * Verifies the attribute list for decoding from JSON or XML with
+     * ANYXML YANG file.
+     *
+     * @param ctx service logic context
+     */
+    private void verifyOutputOfAnyXml(SvcLogicContext ctx) {
+        System.out.println(ctx.getAttribute("pp.status.eventType"));
+        assertThat(ctx.getAttribute("pp.status.eventType"), is(
+                "EVENT_COMPONENT_EXECUTED"));
+        assertThat(ctx.getAttribute("pp.actionIdentifiers.blueprintName"),
+                   is("golden"));
+        assertThat(ctx.getAttribute("pp.actionIdentifiers.mode"),
+                   is("sync"));
+        assertThat(ctx.getAttribute("pp.stepData.name"),
+                   is("resource-assignment"));
+        assertThat(ctx.getAttribute("pp.status.message"),
+                   is("success"));
+        assertThat(ctx.getAttribute("pp.commonHeader.originatorId"),
+                   is("System"));
+        assertThat(ctx.getAttribute("pp.status.code"),
+                   is("200"));
+        assertThat(ctx.getAttribute("pp.commonHeader.requestId"),
+                   is("1234"));
+        assertThat(ctx.getAttribute("pp.commonHeader.subRequestId"),
+                   is("1234-12234"));
+        assertThat(ctx.getAttribute("pp.commonHeader.timestamp"),
+                   is("2019-05-18T23:42:41.658Z"));
+        assertThat(ctx.getAttribute("pp.status.timestamp"),
+                   is("2019-05-18T23:42:41.950Z"));
+        assertThat(ctx.getAttribute("pp.actionIdentifiers.blueprintV" +
+                                            "ersion"), is("1.0.0"));
+        assertThat(ctx.getAttribute("pp.actionIdentifiers.actionName"),
+                   is("resource-assignment"));
+        assertThat(ctx.getAttribute("pp.payload.resource-assignment-resp" +
+                                            "onse.meshed-template.vf-module-1"),
+                   is("<interface>\n    <description>This i" +
+                              "s the Virtual Firewall entity</description>\n" +
+                              "    <vfw>10.0.101.20/24</vfw>\n" +
+                              "</interface>"));
+        assertThat(ctx.getAttribute("pp.actionIdentifiers.actionName"),
+                   is("resource-assignment"));
+    }
+
 
     /**
      * Captures the data format messages by mocking it, which can be used in

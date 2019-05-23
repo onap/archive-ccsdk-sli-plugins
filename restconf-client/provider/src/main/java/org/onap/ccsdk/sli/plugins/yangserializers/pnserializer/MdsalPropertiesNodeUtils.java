@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -484,8 +485,12 @@ public final class MdsalPropertiesNodeUtils {
      * @param name name of the property
      * @return the property node type
      */
-    public static NodeType getNodeType(int index, int length, String name) {
+    public static NodeType getNodeType(int index, int length, String name,
+                                       SchemaNode schema) {
         if (index == length-1) {
+            if (schema instanceof AnyXmlSchemaNode){
+                return NodeType.ANY_XML_NODE;
+            }
             return (isListEntry(name) ? NodeType.MULTI_INSTANCE_LEAF_NODE :
                     NodeType.SINGLE_INSTANCE_LEAF_NODE);
         } else {

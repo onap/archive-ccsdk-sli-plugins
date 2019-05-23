@@ -20,12 +20,12 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.addToAugmentations;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.createNode;
@@ -112,15 +112,18 @@ public abstract class InnerNode<T extends NodeChild> extends PropertiesNode {
         }
 
         AugmentationSchemaNode augSchema = null;
-        if (((DataSchemaNode) appInfo).isAugmenting()) {
-            augSchema = findCorrespondingAugment(((DataSchemaNode) this.appInfo()),
-                                                 ((DataSchemaNode) appInfo));
-        }
-
         String uri = getUri(this, name, namespace);
         node = new LeafNode(name, namespace, uri, this,
                             appInfo, type, value);
-        node.valueNs(valueNs);
+
+        if (type != NodeType.ANY_XML_NODE) {
+            if (((DataSchemaNode) appInfo).isAugmenting()) {
+                augSchema = findCorrespondingAugment(
+                        ((DataSchemaNode) this.appInfo()),
+                        ((DataSchemaNode) appInfo));
+            }
+            node.valueNs(valueNs);
+        }
 
         if (augSchema != null && !isNamespaceAsParent(this, node)) {
             addToAugmentations(augSchema, this, node);

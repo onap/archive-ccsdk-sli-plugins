@@ -21,6 +21,13 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Map;
+
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.LeafNode;
@@ -28,12 +35,6 @@ import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeListener;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.RootNode;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.Map;
 
 import static com.google.common.base.Strings.repeat;
 import static java.lang.String.format;
@@ -116,6 +117,16 @@ public class PropertiesNodeJsonListener implements PropertiesNodeListener{
                     jsonWriter.value(val);
                     break;
 
+                case ANY_XML_NODE:
+                    jsonWriter.name(nodeName);
+                    val = ((LeafNode) node).value();
+                    try {
+                        jsonWriter.jsonValue(val);
+                    } catch (IOException e) {
+                        throw new SvcLogicException(JSON_WRITE_ERR, e);
+                    }
+                    break;
+
                 default:
                     throw new SvcLogicException(format(
                             NODE_TYPE_ERR, node.nodeType().toString()));
@@ -143,6 +154,7 @@ public class PropertiesNodeJsonListener implements PropertiesNodeListener{
 
                 case  SINGLE_INSTANCE_LEAF_NODE:
                 case MULTI_INSTANCE_LEAF_NODE:
+                case ANY_XML_NODE:
                     break;
 
                 default:
@@ -174,7 +186,9 @@ public class PropertiesNodeJsonListener implements PropertiesNodeListener{
         PropertiesNode parent = node.parent();
         if (parent instanceof RootNode || !parent.namespace().moduleName()
                 .equals(node.namespace().moduleName())) {
-            return node.namespace().moduleName() + ":" + node.name();
+            if (!parent.nonAppend()) {
+                return node.namespace().moduleName() + ":" + node.name();
+            }
         }
         return node.name();
     }

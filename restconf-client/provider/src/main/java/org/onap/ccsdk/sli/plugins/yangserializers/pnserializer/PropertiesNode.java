@@ -38,6 +38,7 @@ public abstract class PropertiesNode {
     private PropertiesNode parent;
     private Object appInfo;
     private NodeType nodeType;
+    private boolean nonAppend;
     private Multimap<Object, PropertiesNode> augmentations = ArrayListMultimap.create();
 
     /**
@@ -107,6 +108,16 @@ public abstract class PropertiesNode {
     }
 
     /**
+     * Sets to true if module name is required in forming a request; false
+     * otherwise.
+     *
+     * @param isNotReq true if required; false otherwise
+     */
+    public void nonAppend(boolean isNotReq) {
+        this.nonAppend = isNotReq;
+    }
+
+    /**
      * Returns parent.
      *
      * @return parent node
@@ -158,6 +169,15 @@ public abstract class PropertiesNode {
      */
     public NodeType nodeType() {
         return nodeType;
+    }
+
+    /**
+     * Returns if module name is required.
+     *
+     * @return status of module name if required
+     */
+    public boolean nonAppend() {
+        return nonAppend;
     }
 
     /**
