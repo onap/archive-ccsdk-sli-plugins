@@ -167,6 +167,18 @@ public final class RestconfApiUtils {
             }
             secondHalf = path.substring(p[0].length() + 1);
             return firstHalf + COLON + secondHalf;
+        } else if (path.contains(SLASH)) {
+            String[] p = path.split(SLASH);
+            if (p.length > 4) {
+                String actual = p[3] + COLON + p[4];
+                if (p.length > 5) {
+                    secondHalf = path.substring(
+                           p[1].length() + p[2].length() + actual.length() + 3);
+                    path = actual + secondHalf;
+                } else {
+                    path = actual;
+                }
+            }
         }
         return path;
     }

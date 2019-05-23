@@ -20,10 +20,10 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-
 import java.util.Collection;
 import java.util.Map;
+
+import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 
 /**
  * Implementation of properties node walker which helps in forming a new tree from properties node.
@@ -110,6 +110,7 @@ public class DefaultPropertiesNodeWalker<T extends NodeChild> implements Propert
                         .children());
             case SINGLE_INSTANCE_LEAF_NODE:
             case MULTI_INSTANCE_LEAF_NODE:
+            case ANY_XML_NODE:
                 return null;
             default:
                 throw new IllegalArgumentException("No more types allowed");

@@ -69,6 +69,31 @@ public final class DataFormatUtilsTest {
             "    \"identity-test:l\": \"abc\"\n" +
             "}";
 
+    static final String ENCODE_TO_ANYXML = "{\n" +
+            "    \"actionIdentifiers\": {\n" +
+            "        \"mode\": \"sync\",\n" +
+            "        \"blueprintName\": \"baseconfiguration\",\n" +
+            "        \"blueprintVersion\": \"1.0.0\",\n" +
+            "        \"actionName\": \"assign-activate\"\n" +
+            "    },\n" +
+            "    \"payload\": {\n" +
+            "        \"template-prefix\": \"vDNS-test\",\n" +
+            "        \"resource-assignment-request\": {\n" +
+            "            \"resource-assignment-properties\": {\n" +
+            "                \"service-instance-id\": \"1234\",\n" +
+            "                \"vnf-id\": \"3526\",\n" +
+            "                \"customer-name\": \"htipl\",\n" +
+            "                \"subscriber-name\": \"huawei\"\n" +
+            "            }\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"commonHeader\": {\n" +
+            "        \"subRequestId\": \"sub-123456-1000\",\n" +
+            "        \"requestId\": \"123456-1000\",\n" +
+            "        \"originatorId\": \"SDNC_DG\"\n" +
+            "    }\n" +
+            "}";
+
     static final String ENCODE_TO_JSON_ID_PUT = "{\n" +
             "    \"identity-test:test\": {\n" +
             "        \"con1\": {" + addSpace(ENCODE_TO_JSON_ID_COMMON, 4) +
@@ -481,6 +506,45 @@ public final class DataFormatUtilsTest {
             "                \"abc\"\n" +
             "            ],\n" +
             "            \"leaf28\": \"abc\"\n" +
+            "        }\n" +
+            "    }\n" +
+            "}";
+
+    static final String DECODE_ANYXML_RESPONSE = "{\n" +
+            "    \"commonHeader\": {\n" +
+            "        \"timestamp\": \"2019-05-18T23:42:41.658Z\",\n" +
+            "        \"originatorId\": \"System\",\n" +
+            "        \"requestId\": \"1234\",\n" +
+            "        \"subRequestId\": \"1234-12234\",\n" +
+            "        \"flags\": null\n" +
+            "    },\n" +
+            "    \"actionIdentifiers\": {\n" +
+            "        \"blueprintName\": \"golden\",\n" +
+            "        \"blueprintVersion\": \"1.0.0\",\n" +
+            "        \"actionName\": \"resource-assignment\",\n" +
+            "        \"mode\": \"sync\"\n" +
+            "    },\n" +
+            "    \"status\": {\n" +
+            "        \"code\": 200,\n" +
+            "        \"eventType\": \"EVENT_COMPONENT_EXECUTED\",\n" +
+            "        \"timestamp\": \"2019-05-18T23:42:41.950Z\",\n" +
+            "        \"errorMessage\": null,\n" +
+            "        \"message\": \"success\"\n" +
+            "    },\n" +
+            "    \"payload\": {\n" +
+            "        \"resource-assignment-response\": {\n" +
+            "            \"meshed-template\": {\n" +
+            "                \"vf-module-1\": \"<interface>\\n   " +
+            " <description>This is the Virtual Firewall entity</" +
+            "description>\\n    <vfw>10.0.101.20/24</vfw>\\n</interface>\"\n" +
+            "            }\n" +
+            "        }\n" +
+            "    },\n" +
+            "    \"stepData\": {\n" +
+            "        \"name\": \"resource-assignment\",\n" +
+            "        \"properties\": {\n" +
+            "            \"resource-assignment-params\": null,\n" +
+            "            \"status\": null\n" +
             "        }\n" +
             "    }\n" +
             "}";

@@ -44,6 +44,7 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPrope
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getRevision;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.getValueNamespace;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.MdsalPropertiesNodeUtils.resolveName;
+import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.ANY_XML_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_LEAF_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.MULTI_INSTANCE_NODE;
 import static org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType.SINGLE_INSTANCE_LEAF_NODE;
@@ -81,6 +82,8 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
 
         paramMap = convertToValidParam(paramMap);
 
+        updateModNameReq(paramMap, rootUri);
+
         for (Map.Entry<String, String> entry : paramMap.entrySet()) {
             String[] names = entry.getKey().split("\\.");
             for (int i = 0; i < names.length; i++) {
@@ -95,6 +98,15 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
             }
         }
         return node;
+    }
+
+    private void updateModNameReq(Map<String, String> paramMap,
+                                  String rootUri) {
+        String isReqStr = rootUri + "." + "isNonAppend";
+        String val = paramMap.get(isReqStr);
+        if (val != null && val.equals("true")) {
+            node.nonAppend(true);
+        }
     }
 
     /**
@@ -150,7 +162,7 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
             return;
         }
 
-        switch (getNodeType(index, length, name)) {
+        switch (getNodeType(index, length, name, schema)) {
             case SINGLE_INSTANCE_NODE:
                 node = node.addChild(localName, ns,
                                      SINGLE_INSTANCE_NODE, schema);
@@ -171,6 +183,13 @@ public class MdsalPropertiesNodeSerializer extends PropertiesNodeSerializer<Sche
             case MULTI_INSTANCE_LEAF_NODE:
                 addLeafNode(value, MULTI_INSTANCE_LEAF_NODE, localName,
                                ns, schema, name);
+                break;
+
+            case ANY_XML_NODE:
+                node = node.addChild(localName, ns, ANY_XML_NODE,
+                                     value, null, schema);
+                node = node.endNode();
+                curSchema = ((SchemaNode) node.appInfo());
                 break;
 
             default:
