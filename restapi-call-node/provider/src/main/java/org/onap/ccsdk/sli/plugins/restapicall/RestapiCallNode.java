@@ -25,6 +25,7 @@ package org.onap.ccsdk.sli.plugins.restapicall;
 import static java.lang.Boolean.valueOf;
 import static javax.ws.rs.client.Entity.entity;
 import static org.onap.ccsdk.sli.plugins.restapicall.AuthType.fromString;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,6 +51,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Feature;
@@ -71,6 +73,7 @@ import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class RestapiCallNode implements SvcLogicJavaPlugin {
 
@@ -670,7 +673,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 }
             }
 
-            invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
+            invocationBuilder.header("X-ECOMP-RequestID", MDC.get("X-ECOMP-RequestID"));
 
             invocationBuilder.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
 
@@ -694,53 +697,50 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             }
         } else if (!p.skipSending && p.multipartFormData) {
 
-            WebTarget wt = client.register(MultiPartFeature.class).target(p.restapiUrl);
-
-            MultiPart multiPart = new MultiPart();
-            multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
-
-            FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
-                    new File(p.multipartFile),
-                    MediaType.APPLICATION_OCTET_STREAM_TYPE);
-            multiPart.bodyPart(fileDataBodyPart);
-
-
-            Invocation.Builder invocationBuilder = wt.request(contentType).accept(accept);
+            final WebTarget wt = client.register(MultiPartFeature.class).target(p.restapiUrl);
+            final Builder invocationBuilder = wt.request(contentType).accept(accept);
 
             if (p.format == Format.NONE) {
                 invocationBuilder.header("", "");
             }
 
             if (p.customHttpHeaders != null && p.customHttpHeaders.length() > 0) {
-                String[] keyValuePairs = p.customHttpHeaders.split(",");
-                for (String singlePair : keyValuePairs) {
-                    int equalPosition = singlePair.indexOf('=');
+                final String[] keyValuePairs = p.customHttpHeaders.split(",");
+                for (final String singlePair : keyValuePairs) {
+                    final int equalPosition = singlePair.indexOf('=');
                     invocationBuilder.header(singlePair.substring(0, equalPosition),
-                            singlePair.substring(equalPosition + 1, singlePair.length()));
+                        singlePair.substring(equalPosition + 1));
                 }
             }
 
-            invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
+            invocationBuilder.header("X-ECOMP-RequestID", MDC.get("X-ECOMP-RequestID"));
 
-            Response response;
+            try (final MultiPart multiPart = new MultiPart();) {
+                multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-            try {
-                response = invocationBuilder.method(p.httpMethod.toString(), entity(multiPart, multiPart.getMediaType()));
-            } catch (ProcessingException | IllegalStateException e) {
-                throw new SvcLogicException(requestPostingException +
-                        e.getLocalizedMessage(), e);
+                final FileDataBodyPart fileDataBodyPart =
+                    new FileDataBodyPart("file", new File(p.multipartFile), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+                multiPart.bodyPart(fileDataBodyPart);
+
+                final Response response;
+                try {
+                    response =
+                        invocationBuilder.method(p.httpMethod.toString(), entity(multiPart, multiPart.getMediaType()));
+                } catch (final ProcessingException | IllegalStateException e) {
+                    throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
+                }
+                r.code = response.getStatus();
+                r.headers = response.getStringHeaders();
+                final EntityTag etag = response.getEntityTag();
+                if (etag != null) {
+                    r.message = etag.getValue();
+                }
+                if (response.hasEntity() && r.code != 204) {
+                    r.body = response.readEntity(String.class);
+                }
+            } catch (final IOException e) {
+                log.warn("Failed to create MultiPart", e);
             }
-
-            r.code = response.getStatus();
-            r.headers = response.getStringHeaders();
-            EntityTag etag = response.getEntityTag();
-            if (etag != null) {
-                r.message = etag.getValue();
-            }
-            if (response.hasEntity() && r.code != 204) {
-                r.body = response.readEntity(String.class);
-            }
-
         }
 
         long t2 = System.currentTimeMillis();
