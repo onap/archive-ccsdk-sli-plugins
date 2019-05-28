@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>binding-parent</artifactId>
-        <version>1.2.3</version>
+        <version>1.2.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>restconf-client-provider</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
+    <version>0.4.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>ccsdk-sli-plugins :: restconf-client :: ${project.artifactId}</name>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>
             <artifactId>properties-node-provider</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>0.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>
             <artifactId>restapi-call-node-provider</artifactId>
-            <version>0.4.3-SNAPSHOT</version>
+            <version>0.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
