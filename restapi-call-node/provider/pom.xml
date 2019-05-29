@@ -15,10 +15,6 @@
 
     <name>ccsdk-sli-plugins :: restapi-call-node :: ${project.artifactId}</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencyManagement>
     	<dependencies>
     		<dependency>
@@ -39,6 +35,7 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-common</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -48,11 +48,13 @@
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-common</artifactId>
             <version>${ccsdk.sli.core.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-provider</artifactId>
             <version>${ccsdk.sli.core.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <artifactId>sal-test-model</artifactId>

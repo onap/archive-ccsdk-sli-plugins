@@ -22,13 +22,7 @@
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.onap.ccsdk.sli.core</groupId>
-			<artifactId>ccsdk-sli</artifactId>
-			<version>${ccsdk.sli.core.version}</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>restapi-call-node-provider</artifactId>

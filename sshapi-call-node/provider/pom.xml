@@ -14,11 +14,6 @@
     <packaging>bundle</packaging>
 
     <name>ccsdk-sli-plugins :: sshapi-call-node :: ${project.artifactId}</name>
-    <url>http://maven.apache.org</url>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     
     <dependencyManagement>
     	<dependencies>
@@ -41,10 +36,7 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>sli-provider</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!-- ILLEGAL DEPENDENCY : creates circular dependency between CCSDK and APPC -->
         <dependency>
