@@ -14,11 +14,6 @@
     <packaging>bundle</packaging>
 
     <name>ccsdk-sli-plugins :: restconf-client :: ${project.artifactId}</name>
-    <url>http://maven.apache.org</url>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     
     <dependencyManagement>
     	<dependencies>
@@ -45,7 +40,13 @@
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-common</artifactId>
-        </dependency>
+            <scope>provided</scope>  
+      </dependency>
+        <dependency>
+            <groupId>org.onap.ccsdk.sli.core</groupId>
+            <artifactId>sli-provider</artifactId>
+            <scope>provided</scope>  
+      </dependency>
         <dependency>
             <groupId>org.onap.ccsdk.sli.plugins</groupId>
             <artifactId>properties-node-provider</artifactId>

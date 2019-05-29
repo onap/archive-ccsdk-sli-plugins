@@ -36,6 +36,7 @@
 		<dependency>
 			<groupId>org.onap.ccsdk.sli.core</groupId>
 			<artifactId>sli-common</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
