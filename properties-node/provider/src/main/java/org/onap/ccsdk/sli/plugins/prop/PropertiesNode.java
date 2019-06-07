@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
@@ -45,10 +44,10 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         Properties prop = new Properties();
         try {
             File file = new File(param.fileName);
-            try(InputStream in = new FileInputStream(file)){
+            try (InputStream in = new FileInputStream(file)) {
                 Map<String, String> mm = null;
                 String pfx = param.contextPrefix != null ? param.contextPrefix + '.' : "";
-                if(param.fileBasedParsing){
+                if (param.fileBasedParsing) {
                     byte[] data = new byte[(int) file.length()];
                     if ("json".equalsIgnoreCase(getFileExtension(param.fileName))) {
                         in.read(data);
@@ -65,14 +64,15 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                             String value = prop.getProperty(name);
                             if (value != null && value.trim().length() > 0) {
                                 ctx.setAttribute(pfx + name, value.trim());
-                                log.info("+++ " + pfx + name + ": [" + value + "]");
+                                log.info("+++ " + pfx + name + ": [" + maskPassword(pfx + name, value) + "]");
                             }
                         }
                     }
-                    if (mm != null){
-                        for (Map.Entry<String,String> entry : mm.entrySet()){
+                    if (mm != null) {
+                        for (Map.Entry<String, String> entry : mm.entrySet()) {
                             ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
-                            log.info("+++ " + pfx + entry.getKey() + ": [" + entry.getValue() + "]");
+                            log.info("+++ " + pfx + entry.getKey() + ": ["
+                                    + maskPassword(pfx + entry.getKey(), entry.getValue()) + "]");
                         }
                     }
                 } else {
@@ -82,7 +82,7 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                         String value = prop.getProperty(name);
                         if (value != null && value.trim().length() > 0) {
                             ctx.setAttribute(pfx + name, value.trim());
-                            log.info("+++ " + pfx + name + ": [" + value + "]");
+                            log.info("+++ " + pfx + name + ": [" + maskPassword(pfx + name, value) + "]");
                         }
                     }
                 }
@@ -92,17 +92,16 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         }
     }
 
-    /* Getting extension has to do the following
-    * ""                            -->   ""
-    * "name"                        -->   ""
-    * "name.txt"                    -->   "txt"
-    * ".htpasswd"                   -->   ""
-    * "name.with.many.dots.myext"   -->   "myext"
-    */
+    /*
+     * Getting extension has to do the following "" --> "" "name" --> "" "name.txt" --> "txt"
+     * ".htpasswd" --> "" "name.with.many.dots.myext" --> "myext"
+     */
     private static String getFileExtension(String fileName) {
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-            return fileName.substring(fileName.lastIndexOf(".")+1);
-        else return "";
+        if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
+        } else {
+            return "";
+        }
     }
 
     protected Parameters getParameters(Map<String, String> paramMap) throws SvcLogicException {
@@ -117,9 +116,11 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
 
     protected Set<String> getListNameList(Map<String, String> paramMap) {
         Set<String> ll = new HashSet<>();
-        for (Map.Entry<String,String> entry : paramMap.entrySet())
-            if (entry.getKey().startsWith("listName"))
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            if (entry.getKey().startsWith("listName")) {
                 ll.add(entry.getValue());
+            }
+        }
         return ll;
     }
 
@@ -128,8 +129,9 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         String s = paramMap.get(name);
 
         if (s == null || s.trim().length() == 0) {
-            if (!required)
+            if (!required) {
                 return def;
+            }
             throw new SvcLogicException("Parameter " + name + " is required in PropertiesNode");
         }
 
@@ -139,13 +141,15 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         int i1 = s.indexOf('%');
         while (i1 >= 0) {
             int i2 = s.indexOf('%', i1 + 1);
-            if (i2 < 0)
+            if (i2 < 0) {
                 throw new SvcLogicException("Cannot parse parameter " + name + ": " + s + ": no matching %");
+            }
 
             String varName = s.substring(i1 + 1, i2);
             String varValue = System.getenv(varName);
-            if (varValue == null)
+            if (varValue == null) {
                 varValue = "";
+            }
 
             value += s.substring(i, i1);
             value += varValue;
@@ -155,7 +159,17 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         }
         value += s.substring(i);
 
-        log.info("Parameter " + name + ": " + value);
+        log.info("Parameter " + name + ": " + maskPassword(name, value));
+        return value;
+    }
+
+    private static Object maskPassword(String name, Object value) {
+        String[] pwdNames = {"pwd", "passwd", "password", "Pwd", "Passwd", "Password"};
+        for (String pwdName : pwdNames) {
+            if (name.contains(pwdName)) {
+                return "**********";
+            }
+        }
         return value;
     }
 }

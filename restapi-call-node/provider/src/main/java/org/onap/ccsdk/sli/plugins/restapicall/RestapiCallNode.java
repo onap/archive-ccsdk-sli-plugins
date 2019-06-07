@@ -57,8 +57,6 @@ import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -70,8 +68,6 @@ import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-import org.glassfish.jersey.client.oauth1.ConsumerCredentials;
-import org.glassfish.jersey.client.oauth1.OAuth1ClientSupport;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
@@ -98,14 +94,14 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected static final String restapiUserKey = "restapiUser";
     protected static final String restapiPasswordKey = "restapiPassword";
 
-    protected HashMap<String,PartnerDetails> partnerStore;
+    protected HashMap<String, PartnerDetails> partnerStore;
 
     public RestapiCallNode() {
-       String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
+        String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
         try {
             String jsonString = readFile(configDir + "/" + PARTNERS_FILE_NAME);
             JSONObject partners = new JSONObject(jsonString);
-            partnerStore = new HashMap<String,PartnerDetails>();
+            partnerStore = new HashMap<>();
             loadPartners(partners);
             log.info("Partners support enabled");
         } catch (Exception e) {
@@ -123,103 +119,81 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     protected void loadPartners(JSONObject partners) {
-	Iterator<String> keys = partners.keys();
-	String partnerUserKey = "user";
-	String partnerPasswordKey = "password";
-	String partnerUrlKey = "url";
+        Iterator<String> keys = partners.keys();
+        String partnerUserKey = "user";
+        String partnerPasswordKey = "password";
+        String partnerUrlKey = "url";
 
-	while (keys.hasNext()) {
-	    String partnerKey = keys.next();
-	    try {
-		JSONObject partnerObject = (JSONObject) partners.get(partnerKey);
-		if (partnerObject.has(partnerUserKey) && partnerObject.has(partnerPasswordKey)) {
-		    String url = null;
-		    if (partnerObject.has(partnerUrlKey)) {
-			url = partnerObject.getString(partnerUrlKey);
-		    }
-		    String userName = partnerObject.getString(partnerUserKey);
-		    String password = partnerObject.getString(partnerPasswordKey);
-		    PartnerDetails details = new PartnerDetails(userName, password, url);
-		    partnerStore.put(partnerKey, details);
-		    log.info("mapped partner using partner key " + partnerKey);
-		} else {
-		    log.info("Partner " + partnerKey + " is missing required keys, it won't be mapped");
-		}
-	    } catch (JSONException e) {
-		log.info("Couldn't map the partner using partner key " + partnerKey, e);
-	    }
-	}
+        while (keys.hasNext()) {
+            String partnerKey = keys.next();
+            try {
+                JSONObject partnerObject = (JSONObject) partners.get(partnerKey);
+                if (partnerObject.has(partnerUserKey) && partnerObject.has(partnerPasswordKey)) {
+                    String url = null;
+                    if (partnerObject.has(partnerUrlKey)) {
+                        url = partnerObject.getString(partnerUrlKey);
+                    }
+                    String userName = partnerObject.getString(partnerUserKey);
+                    String password = partnerObject.getString(partnerPasswordKey);
+                    PartnerDetails details = new PartnerDetails(userName, password, url);
+                    partnerStore.put(partnerKey, details);
+                    log.info("mapped partner using partner key " + partnerKey);
+                } else {
+                    log.info("Partner " + partnerKey + " is missing required keys, it won't be mapped");
+                }
+            } catch (JSONException e) {
+                log.info("Couldn't map the partner using partner key " + partnerKey, e);
+            }
+        }
     }
 
     /**
      * Returns parameters from the parameter map.
      *
      * @param paramMap parameter map
-     * @param p        parameters instance
+     * @param p parameters instance
      * @return parameters filed instance
      * @throws SvcLogicException when svc logic exception occurs
      */
-    public static Parameters getParameters(Map<String, String> paramMap,
-        Parameters p)
-        throws SvcLogicException {
+    public static Parameters getParameters(Map<String, String> paramMap, Parameters p) throws SvcLogicException {
 
-	p.templateFileName = parseParam(paramMap, "templateFileName",
-            false, null);
+        p.templateFileName = parseParam(paramMap, "templateFileName", false, null);
         p.requestBody = parseParam(paramMap, "requestBody", false, null);
         p.restapiUrl = parseParam(paramMap, restapiUrlString, true, null);
         validateUrl(p.restapiUrl);
-        p.restapiUrlSuffix = parseParam(paramMap, "restapiUrlSuffix",
-                false, null);
+        p.restapiUrlSuffix = parseParam(paramMap, "restapiUrlSuffix", false, null);
         p.restapiUser = parseParam(paramMap, restapiUserKey, false, null);
-        p.restapiPassword = parseParam(paramMap, restapiPasswordKey, false,
-            null);
-        if(p.restapiUrlSuffix != null) {
+        p.restapiPassword = parseParam(paramMap, restapiPasswordKey, false, null);
+        if (p.restapiUrlSuffix != null) {
             p.restapiUrl = p.restapiUrl + p.restapiUrlSuffix;
             validateUrl(p.restapiUrl);
         }
-        p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey",
-            false, null);
-        p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret",
-            false, null);
-        p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod",
-            false, null);
+        p.oAuthConsumerKey = parseParam(paramMap, "oAuthConsumerKey", false, null);
+        p.oAuthConsumerSecret = parseParam(paramMap, "oAuthConsumerSecret", false, null);
+        p.oAuthSignatureMethod = parseParam(paramMap, "oAuthSignatureMethod", false, null);
         p.oAuthVersion = parseParam(paramMap, "oAuthVersion", false, null);
         p.contentType = parseParam(paramMap, "contentType", false, null);
-        p.format = Format.fromString(parseParam(paramMap, "format", false,
-            "json"));
-        p.authtype = fromString(parseParam(paramMap, "authType", false,
-            "unspecified"));
-        p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod",
-            false, "post"));
+        p.format = Format.fromString(parseParam(paramMap, "format", false, "json"));
+        p.authtype = fromString(parseParam(paramMap, "authType", false, "unspecified"));
+        p.httpMethod = HttpMethod.fromString(parseParam(paramMap, "httpMethod", false, "post"));
         p.responsePrefix = parseParam(paramMap, responsePrefix, false, null);
         p.listNameList = getListNameList(paramMap);
         String skipSendingStr = paramMap.get(skipSendingMessage);
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
-        p.convertResponse = valueOf(parseParam(paramMap, "convertResponse",
-            false, "true"));
-        p.trustStoreFileName = parseParam(paramMap, "trustStoreFileName",
-            false, null);
-        p.trustStorePassword = parseParam(paramMap, "trustStorePassword",
-            false, null);
-        p.keyStoreFileName = parseParam(paramMap, "keyStoreFileName",
-            false, null);
-        p.keyStorePassword = parseParam(paramMap, "keyStorePassword",
-            false, null);
-        p.ssl = p.trustStoreFileName != null && p.trustStorePassword != null
-            && p.keyStoreFileName != null && p.keyStorePassword != null;
-        p.customHttpHeaders = parseParam(paramMap, "customHttpHeaders",
-            false, null);
+        p.convertResponse = valueOf(parseParam(paramMap, "convertResponse", false, "true"));
+        p.trustStoreFileName = parseParam(paramMap, "trustStoreFileName", false, null);
+        p.trustStorePassword = parseParam(paramMap, "trustStorePassword", false, null);
+        p.keyStoreFileName = parseParam(paramMap, "keyStoreFileName", false, null);
+        p.keyStorePassword = parseParam(paramMap, "keyStorePassword", false, null);
+        p.ssl = p.trustStoreFileName != null && p.trustStorePassword != null && p.keyStoreFileName != null
+                && p.keyStorePassword != null;
+        p.customHttpHeaders = parseParam(paramMap, "customHttpHeaders", false, null);
         p.partner = parseParam(paramMap, "partner", false, null);
-        p.dumpHeaders = valueOf(parseParam(paramMap, "dumpHeaders",
-            false, null));
-        p.returnRequestPayload = valueOf(parseParam(
-            paramMap, "returnRequestPayload", false, null));
-        p.accept = parseParam(paramMap, "accept",
-                false, null);
-        p.multipartFormData = valueOf(parseParam(paramMap, "multipartFormData",
-                false, "false"));
-        p.multipartFile = parseParam(paramMap, "multipartFile",
-                false, null);
+        p.dumpHeaders = valueOf(parseParam(paramMap, "dumpHeaders", false, null));
+        p.returnRequestPayload = valueOf(parseParam(paramMap, "returnRequestPayload", false, null));
+        p.accept = parseParam(paramMap, "accept", false, null);
+        p.multipartFormData = valueOf(parseParam(paramMap, "multipartFormData", false, "false"));
+        p.multipartFile = parseParam(paramMap, "multipartFile", false, null);
         return p;
     }
 
@@ -230,18 +204,18 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      * @throws SvcLogicException when URL validation fails
      */
     private static void validateUrl(String restapiUrl) throws SvcLogicException {
-	if (restapiUrl.contains(",")) {
-	    String[] urls = restapiUrl.split(",");
-	    for(String url : urls) {
-		validateUrl(url);
-	    }
-	} else {
-	    try {
-		URI.create(restapiUrl);
-	    } catch (IllegalArgumentException e) {
-		throw new SvcLogicException("Invalid input of url " + e.getLocalizedMessage(), e);
-	    }
-	}
+        if (restapiUrl.contains(",")) {
+            String[] urls = restapiUrl.split(",");
+            for (String url : urls) {
+                validateUrl(url);
+            }
+        } else {
+            try {
+                URI.create(restapiUrl);
+            } catch (IllegalArgumentException e) {
+                throw new SvcLogicException("Invalid input of url " + e.getLocalizedMessage(), e);
+            }
+        }
     }
 
     /**
@@ -261,19 +235,18 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     /**
-     * Parses the parameter string map of property, validates if required,
-     * assigns default value if present and returns the value.
+     * Parses the parameter string map of property, validates if required, assigns default value if
+     * present and returns the value.
      *
      * @param paramMap string param map
-     * @param name     name of the property
+     * @param name name of the property
      * @param required if value required
-     * @param def      default value
+     * @param def default value
      * @return value of the property
      * @throws SvcLogicException if required parameter value is empty
      */
-    public static String parseParam(Map<String, String> paramMap, String name,
-        boolean required, String def)
-        throws SvcLogicException {
+    public static String parseParam(Map<String, String> paramMap, String name, boolean required, String def)
+            throws SvcLogicException {
         String s = paramMap.get(name);
 
         if (s == null || s.trim().length() == 0) {
@@ -307,37 +280,148 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
         value.append(s.substring(i));
 
-        log.info("Parameter {}: [{}]", name, value);
+        log.info("Parameter {}: [{}]", name, maskPassword(name, value));
+
         return value.toString();
     }
 
+    private static Object maskPassword(String name, Object value) {
+        String[] pwdNames = {"pwd", "passwd", "password", "Pwd", "Passwd", "Password"};
+        for (String pwdName : pwdNames) {
+            if (name.contains(pwdName)) {
+                return "**********";
+            }
+        }
+        return value;
+    }
+
     /**
-     * Allows Directed Graphs  the ability to interact with REST APIs.
+     * Allows Directed Graphs the ability to interact with REST APIs.
+     *
      * @param paramMap HashMap<String,String> of parameters passed by the DG to this function
-     * <table border="1">
-     *  <thead><th>parameter</th><th>Mandatory/Optional</th><th>description</th><th>example values</th></thead>
-     *  <tbody>
-     *      <tr><td>templateFileName</td><td>Optional</td><td>full path to template file that can be used to build a request</td><td>/sdncopt/bvc/restapi/templates/vnf_service-configuration-operation_minimal.json</td></tr>
-     *      <tr><td>restapiUrl</td><td>Mandatory</td><td>url to send the request to</td><td>https://sdncodl:8543/restconf/operations/L3VNF-API:create-update-vnf-request</td></tr>
-     *      <tr><td>restapiUser</td><td>Optional</td><td>user name to use for http basic authentication</td><td>sdnc_ws</td></tr>
-     *      <tr><td>restapiPassword</td><td>Optional</td><td>unencrypted password to use for http basic authentication</td><td>plain_password</td></tr>
-     *      <tr><td>oAuthConsumerKey</td><td>Optional</td><td>Consumer key to use for http oAuth authentication</td><td>plain_key</td></tr>
-     *      <tr><td>oAuthConsumerSecret</td><td>Optional</td><td>Consumer secret to use for http oAuth authentication</td><td>plain_secret</td></tr>
-     *      <tr><td>oAuthSignatureMethod</td><td>Optional</td><td>Consumer method to use for http oAuth authentication</td><td>method</td></tr>
-     *      <tr><td>oAuthVersion</td><td>Optional</td><td>Version http oAuth authentication</td><td>version</td></tr>
-     *      <tr><td>contentType</td><td>Optional</td><td>http content type to set in the http header</td><td>usually application/json or application/xml</td></tr>
-     *      <tr><td>format</td><td>Optional</td><td>should match request body format</td><td>json or xml</td></tr>
-     *      <tr><td>httpMethod</td><td>Optional</td><td>http method to use when sending the request</td><td>get post put delete patch</td></tr>
-     *      <tr><td>responsePrefix</td><td>Optional</td><td>location the response will be written to in context memory</td><td>tmp.restapi.result</td></tr>
-     *      <tr><td>listName[i]</td><td>Optional</td><td>Used for processing XML responses with repeating elements.</td>vpn-information.vrf-details<td></td></tr>
-     *      <tr><td>skipSending</td><td>Optional</td><td></td><td>true or false</td></tr>
-     *      <tr><td>convertResponse </td><td>Optional</td><td>whether the response should be converted</td><td>true or false</td></tr>
-     *      <tr><td>customHttpHeaders</td><td>Optional</td><td>a list additional http headers to be passed in, follow the format in the example</td><td>X-CSI-MessageId=messageId,headerFieldName=headerFieldValue</td></tr>
-     *      <tr><td>dumpHeaders</td><td>Optional</td><td>when true writes http header content to context memory</td><td>true or false</td></tr>
-     *      <tr><td>partner</td><td>Optional</td><td>used to retrieve username, password and url if partner store exists</td><td>aaf</td></tr>
-     *      <tr><td>returnRequestPayload</td><td>Optional</td><td>used to return payload built in the request</td><td>true or false</td></tr>
-     *  </tbody>
-     * </table>
+     *        <table border="1">
+     *        <thead>
+     *        <th>parameter</th>
+     *        <th>Mandatory/Optional</th>
+     *        <th>description</th>
+     *        <th>example values</th></thead> <tbody>
+     *        <tr>
+     *        <td>templateFileName</td>
+     *        <td>Optional</td>
+     *        <td>full path to template file that can be used to build a request</td>
+     *        <td>/sdncopt/bvc/restapi/templates/vnf_service-configuration-operation_minimal.json</td>
+     *        </tr>
+     *        <tr>
+     *        <td>restapiUrl</td>
+     *        <td>Mandatory</td>
+     *        <td>url to send the request to</td>
+     *        <td>https://sdncodl:8543/restconf/operations/L3VNF-API:create-update-vnf-request</td>
+     *        </tr>
+     *        <tr>
+     *        <td>restapiUser</td>
+     *        <td>Optional</td>
+     *        <td>user name to use for http basic authentication</td>
+     *        <td>sdnc_ws</td>
+     *        </tr>
+     *        <tr>
+     *        <td>restapiPassword</td>
+     *        <td>Optional</td>
+     *        <td>unencrypted password to use for http basic authentication</td>
+     *        <td>plain_password</td>
+     *        </tr>
+     *        <tr>
+     *        <td>oAuthConsumerKey</td>
+     *        <td>Optional</td>
+     *        <td>Consumer key to use for http oAuth authentication</td>
+     *        <td>plain_key</td>
+     *        </tr>
+     *        <tr>
+     *        <td>oAuthConsumerSecret</td>
+     *        <td>Optional</td>
+     *        <td>Consumer secret to use for http oAuth authentication</td>
+     *        <td>plain_secret</td>
+     *        </tr>
+     *        <tr>
+     *        <td>oAuthSignatureMethod</td>
+     *        <td>Optional</td>
+     *        <td>Consumer method to use for http oAuth authentication</td>
+     *        <td>method</td>
+     *        </tr>
+     *        <tr>
+     *        <td>oAuthVersion</td>
+     *        <td>Optional</td>
+     *        <td>Version http oAuth authentication</td>
+     *        <td>version</td>
+     *        </tr>
+     *        <tr>
+     *        <td>contentType</td>
+     *        <td>Optional</td>
+     *        <td>http content type to set in the http header</td>
+     *        <td>usually application/json or application/xml</td>
+     *        </tr>
+     *        <tr>
+     *        <td>format</td>
+     *        <td>Optional</td>
+     *        <td>should match request body format</td>
+     *        <td>json or xml</td>
+     *        </tr>
+     *        <tr>
+     *        <td>httpMethod</td>
+     *        <td>Optional</td>
+     *        <td>http method to use when sending the request</td>
+     *        <td>get post put delete patch</td>
+     *        </tr>
+     *        <tr>
+     *        <td>responsePrefix</td>
+     *        <td>Optional</td>
+     *        <td>location the response will be written to in context memory</td>
+     *        <td>tmp.restapi.result</td>
+     *        </tr>
+     *        <tr>
+     *        <td>listName[i]</td>
+     *        <td>Optional</td>
+     *        <td>Used for processing XML responses with repeating
+     *        elements.</td>vpn-information.vrf-details
+     *        <td></td>
+     *        </tr>
+     *        <tr>
+     *        <td>skipSending</td>
+     *        <td>Optional</td>
+     *        <td></td>
+     *        <td>true or false</td>
+     *        </tr>
+     *        <tr>
+     *        <td>convertResponse</td>
+     *        <td>Optional</td>
+     *        <td>whether the response should be converted</td>
+     *        <td>true or false</td>
+     *        </tr>
+     *        <tr>
+     *        <td>customHttpHeaders</td>
+     *        <td>Optional</td>
+     *        <td>a list additional http headers to be passed in, follow the format in the example</td>
+     *        <td>X-CSI-MessageId=messageId,headerFieldName=headerFieldValue</td>
+     *        </tr>
+     *        <tr>
+     *        <td>dumpHeaders</td>
+     *        <td>Optional</td>
+     *        <td>when true writes http header content to context memory</td>
+     *        <td>true or false</td>
+     *        </tr>
+     *        <tr>
+     *        <td>partner</td>
+     *        <td>Optional</td>
+     *        <td>used to retrieve username, password and url if partner store exists</td>
+     *        <td>aaf</td>
+     *        </tr>
+     *        <tr>
+     *        <td>returnRequestPayload</td>
+     *        <td>Optional</td>
+     *        <td>used to return payload built in the request</td>
+     *        <td>true or false</td>
+     *        </tr>
+     *        </tbody>
+     *        </table>
      * @param ctx Reference to context memory
      * @throws SvcLogicException
      * @since 11.0.2
@@ -348,16 +432,16 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     protected void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx, RetryPolicy retryPolicy)
-        throws SvcLogicException {
+            throws SvcLogicException {
 
         HttpResponse r = new HttpResponse();
         try {
-            handlePartner(paramMap);           
+            handlePartner(paramMap);
             Parameters p = getParameters(paramMap, new Parameters());
-            if(p.restapiUrl.contains(",") && retryPolicy == null) {
-        	String[] urls = p.restapiUrl.split(",");
-        	retryPolicy = new RetryPolicy(urls,urls.length * 2);
-        	p.restapiUrl = urls[0];
+            if (p.restapiUrl.contains(",") && retryPolicy == null) {
+                String[] urls = p.restapiUrl.split(",");
+                retryPolicy = new RetryPolicy(urls, urls.length * 2);
+                p.restapiUrl = urls[0];
             }
             String pp = p.responsePrefix != null ? p.responsePrefix + '.' : "";
 
@@ -412,18 +496,20 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             } else {
                 log.debug(retryPolicy.getRetryMessage());
                 try {
-                    //calling getNextHostName increments the retry count so it should be called before shouldRetry
+                    // calling getNextHostName increments the retry count so it should be called before shouldRetry
                     String retryString = retryPolicy.getNextHostName();
                     if (retryPolicy.shouldRetry()) {
                         paramMap.put(restapiUrlString, retryString);
-                        log.debug("retry attempt {} will use the retry url {}", retryPolicy.getRetryCount(), retryString);
+                        log.debug("retry attempt {} will use the retry url {}", retryPolicy.getRetryCount(),
+                                retryString);
                         sendRequest(paramMap, ctx, retryPolicy);
                     } else {
                         log.debug("Maximum retries reached, won't attempt to retry. Calling setFailureResponseStatus.");
                         setFailureResponseStatus(ctx, prefix, e.getMessage(), r);
                     }
                 } catch (Exception ex) {
-                    String retryErrorMessage = "Retry attempt " + retryPolicy.getRetryCount() + "has failed with error message " + ex.getMessage();
+                    String retryErrorMessage = "Retry attempt " + retryPolicy.getRetryCount()
+                            + "has failed with error message " + ex.getMessage();
                     setFailureResponseStatus(ctx, prefix, retryErrorMessage, r);
                 }
             }
@@ -436,18 +522,17 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
     protected void handlePartner(Map<String, String> paramMap) {
         String partner = paramMap.get("partner");
-	    if (partner != null && partner.length() > 0) {
-		PartnerDetails details = partnerStore.get(partner);
-		paramMap.put(restapiUserKey, details.username);
-		paramMap.put(restapiPasswordKey, details.password);
-		if(paramMap.get(restapiUrlString) == null) {
-		    paramMap.put(restapiUrlString, details.url);
-		}
-	    }	
+        if (partner != null && partner.length() > 0) {
+            PartnerDetails details = partnerStore.get(partner);
+            paramMap.put(restapiUserKey, details.username);
+            paramMap.put(restapiPasswordKey, details.password);
+            if (paramMap.get(restapiUrlString) == null) {
+                paramMap.put(restapiUrlString, details.url);
+            }
+        }
     }
 
-    protected String buildXmlJsonRequest(SvcLogicContext ctx, String template, Format format)
-        throws SvcLogicException {
+    protected String buildXmlJsonRequest(SvcLogicContext ctx, String template, Format format) throws SvcLogicException {
         log.info("Building {} started", format);
         long t1 = System.currentTimeMillis();
         String originalTemplate = template;
@@ -496,8 +581,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             }
         }
 
-        String req = format == Format.XML
-            ? XmlJsonUtil.removeEmptyStructXml(ss.toString()) : XmlJsonUtil.removeEmptyStructJson(originalTemplate, ss.toString());
+        String req = format == Format.XML ? XmlJsonUtil.removeEmptyStructXml(ss.toString())
+                : XmlJsonUtil.removeEmptyStructJson(originalTemplate, ss.toString());
 
         if (format == Format.JSON) {
             req = XmlJsonUtil.removeLastCommaJson(req);
@@ -522,7 +607,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             int i2 = template.indexOf(':', i1 + 9);
             if (i2 < 0) {
                 throw new SvcLogicException(
-                    "Template error: Context variable name followed by : is required after repeat");
+                        "Template error: Context variable name followed by : is required after repeat");
             }
 
             // Find the closing }, store in i3
@@ -604,11 +689,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         if (p.authtype == AuthType.Unspecified) {
             if (p.restapiUser != null && p.restapiPassword != null) {
                 client.register(HttpAuthenticationFeature.basic(p.restapiUser, p.restapiPassword));
-            } else if (p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null
-                && p.oAuthSignatureMethod != null) {
-                Feature oAuth1Feature = OAuth1ClientSupport
-                    .builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
-                    .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
+            } else if (p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null && p.oAuthSignatureMethod != null) {
+                Feature oAuth1Feature =
+                        OAuth1ClientSupport.builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
+                                .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
                 client.register(oAuth1Feature);
 
             }
@@ -618,27 +702,30 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     client.register(HttpAuthenticationFeature.digest(p.restapiUser, p.restapiPassword));
                 } else {
                     throw new SvcLogicException(
-                        "oAUTH authentication type selected but all restapiUser and restapiPassword " +
-                            "parameters doesn't exist", new Throwable());
+                            "oAUTH authentication type selected but all restapiUser and restapiPassword "
+                                    + "parameters doesn't exist",
+                            new Throwable());
                 }
             } else if (p.authtype == AuthType.BASIC) {
                 if (p.restapiUser != null && p.restapiPassword != null) {
                     client.register(HttpAuthenticationFeature.basic(p.restapiUser, p.restapiPassword));
                 } else {
                     throw new SvcLogicException(
-                        "oAUTH authentication type selected but all restapiUser and restapiPassword " +
-                            "parameters doesn't exist", new Throwable());
+                            "oAUTH authentication type selected but all restapiUser and restapiPassword "
+                                    + "parameters doesn't exist",
+                            new Throwable());
                 }
             } else if (p.authtype == AuthType.OAUTH) {
                 if (p.oAuthConsumerKey != null && p.oAuthConsumerSecret != null && p.oAuthSignatureMethod != null) {
                     Feature oAuth1Feature = OAuth1ClientSupport
-                        .builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
-                        .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
+                            .builder(new ConsumerCredentials(p.oAuthConsumerKey, p.oAuthConsumerSecret))
+                            .version(p.oAuthVersion).signatureMethod(p.oAuthSignatureMethod).feature().build();
                     client.register(oAuth1Feature);
                 } else {
                     throw new SvcLogicException(
-                        "oAUTH authentication type selected but all oAuthConsumerKey, oAuthConsumerSecret " +
-                            "and oAuthSignatureMethod parameters doesn't exist", new Throwable());
+                            "oAUTH authentication type selected but all oAuthConsumerKey, oAuthConsumerSecret "
+                                    + "and oAuthSignatureMethod parameters doesn't exist",
+                            new Throwable());
                 }
             }
         }
@@ -649,12 +736,11 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      * Receives the http response for the http request sent.
      *
      * @param request request msg
-     * @param p       parameters
+     * @param p parameters
      * @return HTTP response
      * @throws SvcLogicException when sending http request fails
      */
-    public HttpResponse sendHttpRequest(String request, Parameters p)
-        throws SvcLogicException {
+    public HttpResponse sendHttpRequest(String request, Parameters p) throws SvcLogicException {
 
         SSLContext ssl = null;
         if (p.ssl && p.restapiUrl.startsWith("https")) {
@@ -664,11 +750,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         if (ssl != null) {
             HttpsURLConnection.setDefaultSSLSocketFactory(ssl.getSocketFactory());
-            client = ClientBuilder.newBuilder().sslContext(ssl).hostnameVerifier((s, sslSession) -> true)
-                .build();
+            client = ClientBuilder.newBuilder().sslContext(ssl).hostnameVerifier((s, sslSession) -> true).build();
         } else {
-            client = ClientBuilder.newBuilder().hostnameVerifier((s, sslSession) -> true)
-                .build();
+            client = ClientBuilder.newBuilder().hostnameVerifier((s, sslSession) -> true).build();
         }
         client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
         // Needed to support additional HTTP methods such as PATCH
@@ -683,12 +767,12 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         HttpResponse r = new HttpResponse();
         r.code = 200;
         String accept = p.accept;
-        if(accept == null) {
+        if (accept == null) {
             accept = p.format == Format.XML ? "application/xml" : "application/json";
         }
 
         String contentType = p.contentType;
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = accept + ";charset=UTF-8";
         }
 
@@ -705,7 +789,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 for (String singlePair : keyValuePairs) {
                     int equalPosition = singlePair.indexOf('=');
                     invocationBuilder.header(singlePair.substring(0, equalPosition),
-                        singlePair.substring(equalPosition + 1, singlePair.length()));
+                            singlePair.substring(equalPosition + 1, singlePair.length()));
                 }
             }
 
@@ -718,8 +802,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             try {
                 response = invocationBuilder.method(p.httpMethod.toString(), entity(request, contentType));
             } catch (ProcessingException | IllegalStateException e) {
-                throw new SvcLogicException(requestPostingException +
-                    e.getLocalizedMessage(), e);
+                throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
             }
 
             r.code = response.getStatus();
@@ -738,9 +821,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             MultiPart multiPart = new MultiPart();
             multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-            FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
-                    new File(p.multipartFile),
-                    MediaType.APPLICATION_OCTET_STREAM_TYPE);
+            FileDataBodyPart fileDataBodyPart =
+                    new FileDataBodyPart("file", new File(p.multipartFile), MediaType.APPLICATION_OCTET_STREAM_TYPE);
             multiPart.bodyPart(fileDataBodyPart);
 
 
@@ -764,10 +846,10 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             Response response;
 
             try {
-                response = invocationBuilder.method(p.httpMethod.toString(), entity(multiPart, multiPart.getMediaType()));
+                response =
+                        invocationBuilder.method(p.httpMethod.toString(), entity(multiPart, multiPart.getMediaType()));
             } catch (ProcessingException | IllegalStateException e) {
-                throw new SvcLogicException(requestPostingException +
-                        e.getLocalizedMessage(), e);
+                throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
             }
 
             r.code = response.getStatus();
@@ -816,7 +898,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     }
 
     protected void setFailureResponseStatus(SvcLogicContext ctx, String prefix, String errorMessage,
-        HttpResponse resp) {
+            HttpResponse resp) {
         resp.code = 500;
         resp.message = errorMessage;
         String pp = prefix != null ? prefix + '.' : "";
@@ -939,8 +1021,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
                 }
             } catch (ProcessingException e) {
-                throw new SvcLogicException(requestPostingException +
-                    e.getLocalizedMessage(), e);
+                throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
             }
 
             r.code = response.getStatus();
@@ -958,7 +1039,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
                 log.info("Got response code 301. Sending same request to URL: {}", newUrl);
 
-                    webTarget = client.target(newUrl);
+                webTarget = client.target(newUrl);
                 invocationBuilder = webTarget.request(tt).accept(tt);
 
                 try {
@@ -970,8 +1051,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
                     }
                 } catch (ProcessingException e) {
-                    throw new SvcLogicException(requestPostingException +
-                        e.getLocalizedMessage(), e);
+                    throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
                 }
 
                 r.code = response.getStatus();
@@ -1068,8 +1148,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             try {
                 response = invocationBuilder.post(Entity.entity(request, tt1));
             } catch (ProcessingException e) {
-                throw new SvcLogicException(requestPostingException +
-                    e.getLocalizedMessage(), e);
+                throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
             }
             r.code = response.getStatus();
             r.headers = response.getStringHeaders();
