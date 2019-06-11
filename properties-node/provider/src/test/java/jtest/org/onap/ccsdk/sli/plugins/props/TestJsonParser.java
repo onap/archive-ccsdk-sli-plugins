@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package jtest.org.onap.ccsdk.sli.plugins.prop;
+package jtest.org.onap.ccsdk.sli.plugins.props;
 
 import java.io.BufferedReader;
 import java.io.IOException;
