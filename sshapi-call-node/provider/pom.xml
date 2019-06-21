@@ -46,6 +46,7 @@
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-provider</artifactId>
         </dependency>
+        <!-- ILLEGAL DEPENDENCY : creates circular dependency between CCSDK and APPC -->
         <dependency>
             <groupId>org.onap.appc</groupId>
             <artifactId>appc-ssh-adapter-api</artifactId>
