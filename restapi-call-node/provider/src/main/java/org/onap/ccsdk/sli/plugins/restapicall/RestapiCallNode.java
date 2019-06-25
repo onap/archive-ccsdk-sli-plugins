@@ -80,6 +80,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected static final String UEB_PROPERTIES_FILE_NAME = "ueb.properties";
     protected static final String DEFAULT_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
     protected static final String PROPERTIES_DIR_KEY = "SDNC_CONFIG_DIR";
+    protected static final int DEFAULT_HTTP_CONNECT_TIMEOUT_MS = 30000; // 30 seconds
+    protected static final int DEFAULT_HTTP_READ_TIMEOUT_MS = 600000; // 10 minutes
 
     private static final Logger log = LoggerFactory.getLogger(RestapiCallNode.class);
     private String uebServers;
@@ -93,7 +95,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected static final String restapiUrlString = "restapiUrl";
     protected static final String restapiUserKey = "restapiUser";
     protected static final String restapiPasswordKey = "restapiPassword";
-
+    protected Integer httpConnectTimeout;
+    protected Integer httpReadTimeout;
+    
     protected HashMap<String, PartnerDetails> partnerStore;
 
     public RestapiCallNode() {
@@ -116,6 +120,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         } catch (Exception e) {
             log.warn("UEB properties could not be read, UEB support will not be enabled.", e);
         }
+        httpConnectTimeout = readOptionalInteger("HTTP_CONNECT_TIMEOUT_MS",DEFAULT_HTTP_CONNECT_TIMEOUT_MS);
+        httpReadTimeout = readOptionalInteger("HTTP_READ_TIMEOUT_MS",DEFAULT_HTTP_READ_TIMEOUT_MS);       
     }
 
     protected void loadPartners(JSONObject partners) {
@@ -754,7 +760,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         } else {
             client = ClientBuilder.newBuilder().hostnameVerifier((s, sslSession) -> true).build();
         }
-        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        setClientTimeouts(client);
         // Needed to support additional HTTP methods such as PATCH
         client.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
 
@@ -996,7 +1002,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected HttpResponse sendHttpData(byte[] data, FileParam p) throws SvcLogicException {
 
         Client client = ClientBuilder.newBuilder().build();
-        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        setClientTimeouts(client);
         client.property(ClientProperties.FOLLOW_REDIRECTS, true);
         WebTarget webTarget = addAuthType(client, p).target(p.url);
 
@@ -1127,7 +1133,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
 
         Client client = ClientBuilder.newBuilder().build();
-        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        setClientTimeouts(client);
         WebTarget webTarget = client.target(urls[0]);
 
         log.info("UEB URL: {}", urls[0]);
@@ -1173,7 +1179,25 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     public void setDefaultUebTemplateFileName(String defaultUebTemplateFileName) {
         this.defaultUebTemplateFileName = defaultUebTemplateFileName;
     }
+    
+    protected void setClientTimeouts(Client client) {
+        client.property(ClientProperties.CONNECT_TIMEOUT, httpConnectTimeout);
+	client.property(ClientProperties.READ_TIMEOUT, httpReadTimeout);
+    }
 
+    protected Integer readOptionalInteger(String propertyName, Integer defaultValue) {
+	String stringValue = System.getProperty(propertyName);
+	if (stringValue != null && stringValue.length() > 0) {
+	    try {
+		return Integer.valueOf(stringValue);
+	    } catch (NumberFormatException e) {
+		log.warn("property " + propertyName + " had the value " + stringValue + " that could not be converted to an Integer, default " + defaultValue + " will be used instead", e);
+	    }
+	}
+	return defaultValue;
+    }
+
+    
     private static class FileParam {
 
         public String fileName;
