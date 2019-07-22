@@ -12,5 +12,11 @@
 	"partnerThree": {
 		"url": "http://localhost:7003",
 		"user": "controller_admin"
+	},
+	"partnerFour": {
+		"url": "http://localhost:7004",
+		"user": "m30402@sdncp.att.com",
+		"password": "${deployer_pass}",
+		"test": "/metrics"
 	}
 }
