@@ -3,7 +3,7 @@
  * openECOMP : SDN-C
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
- * 			reserved.
+ * reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
@@ -38,6 +40,9 @@ public class TestRestapiCallNode {
 
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
+    @Rule
+    public EnvironmentVariables environmentVariables = new EnvironmentVariables();
+    
 
 
     @Test
@@ -459,11 +464,15 @@ public class TestRestapiCallNode {
      */
     @Test
     public void testPartners() throws Exception{
-	String partnerTwoKey = "partnerTwo";
-	String partnerTwoUsername = "controller_user";
-	String partnerTwoPassword = "P@ssword";
 
-	System.setProperty("SDNC_CONFIG_DIR", "src/test/resources");
+        environmentVariables.set("deployer_pass", "sdncp-123");
+        assertEquals("sdncp-123", System.getenv("deployer_pass"));
+
+        String partnerTwoKey = "partnerTwo";
+        String partnerTwoUsername = "controller_user";
+        String partnerTwoPassword = "P@ssword";
+
+        System.setProperty("SDNC_CONFIG_DIR", "src/test/resources");
         RestapiCallNode rcn = new RestapiCallNode();
         assertNull(rcn.partnerStore.get("partnerOne"));
         PartnerDetails details = rcn.partnerStore.get(partnerTwoKey);
@@ -474,7 +483,7 @@ public class TestRestapiCallNode {
         //In this scenario the caller expects username, password and url to be picked up from the partners json
         Map<String, String> paramMap = new HashMap<String,String>();
         paramMap.put("partner", partnerTwoKey);
-	rcn.handlePartner(paramMap );
+        rcn.handlePartner(paramMap );
         assertEquals(partnerTwoUsername,paramMap.get(rcn.restapiUserKey));
         assertEquals(partnerTwoPassword,paramMap.get(rcn.restapiPasswordKey));
         assertEquals("http://localhost:7002",paramMap.get(rcn.restapiUrlString));
@@ -484,28 +493,39 @@ public class TestRestapiCallNode {
         paramMap = new HashMap<String,String>();
         paramMap.put("partner", partnerTwoKey);
         paramMap.put("restapiUrlSuffix", "/networking/v1/instance/3");
-	rcn.handlePartner(paramMap);
-	Parameters p = new Parameters();
-	RestapiCallNode.getParameters(paramMap, p);
+        rcn.handlePartner(paramMap);
+        p = new Parameters();
+        RestapiCallNode.getParameters(paramMap, p);
         assertEquals(partnerTwoUsername,p.restapiUser);
         assertEquals(partnerTwoPassword,p.restapiPassword);
         assertEquals("http://localhost:7002/networking/v1/instance/3",p.restapiUrl);
+
+        paramMap = new HashMap<String, String>();
+        paramMap.put("partner","partnerFour" );
+        paramMap.put("httpMethod", "delete");
+        paramMap.put("skipSending", "true");
+        rcn.handlePartner(paramMap);
+        Parameters p = new Parameters();
+        RestapiCallNode.getParameters(paramMap, p);
+        assertEquals(p.restapiPassword, "sdncp-123");
+        assertEquals(p.restapiUser, "m30402@sdncp.att.com");
+        assertEquals(p.restapiUrl, "http://localhost:7004");
     }
     
     @Test
     public void retryPolicyBean() throws Exception {
-	Integer retries = 3;
-	String first = "http://localhost:7001";
-	String second = "http://localhost:7001";
-
-	RetryPolicy p = new RetryPolicy(new String[] {first,second}, retries);
-	assertEquals(retries,p.getMaximumRetries());
-	assertNotNull(p.getRetryMessage());
-	String next = p.getNextHostName();
-	assertEquals(second,next);
-	assertEquals(1,p.getRetryCount());
-	next = p.getNextHostName();
-	assertEquals(first,next);
-	assertEquals(2,p.getRetryCount());
+    Integer retries = 3;
+    String first = "http://localhost:7001";
+    String second = "http://localhost:7001";
+    
+    RetryPolicy p = new RetryPolicy(new String[] {first,second}, retries);
+    assertEquals(retries,p.getMaximumRetries());
+    assertNotNull(p.getRetryMessage());
+    String next = p.getNextHostName();
+    assertEquals(second,next);
+    assertEquals(1,p.getRetryCount());
+    next = p.getNextHostName();
+    assertEquals(first,next);
+    assertEquals(2,p.getRetryCount());
     }
 }

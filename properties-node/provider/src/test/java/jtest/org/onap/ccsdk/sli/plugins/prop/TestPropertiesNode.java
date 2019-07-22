@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import static org.junit.Assert.assertEquals;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
@@ -16,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public class TestPropertiesNode {
 
     private static final Logger log = LoggerFactory.getLogger(TestPropertiesNode.class);
+    @Rule
+    public EnvironmentVariables environmentVariables = new EnvironmentVariables();
     
     @Test
     public void testJSONFileParsing() throws SvcLogicException {
@@ -129,6 +133,10 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsing() throws SvcLogicException {
+
+        environmentVariables.set("deployer_pass", "sdncp-123");
+        assertEquals("sdncp-123", System.getenv("deployer_pass"));
+
         SvcLogicContext ctx = new SvcLogicContext();
 
         Map<String, String> p = new HashMap<String, String>();
@@ -147,6 +155,7 @@ public class TestPropertiesNode {
                                               "access-information.l1-customer-handoff"),"_1000BASELX");
         assertEquals(ctx.getAttribute("test-txt.service-data.avpn-ip-port-information.avpn-" +
                                               "access-information.vlan-tag-control"),"_1Q");
+        assertEquals(ctx.getAttribute("test-txt.obfuscated-var"), "sdncp-123");
     }
 
     @Test

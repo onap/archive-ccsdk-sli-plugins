@@ -3,7 +3,7 @@
  * openECOMP : SDN-C
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
- * 			reserved.
+ * reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,14 +63,14 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                             String name = (String) key;
                             String value = prop.getProperty(name);
                             if (value != null && value.trim().length() > 0) {
-                                ctx.setAttribute(pfx + name, value.trim());
+                                ctx.setAttribute(pfx + name, getObfuscatedVal(value.trim()));
                                 log.info("+++ " + pfx + name + ": [" + maskPassword(pfx + name, value) + "]");
                             }
                         }
                     }
                     if (mm != null) {
                         for (Map.Entry<String, String> entry : mm.entrySet()) {
-                            ctx.setAttribute(pfx + entry.getKey(), entry.getValue());
+                            ctx.setAttribute(pfx + entry.getKey(), getObfuscatedVal(entry.getValue()));
                             log.info("+++ " + pfx + entry.getKey() + ": ["
                                     + maskPassword(pfx + entry.getKey(), entry.getValue()) + "]");
                         }
@@ -81,7 +81,7 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
                         String name = (String) key;
                         String value = prop.getProperty(name);
                         if (value != null && value.trim().length() > 0) {
-                            ctx.setAttribute(pfx + name, value.trim());
+                            ctx.setAttribute(pfx + name, getObfuscatedVal(value.trim()));
                             log.info("+++ " + pfx + name + ": [" + maskPassword(pfx + name, value) + "]");
                         }
                     }
@@ -90,6 +90,25 @@ public class PropertiesNode implements SvcLogicJavaPlugin {
         } catch (IOException e) {
             throw new SvcLogicException("Cannot read property file: " + param.fileName + ": " + e.getMessage(), e);
         }
+    }
+
+    /* Unobfuscate param value */ 
+    private static String getObfuscatedVal(String paramValue) {
+        String resValue = paramValue;
+        if (paramValue != null && paramValue.startsWith("${") && paramValue.endsWith("}"))
+        {
+                String paramStr = paramValue.substring(2, paramValue.length()-1);
+                if (paramStr  != null && paramStr.length() > 0)
+                {
+                        String val = System.getenv(paramStr);
+                        if (val != null && val.length() > 0)
+                        {
+                             resValue=val;
+                             log.info("Obfuscated value RESET for param value:" + paramValue);
+                        }
+                 }
+        }
+        return resValue;
     }
 
     /*
