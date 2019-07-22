@@ -28,3 +28,4 @@ service-data.avpn-ip-port-information.endpoint-information.bundle-id = 33
 service-data.avpn-ip-port-information.endpoint-information.interface-string = ae0
 service-data.service-information.service-instance-id = ICORESITE-2751508
 service-data.service-information.service-type = AVPN
+obfuscated-var=${deployer_pass}

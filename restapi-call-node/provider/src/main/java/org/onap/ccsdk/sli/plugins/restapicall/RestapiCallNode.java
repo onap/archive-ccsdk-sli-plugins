@@ -141,7 +141,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                     }
                     String userName = partnerObject.getString(partnerUserKey);
                     String password = partnerObject.getString(partnerPasswordKey);
-                    PartnerDetails details = new PartnerDetails(userName, password, url);
+                    PartnerDetails details = new PartnerDetails(userName, getObfuscatedVal(password), url);
                     partnerStore.put(partnerKey, details);
                     log.info("mapped partner using partner key " + partnerKey);
                 } else {
@@ -151,6 +151,25 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                 log.info("Couldn't map the partner using partner key " + partnerKey, e);
             }
         }
+    }
+
+    /* Unobfuscate param value */ 
+    private static String getObfuscatedVal(String paramValue) {
+        String resValue = paramValue;
+        if (paramValue != null && paramValue.startsWith("${") && paramValue.endsWith("}"))
+        {
+                String paramStr = paramValue.substring(2, paramValue.length()-1);
+                if (paramStr  != null && paramStr.length() > 0)
+                {
+                        String val = System.getenv(paramStr);
+                        if (val != null && val.length() > 0)
+                        {
+                             resValue=val;
+                             log.info("Obfuscated value RESET for param value:" + paramValue);
+                        }
+                 }
+        }
+        return resValue;
     }
 
     /**

@@ -16,15 +16,15 @@
     <name>ccsdk-sli-plugins :: restapi-call-node :: ${project.artifactId}</name>
 
     <dependencyManagement>
-    	<dependencies>
-    		<dependency>
-    			<groupId>org.onap.ccsdk.sli.core</groupId>
-    			<artifactId>sli-core-artifacts</artifactId>
-    			<version>${ccsdk.sli.core.version}</version>
-    			<type>pom</type>
-    			<scope>import</scope>
-    		</dependency>
-    	</dependencies>
+       <dependencies>
+          <dependency>
+             <groupId>org.onap.ccsdk.sli.core</groupId>
+             <artifactId>sli-core-artifacts</artifactId>
+             <version>${ccsdk.sli.core.version}</version>
+             <type>pom</type>
+             <scope>import</scope>
+          </dependency>
+       </dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -71,6 +71,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+           <groupId>com.github.stefanbirkner</groupId>
+           <artifactId>system-rules</artifactId>
+           <version>1.19.0</version>
+           <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
