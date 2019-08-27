@@ -21,27 +21,27 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.ccsdk.sli.northbound</groupId>
+			<groupId>org.onap.ccsdk.sli.plugins</groupId>
 			<artifactId>properties-node-lighty</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.ccsdk.sli.northbound</groupId>
+			<groupId>org.onap.ccsdk.sli.plugins</groupId>
 			<artifactId>restapi-call-node-lighty</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.ccsdk.sli.northbound</groupId>
+			<groupId>org.onap.ccsdk.sli.plugins</groupId>
 			<artifactId>restconf-client-lighty</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.ccsdk.sli.northbound</groupId>
+			<groupId>org.onap.ccsdk.sli.plugins</groupId>
 			<artifactId>sshapi-call-node-lighty</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.onap.ccsdk.sli.northbound</groupId>
+			<groupId>org.onap.ccsdk.sli.plugins</groupId>
 			<artifactId>template-node-lighty</artifactId>
 			<version>${project.version}</version>
 		</dependency>
