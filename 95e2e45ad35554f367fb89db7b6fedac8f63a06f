@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1784c0ea_9bc9ff77",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/HttpResponse.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2019-08-28T13:43:42Z",
+      "side": 1,
+      "message": "This doesn\u0027t appear to be used anywhere, what is it for?",
+      "range": {
+        "startLine": 33,
+        "startChar": 37,
+        "endLine": 33,
+        "endChar": 45
+      },
+      "revId": "95e2e45ad35554f367fb89db7b6fedac8f63a06f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
