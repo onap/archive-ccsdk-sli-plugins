@@ -51,6 +51,7 @@
         "run-id": ${tmp.sdn-circuit-req-row[${1}].run-id},
         "hostname": ${tmp.sdn-circuit-req-row[${1}].hostname},
         "algo-request-reason": ${tmp.sdn-circuit-req-row[${1}].algo-request-reason}
+        "test-empty-value": ${tmp.sdn-circuit-req-row[${1}].test-empty-value}
     },
    }
    ]
