@@ -22,6 +22,57 @@
       "revId": "95e2e45ad35554f367fb89db7b6fedac8f63a06f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "507ea549_a60f66eb",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/JsonParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2019-08-28T14:20:31Z",
+      "side": 1,
+      "message": "Can you explain why this new block was added? It deals with json arrays, but what support does it add? Please add a brief comment",
+      "revId": "95e2e45ad35554f367fb89db7b6fedac8f63a06f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aee9dfe5_55948799",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RetryPolicy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2019-08-28T14:20:31Z",
+      "side": 1,
+      "message": "Try to separate actual changes from formatting changes",
+      "revId": "95e2e45ad35554f367fb89db7b6fedac8f63a06f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cdc818d0_6fce742f",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/XmlJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2019-08-28T14:20:31Z",
+      "side": 1,
+      "message": "Try to separate actual changes from formatting changes",
+      "revId": "95e2e45ad35554f367fb89db7b6fedac8f63a06f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
