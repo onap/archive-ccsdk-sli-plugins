@@ -17,6 +17,5 @@
         <module>provider</module>
         <module>features</module>
         <module>installer</module>
-        <module>lighty</module>
     </modules>
 </project>
