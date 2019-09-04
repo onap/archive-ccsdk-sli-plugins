@@ -152,6 +152,65 @@ public class TestXmlJsonUtil {
         log.info(ss);
     }
 
+    public void testRemoveEmptyStructJson1() {
+        String xmlin = "{\n" +
+                "        \"policyName\" : \"default-domain.ECOM_Tenant_DND.ECOM_Tenant_DND_mtn6_HngwOamNetVto." +
+                "HNGWOAMNETVTO.OAM_landing-network-role_policy_05\",\n" +
+                "        \"policyConfigType\": \"MicroService\",\n" +
+                "        \"ecompName\": \"SDNC\",\n" +
+                "        \"configBody\": \"{\\\"service\\\": \\\"NetworkPolicy\\\"," +
+                "\\\"location\\\": \\\"Search\\\",\\\"uuid\\\": \\\"Search\\\"," +
+                "\\\"policyName\\\": \\\"default-domain.ECOM_Tenant_DND.ECOM_Tenant_DND_mtn6_HngwOamNetVto." +
+                "HNGWOAMNETVTO.OAM_landing-network-role_policy_05\\\"," +
+                "\\\"description\\\": \\\"default-domain.ECOM_Tenant_DND.ECOM_Tenant_DND_mtn6_HngwOamNetVto." +
+                "HNGWOAMNETVTO.OAM_landing-network-role_policy_05\\\",\\\"configName\\\": \\\"Search\\\"," +
+                "\\\"templateVersion\\\": \\\"1607\\\",\\\"version\\\": \\\"1.3.0.1\\\"," +
+                "\\\"priority\\\": \\\"2\\\",\\\"policyScope\\\": \\\"SDNC\\\",\\\"riskType\\\": \\\"low\\\"," +
+                "\\\"riskLevel\\\": \\\"2\\\",\\\"guard\\\": \\\"True\\\",\\\"content\\\":{    " +
+                "\\\"network-policy\\\": {        \\\"display_name\\\": \\\"default-domain.ECOM_Tenant_DND." +
+                "ECOM_Tenant_DND_mtn6_HngwOamNetVto.HNGWOAMNETVTO.OAM_landing-network-role_policy_05\\\",        " +
+                "\\\"fq_name\\\": [                    \\\"default-domain\\\",              " +
+                "\\\"ECOM_Tenant_DND\\\",              \\\"default-domain." +
+                "ECOM_Tenant_DND.ECOM_Tenant_DND_mtn6_HngwOamNetVto." +
+                "HNGWOAMNETVTO.OAM_landing-network-role_policy_05\\\"               ],        " +
+                "\\\"id_perms\\\": {            \\\"user_visible\\\": true        },        " +
+                "\\\"parent_type\\\": \\\"project\\\",        \\\"network_policy_entries\\\": {            " +
+                "\\\"policy_rule\\\": [                {                    " +
+                "\\\"action_list\\\": {                        \\\"apply_service\\\": [                            " +
+                "\\\"testfqdn\\\"                        ],                        " +
+                "\\\"gateway_name\\\": null,                        \\\"qos_action\\\": null,                        " +
+                "\\\"log\\\": false ,                        \\\"mirror_to\\\": null,                        " +
+                "\\\"simple_action\\\": null                    },                 " +
+                "\\\"ethertype\\\": null,                    \\\"application\\\": [],                    " +
+                "\\\"direction\\\": \\\"<>\\\",                    \\\"dst_addresses\\\": [                        " +
+                "{                            \\\"network_policy\\\": null,                            " +
+                "\\\"security_group\\\": null,                            " +
+                "\\\"subnet\\\": null,                            \\\"virtual_network\\\": " +
+                "\\\"default-domain:ECOM_Tenant_DND:ECOM_Tenant_DND_int_HngwOamNetVto." +
+                "HNGWOAMNETVTO.OAM_net_10\\\"                        }                    ],                    " +
+                "\\\"dst_ports\\\": [                        {                            " +
+                "\\\"end_port\\\": -1,                            \\\"start_port\\\": -1                         " +
+                "}                    ],                    \\\"protocol\\\": \\\"any\\\",                    " +
+                "\\\"src_addresses\\\": [                        {                            " +
+                "\\\"network_policy\\\": null,                            " +
+                "\\\"security_group\\\": null,                            " +
+                "\\\"subnet\\\": null,                            \\\"virtual_network\\\": " +
+                "\\\"default-domain:ECOM_Tenant_DND:ECOM_Tenant_DND_int_HngwOamNetVto." +
+                "HNGWOAMNETVTO.OAM_net_9\\\"                        }                    ],                    " +
+                "\\\"src_ports\\\": [                        {                            " +
+                "\\\"end_port\\\": -1,                            " +
+                "\\\"start_port\\\": -1                         }                    ]                }            " +
+                "]        }    }}}\"\n" +
+                "}";
+
+        String xmloutexpected = xmlin;
+
+        String xmlout = XmlJsonUtil.removeEmptyStructJson(null, xmlin);
+        log.info(xmlout);
+
+        Assert.assertEquals(xmloutexpected, xmlout);
+    }
+
     @Test
     public void testRemoveEmptyStructXml() {
         String xmlin = "" +

@@ -35,6 +35,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.XMLConstants;
 
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.XMLReader;
 
 public final class XmlParser {
 
@@ -58,10 +60,15 @@ public final class XmlParser {
 
         Handler handler = new Handler(listNameList);
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);  
             InputStream in = new ByteArrayInputStream(s.getBytes());
+            SAXParser saxParser = spf.newSAXParser();
             saxParser.parse(in, handler);
+            
         } catch (ParserConfigurationException | IOException | SAXException | NumberFormatException e) {
             throw new SvcLogicException("Unable to convert XML to properties" + e.getLocalizedMessage(), e);
         }

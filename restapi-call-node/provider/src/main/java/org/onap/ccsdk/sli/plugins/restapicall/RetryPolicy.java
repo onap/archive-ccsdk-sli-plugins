@@ -21,41 +21,44 @@
  */
 
 package org.onap.ccsdk.sli.plugins.restapicall;
+
 public class RetryPolicy {
     private String[] hostnames;
     private Integer maximumRetries;
-	
     private int position;
-	
     private int retryCount;
+
     public RetryPolicy(String[] hostnames, Integer maximumRetries) {
-	this.hostnames = hostnames;
-	this.maximumRetries = maximumRetries;
-	
-	this.position = 0;
-	
-	this.retryCount = 0;
+    this.hostnames = hostnames;
+    this.maximumRetries = maximumRetries;
+    this.position = 0;
+    this.retryCount = 0;
+
     }
+
     public Integer getMaximumRetries() {
-	return maximumRetries;
+    return maximumRetries;
     }
+
     public int getRetryCount() {
-	return retryCount;
+    return retryCount;
     }
+
     public Boolean shouldRetry() {
-	return retryCount < maximumRetries + 1;
+    return retryCount < maximumRetries + 1;
     }
+
     public String getRetryMessage() {
-	return retryCount + " retry attempts were made out of " + maximumRetries + " maximum retry attempts.";
+    return retryCount + " retry attempts were made out of " + maximumRetries + " maximum retry attempts.";
     }
     
     public String getNextHostName() throws RetryException {
-	retryCount++;
-	position++;
-	
-	if (position > hostnames.length - 1) {
-	    position = 0;
-	}
-	return hostnames[position];
+    retryCount++;
+    position++;
+    if (position > hostnames.length - 1) {
+        position = 0;
     }
+    return hostnames[position];
+    }
+
 }

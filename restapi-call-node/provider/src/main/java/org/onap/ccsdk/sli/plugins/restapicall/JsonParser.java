@@ -8,7 +8,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
@@ -50,7 +50,15 @@ public final class JsonParser {
         checkNotNull(s, "Input should not be null.");
 
         try {
-            JSONObject json = new JSONObject(s);
+            JSONObject json = null;
+            //support top level list in json response
+            if (s.startsWith("[")) {
+                JSONArray jsonArr = new JSONArray(s);
+                json = jsonArr.getJSONObject(0);
+            } else {
+                json = new JSONObject(s);
+            }
+
             Map<String, Object> wm = new HashMap<>();
             Iterator<String> ii = json.keys();
             while (ii.hasNext()) {

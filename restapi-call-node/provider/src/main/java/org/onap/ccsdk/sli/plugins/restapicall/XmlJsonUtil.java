@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,38 +66,45 @@ public final class XmlJsonUtil {
 
     private static Object createStructure(Map<String, String> flatmap, String var) {
         if (flatmap.containsKey(var)) {
-            if (var.endsWith("_length") || var.endsWith("].key"))
+            if (var.endsWith("_length") || var.endsWith("].key")) {
                 return null;
+            }
             return flatmap.get(var);
         }
 
         Map<String, Object> mm = new HashMap<>();
-        for (String k : flatmap.keySet())
+        for (String k : flatmap.keySet()) {
             if (k.startsWith(var + ".")) {
                 int i1 = k.indexOf('.', var.length() + 1);
                 int i2 = k.indexOf('[', var.length() + 1);
                 int i3 = k.length();
-                if (i1 > 0 && i1 < i3)
+                if (i1 > 0 && i1 < i3) {
                     i3 = i1;
-                if (i2 > 0 && i2 < i3)
+                }
+                if (i2 > 0 && i2 < i3) {
                     i3 = i2;
+                }
                 String k1 = k.substring(var.length() + 1, i3);
                 String var1 = k.substring(0, i3);
                 if (!mm.containsKey(k1)) {
                     Object str = createStructure(flatmap, var1);
-                    if (str != null && (!(str instanceof String) || ((String) str).trim().length() > 0))
+                    if (str != null && (!(str instanceof String) || ((String) str).trim().length() > 0)) {
                         mm.put(k1, str);
+                    }
                 }
             }
-        if (!mm.isEmpty())
+        }
+        if (!mm.isEmpty()) {
             return mm;
+        }
 
         boolean arrayFound = false;
-        for (String k : flatmap.keySet())
+        for (String k : flatmap.keySet()) {
             if (k.startsWith(var + "[")) {
                 arrayFound = true;
                 break;
             }
+        }
 
         if (arrayFound) {
             List<Object> ll = new ArrayList<>();
@@ -115,13 +121,15 @@ public final class XmlJsonUtil {
 
             for (int i = 0; i < length; i++) {
                 Object v = createStructure(flatmap, var + '[' + i + ']');
-                if (v == null)
+                if (v == null) {
                     break;
+                }
                 ll.add(v);
             }
 
-            if (!ll.isEmpty())
+            if (!ll.isEmpty()) {
                 return ll;
+            }
         }
 
         return null;
@@ -129,16 +137,18 @@ public final class XmlJsonUtil {
 
     @SuppressWarnings("unchecked")
     private static String generateXml(Object o, int indent, boolean escape) {
-        if (o == null)
+        if (o == null) {
             return null;
+        }
 
-        if (o instanceof String)
-            return escape ? escapeXml((String) o) : (String) o;;
+        if (o instanceof String) {
+            return escape ? escapeXml((String) o) : (String) o;
+        };
 
         if (o instanceof Map) {
             StringBuilder ss = new StringBuilder();
             Map<String, Object> mm = (Map<String, Object>) o;
-            for (Map.Entry<String, Object> entry: mm.entrySet()) {
+            for (Map.Entry<String, Object> entry : mm.entrySet()) {
                 Object v = entry.getValue();
                 String key = entry.getKey();
                 if (v instanceof String) {
@@ -164,10 +174,13 @@ public final class XmlJsonUtil {
 
         return null;
     }
-
     private static String generateJson(Object o, boolean escape, boolean quotes) {
-        if (o == null)
+        if (o == null) {
             return null;
+        }
+        if (o instanceof String && ((String) o).length() == 0) {
+            return null;
+        }
 
         StringBuilder ss = new StringBuilder();
         generateJson(ss, o, 0, false, escape, quotes);
@@ -178,8 +191,9 @@ public final class XmlJsonUtil {
     private static void generateJson(StringBuilder ss, Object o, int indent, boolean padFirst, boolean escape, boolean quotes) {
         if (o instanceof String) {
             String s = escape ? escapeJson((String) o) : (String) o;
-            if (padFirst)
+            if (padFirst) {
                 ss.append(pad(indent));
+            }
             if (quotes) {
                 ss.append('"').append(s).append('"');
             } else {
@@ -191,14 +205,16 @@ public final class XmlJsonUtil {
         if (o instanceof Map) {
             Map<String, Object> mm = (Map<String, Object>) o;
 
-            if (padFirst)
+            if (padFirst) {
                 ss.append(pad(indent));
+            }
             ss.append("{\n");
 
             boolean first = true;
             for (Map.Entry<String, Object> entry : mm.entrySet()) {
-                if (!first)
+                if (!first) {
                     ss.append(",\n");
+                }
                 first = false;
                 Object v = entry.getValue();
                 String key = entry.getKey();
@@ -215,14 +231,16 @@ public final class XmlJsonUtil {
         if (o instanceof List) {
             List<Object> ll = (List<Object>) o;
 
-            if (padFirst)
+            if (padFirst) {
                 ss.append(pad(indent));
+            }
             ss.append("[\n");
 
             boolean first = true;
             for (Object o1 : ll) {
-                if (!first)
+                if (!first) {
                     ss.append(",\n");
+                }
                 first = false;
 
                 generateJson(ss, o1, indent + 1, true, escape, quotes);
@@ -241,14 +259,16 @@ public final class XmlJsonUtil {
             int i11 = s.indexOf('}', k);
             int i12 = s.indexOf(']', k);
             int i1 = -1;
-            if (i11 < 0)
+            if (i11 < 0) {
                 i1 = i12;
-            else if (i12 < 0)
+            } else if (i12 < 0) {
                 i1 = i11;
-            else
+            } else {
                 i1 = i11 < i12 ? i11 : i12;
-            if (i1 < 0)
+            }
+            if (i1 < 0) {
                 break;
+            }
 
             int i2 = s.lastIndexOf(',', i1);
             if (i2 < 0) {
@@ -282,15 +302,14 @@ public final class XmlJsonUtil {
             if (i11 < 0) {
                 i1 = i12;
                 curly = false;
-            } else if (i12 < 0)
+            } else if (i12 < 0) {
                 i1 = i11;
-            else
-                if (i11 < i12)
-                    i1 = i11;
-                else {
-                    i1 = i12;
-                    curly = false;
-                }
+            } else if (i11 < i12) {
+                i1 = i11;
+            } else {
+                i1 = i12;
+                curly = false;
+            }
 
             if (i1 >= 0) {
                 int i2 = curly ? s.indexOf('}', i1) : s.indexOf(']', i1);
@@ -298,25 +317,31 @@ public final class XmlJsonUtil {
                     String value = s.substring(i1 + 1, i2);
                     if (value.trim().length() == 0) {
                         int i4 = s.lastIndexOf('\n', i1);
-                        if (i4 < 0)
+                        if (i4 < 0) {
                             i4 = 0;
+                        }
                         int i5 = s.indexOf('\n', i2);
-                        if (i5 < 0)
+                        if (i5 < 0) {
                             i5 = s.length();
+                        }
+
 
                         /*If template mandates empty construct to be present, those should not be removed.*/
-                        if ((template != null) && template.contains(s.substring(i4))) {
+                        if (template != null && template.contains(s.substring(i4))) {
                             k = i1 + 1;
                         } else {
                             s = s.substring(0, i4) + s.substring(i5);
                             k = 0;
                         }
-                    } else
+                    } else {
                         k = i1 + 1;
-                } else
+                    }
+                } else {
                     break;
-            } else
+                }
+            } else {
                 break;
+            }
         }
 
         return s;
@@ -326,8 +351,9 @@ public final class XmlJsonUtil {
         int k = 0;
         while (k < s.length()) {
             int i1 = s.indexOf('<', k);
-            if (i1 < 0 || i1 == s.length() - 1)
+            if (i1 < 0 || i1 == s.length() - 1) {
                 break;
+            }
 
             char c1 = s.charAt(i1 + 1);
             if (c1 == '?' || c1 == '!') {
@@ -355,11 +381,13 @@ public final class XmlJsonUtil {
             }
 
             int i4 = s.lastIndexOf('\n', i1);
-            if (i4 < 0)
+            if (i4 < 0) {
                 i4 = 0;
+            }
             int i5 = s.indexOf('\n', i3);
-            if (i5 < 0)
+            if (i5 < 0) {
                 i5 = s.length();
+            }
 
             s = s.substring(0, i4) + s.substring(i5);
             k = 0;
@@ -385,8 +413,9 @@ public final class XmlJsonUtil {
 
     private static String pad(int n) {
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             s.append(Character.toString('\t'));
+        }
         return s.toString();
     }
 }
