@@ -788,8 +788,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         WebTarget webTarget = addAuthType(client, p).target(p.restapiUrl);
 
-        log.info("Sending request below to url " + p.restapiUrl);
-        log.info(request);
         long t1 = System.currentTimeMillis();
 
         HttpResponse r = new HttpResponse();
@@ -828,7 +826,14 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             Response response;
 
             try {
-                response = invocationBuilder.method(p.httpMethod.toString(), entity(request, contentType));
+                // GET and DELETE should not send content, setting content-type has caused errors with some servers
+                if (p.httpMethod.equals(HttpMethod.GET) || p.httpMethod.equals(HttpMethod.DELETE)) {
+                    response = invocationBuilder.method(p.httpMethod.toString());
+                } else {
+                    log.info("Sending request below to url " + p.restapiUrl);
+                    log.info(request);
+                    response = invocationBuilder.method(p.httpMethod.toString(), entity(request, contentType));
+                }
             } catch (ProcessingException | IllegalStateException e) {
                 throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
             }
