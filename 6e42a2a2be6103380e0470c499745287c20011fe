@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5c15460_c26358a4",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 834,
+      "author": {
+        "id": 3231
+      },
+      "writtenOn": "2019-09-12T13:00:56Z",
+      "side": 1,
+      "message": "Did you intentionally log only in the else scenario",
+      "range": {
+        "startLine": 834,
+        "startChar": 20,
+        "endLine": 834,
+        "endChar": 76
+      },
+      "revId": "6e42a2a2be6103380e0470c499745287c20011fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
