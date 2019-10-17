@@ -65,7 +65,11 @@
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.onap.logging-analytics</groupId>
+            <artifactId>logging-filter-base</artifactId>
+            <version>1.5.0</version>
+        </dependency>
         <!-- For test -->
         <dependency>
             <groupId>junit</groupId>
