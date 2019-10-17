@@ -72,6 +72,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.onap.logging.filter.base.MetricLogClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -785,7 +786,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         setClientTimeouts(client);
         // Needed to support additional HTTP methods such as PATCH
         client.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
-
+        client.register(new MetricLogClientFilter());
         WebTarget webTarget = addAuthType(client, p).target(p.restapiUrl);
 
         long t1 = System.currentTimeMillis();
@@ -818,8 +819,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         singlePair.substring(equalPosition + 1, singlePair.length()));
                 }
             }
-
-            invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
 
             invocationBuilder.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
 
