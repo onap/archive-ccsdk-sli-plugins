@@ -23,7 +23,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.opendaylight.restconf.common.errors.RestconfDocumentedException;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;

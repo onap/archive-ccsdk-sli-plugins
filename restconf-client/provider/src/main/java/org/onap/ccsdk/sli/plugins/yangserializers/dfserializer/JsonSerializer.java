@@ -28,7 +28,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNodeWalker;

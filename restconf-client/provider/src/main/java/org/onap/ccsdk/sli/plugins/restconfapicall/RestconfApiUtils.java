@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.restapicall.HttpMethod;
 import org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.YangParameters;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;

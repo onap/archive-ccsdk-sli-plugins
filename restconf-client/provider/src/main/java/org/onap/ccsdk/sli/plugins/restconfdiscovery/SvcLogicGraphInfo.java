@@ -20,11 +20,11 @@
 
 package org.onap.ccsdk.sli.plugins.restconfdiscovery;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.core.sli.SvcLogicGraph;
-import org.onap.ccsdk.sli.core.sli.SvcLogicStore;
-import org.onap.ccsdk.sli.core.sli.provider.SvcLogicService;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.SvcLogicGraph;
+import org.onap.ccsdk.sli.core.api.SvcLogicService;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.util.SvcLogicStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -162,7 +162,7 @@ class SvcLogicGraphInfo {
         Bundle bundle = FrameworkUtil.getBundle(SvcLogicService.class);
         if (bundle == null) {
             throw new SvcLogicException("Cannot find bundle reference for "
-                                                + SvcLogicService.NAME);
+                    + SvcLogicService.class.getName());
         }
 
         BundleContext bctx = bundle.getBundleContext();
@@ -172,7 +172,7 @@ class SvcLogicGraphInfo {
             return bctx.getService(sref);
         } else {
             throw new SvcLogicException("Cannot find service reference for "
-                                                + SvcLogicService.NAME);
+                    + SvcLogicService.class.getName());
         }
     }
 }

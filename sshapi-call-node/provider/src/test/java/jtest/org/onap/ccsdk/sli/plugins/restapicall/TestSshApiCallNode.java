@@ -1,18 +1,17 @@
 package jtest.org.onap.ccsdk.sli.plugins.restapicall;
 
+import static org.junit.Assert.assertEquals;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
 import org.onap.ccsdk.sli.plugins.sshapicall.SshApiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestSshApiCallNode {
 
@@ -28,7 +27,7 @@ public class TestSshApiCallNode {
     @Before
     public void setup() throws IllegalArgumentException {
         testMode = true;
-        svcContext = new SvcLogicContext();
+        svcContext = new SvcLogicContextImpl();
         adapter = new SshApiCallNode();
 
         params = new HashMap<>();

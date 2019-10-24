@@ -35,8 +35,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.ccsdk.sli.core</groupId>
-			<artifactId>sli-common</artifactId>
+			<artifactId>api</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.ccsdk.sli.core</groupId>
+			<artifactId>impl</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

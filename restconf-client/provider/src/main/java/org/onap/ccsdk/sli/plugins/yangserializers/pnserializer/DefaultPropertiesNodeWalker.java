@@ -23,7 +23,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 import java.util.Collection;
 import java.util.Map;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 /**
  * Implementation of properties node walker which helps in forming a new tree from properties node.

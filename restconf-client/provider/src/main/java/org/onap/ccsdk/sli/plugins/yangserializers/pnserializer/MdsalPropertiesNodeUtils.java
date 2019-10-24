@@ -25,7 +25,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Optional;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
 import org.opendaylight.restconf.common.errors.RestconfDocumentedException;
 import org.opendaylight.yangtools.yang.common.QName;

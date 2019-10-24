@@ -22,7 +22,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
 import org.dom4j.Namespace;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 import java.util.List;
 

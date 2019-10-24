@@ -23,7 +23,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 

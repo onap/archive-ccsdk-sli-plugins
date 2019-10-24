@@ -24,20 +24,13 @@ package org.onap.ccsdk.sli.plugins.restapicall;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.codehaus.jettison.json.JSONObject;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ResourceConfig;
-
 import org.junit.Test;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +41,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testDelete() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
@@ -63,7 +56,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testDeleteWithPayload() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         ctx.setAttribute("prop.name", "site1");
 
@@ -81,7 +74,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testJsonTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "3");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
@@ -121,7 +114,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testInvalidRepeatTimes() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "a");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
@@ -147,7 +140,7 @@ public class TestRestapiCallNode {
 
     @Test(expected = SvcLogicException.class)
     public void testInvalidTemplatePath() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
@@ -173,7 +166,7 @@ public class TestRestapiCallNode {
 
     @Test(expected = SvcLogicException.class)
     public void testWithoutSkipSending() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
@@ -200,7 +193,7 @@ public class TestRestapiCallNode {
 
     @Test(expected = SvcLogicException.class)
     public void testWithInvalidURI() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].source-uid", "APIDOC-123");
         ctx.setAttribute("tmp.sdn-circuit-req-row[0].action", "delete");
@@ -226,7 +219,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testVpnJsonTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
@@ -246,7 +239,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testSiteJsonTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
@@ -292,7 +285,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testVrfJsonTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.l3vpn.vrf1-id", "10000000-0000-0000-0000-000000000007");
         ctx.setAttribute("prop.l3vpn.vpn-policy1-id", "10000000-0000-0000-0000-000000000003");
         ctx.setAttribute("prop.l3vpn.pe1_id", "a8098c1a-f86e-11da-bd1a-00112444be1e");
@@ -316,7 +309,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testDeleteVpnJsonTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
@@ -337,7 +330,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testL2DciTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.dci-connects.id", "Id1");
         ctx.setAttribute("prop.dci-connects.name", "Name1");
         ctx.setAttribute("prop.dci-connects.local_networks[0]", "NetId1");
@@ -364,7 +357,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testL3DciTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.dci-connects.id", "Id1");
         ctx.setAttribute("prop.dci-connects.name", "Name1");
         ctx.setAttribute("prop.dci-connects.local_networks_length", "2");
@@ -393,7 +386,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testControllerTokenTemplate() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.sdncRestApi.thirdpartySdnc.user", "admin");
         ctx.setAttribute("prop.sdncRestApi.thirdpartySdnc.password", "admin123");
 
@@ -412,7 +405,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testDeleteNoneAsContentType() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<>();
         p.put("restapiUrl", "https://echo.getpostman.com/delete");
@@ -428,7 +421,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testPostNoneAsContentType() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.l3vpn.name", "10000000-0000-0000-0000-000000000001");
         ctx.setAttribute("prop.l3vpn.topology", "point_to_point");
 
@@ -517,7 +510,7 @@ public class TestRestapiCallNode {
 
     @Test
     public void testEmbeddedJsonTemplate() throws Exception {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 	String complexObj = "{\"image_name\":\"Ubuntu 14.04\",\"service-instance-id\":\"1\",\"vnf-model-customization-uuid\":\"2f\",\"vnf-id\":\"3b\"}";
 	ctx.setAttribute("reqId", "1235");
         ctx.setAttribute("subReqId", "054243");

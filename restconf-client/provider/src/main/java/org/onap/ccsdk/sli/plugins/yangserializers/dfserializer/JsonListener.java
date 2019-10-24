@@ -21,7 +21,7 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
 
 /**

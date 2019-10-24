@@ -1,16 +1,14 @@
 package jtest.org.onap.ccsdk.sli.plugins.prop;
 
+import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
-import static org.junit.Assert.assertEquals;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
 import org.onap.ccsdk.sli.plugins.prop.PropertiesNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,7 @@ public class TestPropertiesNode {
     
     @Test
     public void testJSONFileParsing() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
@@ -39,7 +37,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testJSONFileArrayParsing() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
@@ -57,7 +55,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testJSONFileParsingPrefixCheck() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
@@ -77,7 +75,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testJSONFileParsingNoPrefix() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
@@ -96,7 +94,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testJSONFileParsingCtxCheck() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -117,7 +115,7 @@ public class TestPropertiesNode {
 
     @Test(expected = SvcLogicException.class)
     public void testToPropertiesInvalidJson() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -137,7 +135,7 @@ public class TestPropertiesNode {
         environmentVariables.set("deployer_pass", "sdncp-123");
         assertEquals("sdncp-123", System.getenv("deployer_pass"));
 
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
@@ -160,7 +158,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingPrefixCheck() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
@@ -182,7 +180,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingNoPrefix() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
@@ -203,7 +201,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingCtxCheck() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -226,7 +224,7 @@ public class TestPropertiesNode {
 
     @Test(expected = SvcLogicException.class)
     public void testToPropertiesInvalidParam() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -242,7 +240,7 @@ public class TestPropertiesNode {
 
     @Test(expected = SvcLogicException.class)
     public void testToPropertiesNoParam() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -256,7 +254,7 @@ public class TestPropertiesNode {
 
     @Test(expected = SvcLogicException.class)
     public void testToPropertiesFilePathError() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -271,7 +269,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileParsing() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -287,7 +285,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileInnerParsing() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -309,7 +307,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileParsingPrefixCheck() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -330,7 +328,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileParsingNoPrefix() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -350,7 +348,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileParsingCtxCheck() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -372,7 +370,7 @@ public class TestPropertiesNode {
 
     @Test(expected = SvcLogicException.class)
     public void testToPropertiesInvalidXML() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -388,7 +386,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileParsingListName() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -407,7 +405,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileParsingListNameAnother() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -425,7 +423,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
@@ -446,7 +444,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingPrefixCheckNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
@@ -467,7 +465,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingNoPrefixNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.txt");
@@ -487,7 +485,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testTXTFileParsingCtxCheckNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("tmp.sdn-circuit-req-row_length", "1");
 
         Map<String, String> p = new HashMap<String, String>();
@@ -509,7 +507,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testJSONFileArrayParsingNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.json");
@@ -525,7 +523,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testXMLFileInnerParsingNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test.xml");
@@ -545,7 +543,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testNoFileTypeNoPrefixNotFileBased() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test");
@@ -566,7 +564,7 @@ public class TestPropertiesNode {
 
     @Test(expected = SvcLogicException.class)
     public void testNoFileTypeParseReqError() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("file Name", "src/test/resources/test");
@@ -587,7 +585,7 @@ public class TestPropertiesNode {
 
     @Test
     public void testNoFileTypeParseError() throws SvcLogicException {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
 
         Map<String, String> p = new HashMap<String, String>();
         p.put("fileName", "src/test/resources/test");

@@ -20,23 +20,9 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
-import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
-import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
-import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -62,6 +48,19 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormat
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG_AUG_POST;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DataFormatUtilsTest.ENCODE_TO_XML_YANG_PUT;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
+import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
+import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
+import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
+import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
 
 
 /**
@@ -274,7 +273,7 @@ public class DataFormatSerializerTest {
     @Test
     public void decodeToJsonId() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_JSON_ID);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre = "identity-test_test.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -295,7 +294,7 @@ public class DataFormatSerializerTest {
     @Test
     public void decodeToXmlId() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_XML_ID);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre = "identity-test_test.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -391,7 +390,7 @@ public class DataFormatSerializerTest {
     @Test
     public void decodeToJsonYang() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_JSON_YANG);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre = "test-yang_cont1.cont2.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "json");
@@ -487,7 +486,7 @@ public class DataFormatSerializerTest {
     @Test
     public void decodeToXmlYang() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_XML_YANG);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre = "test-yang_cont1.cont2.";
         p.put("dirPath", "src/test/resources");
         p.put("format", "xml");
@@ -629,7 +628,7 @@ public class DataFormatSerializerTest {
      * @return service logic context
      */
     private SvcLogicContext createAnyXmlAttList(String pre) {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre1 = pre + "commonHeader.";
         String pre2 = pre + "actionIdentifiers.";
         ctx.setAttribute(pre + "isNonAppend", "true");
@@ -663,7 +662,7 @@ public class DataFormatSerializerTest {
      * @return service logic context
      */
     private SvcLogicContext createAttList(String pre) {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre1 = pre + "con1.interfaces.";
         ctx.setAttribute(pre + "con1.interface", "identity-types:physical");
         ctx.setAttribute(pre1 + "int-list[0].iden", "optical");
@@ -697,7 +696,7 @@ public class DataFormatSerializerTest {
      * @return service logic context
      */
     private SvcLogicContext createAttListYang(String pre) {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute(pre + "cont3.leaf10", "abc");
         ctx.setAttribute(pre + "list1[0].leaf1", "true");
         ctx.setAttribute(pre + "list1[0].leaf2", "abc");
@@ -762,7 +761,7 @@ public class DataFormatSerializerTest {
      * @return service logic context
      */
     private SvcLogicContext createAttListRpc(String pre) {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute(pre + "cont14.leaf28", "abc");
         ctx.setAttribute(pre + "list10[0].leaf29", "abc");
         ctx.setAttribute(pre + "list10[1].leaf29", "abc");

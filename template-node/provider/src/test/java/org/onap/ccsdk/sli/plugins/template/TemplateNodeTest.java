@@ -8,8 +8,9 @@ import java.util.Map;
 import java.util.Vector;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.junit.Test;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
 
 public class TemplateNodeTest {
 
@@ -27,7 +28,7 @@ public class TemplateNodeTest {
         params.put(TemplateNode.OUTPUT_PATH_KEY, "mycontainer");
         params.put(TemplateNode.TEMPLATE_PATH, "src/test/resources/basic.vtl");
         params.put("service-type", serviceType);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("input.svc-request-id", requestId);
         ctx.setAttribute("input.unique-key", uniqueKey);
         ctx.setAttribute("action", action);
@@ -45,7 +46,7 @@ public class TemplateNodeTest {
     public void parameterException() throws Exception {
         TemplateNode t = new MockTemplateNode();
         Map<String, String> params = new HashMap<String, String>();
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         t.evaluateTemplate(params, ctx);
     }
 
@@ -56,7 +57,7 @@ public class TemplateNodeTest {
         params.put(TemplateNode.PREFIX_KEY, "output");
         params.put(TemplateNode.OUTPUT_PATH_KEY, "mycontainer");
         params.put(TemplateNode.TEMPLATE_PATH, "src/test/resources/missing.vtl");
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         t.evaluateTemplate(params, ctx);
     }
 

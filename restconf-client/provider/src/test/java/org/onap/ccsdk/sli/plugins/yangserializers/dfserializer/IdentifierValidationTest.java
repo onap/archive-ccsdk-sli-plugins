@@ -20,23 +20,9 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
-import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
-import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
-import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -52,6 +38,19 @@ import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.Identifier
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.IdentifierValidationUtilsTest.ENCODE_TO_XML_YANG_AUG_POST_ID;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.IdentifierValidationUtilsTest.ENCODE_TO_XML_YANG_ID;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.IdentifierValidationUtilsTest.ENCODE_TO_XML_YANG_PUT_ID;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
+import org.onap.ccsdk.sli.plugins.restapicall.HttpResponse;
+import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
+import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
+import org.opendaylight.restconf.common.context.InstanceIdentifierContext;
 
 /**
  * Unit test cases for identifier validation test.
@@ -231,7 +230,7 @@ public class IdentifierValidationTest {
     @Test
     public void decodeToJsonYang() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_JSON_YANG_ID);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre = "test_name_of_the_module_name_of_the_cont1.name_" +
                 "of_the_cont2.";
         p.put("dirPath", "src/test/resources");
@@ -336,7 +335,7 @@ public class IdentifierValidationTest {
     @Test
     public void decodeToXmlYang() throws SvcLogicException {
         createMockForDecode(ENCODE_TO_XML_YANG_ID);
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         String pre = "test_name_of_the_module_name_of_the_cont1.name_of_" +
                 "the_cont2.";
         p.put("dirPath", "src/test/resources");
@@ -402,7 +401,7 @@ public class IdentifierValidationTest {
      * @return service logic context
      */
     private SvcLogicContext createAttListYang(String pre) {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute(pre + "name_of_the_cont3.name_of_the_leaf" +
                                  "10", "abc");
         ctx.setAttribute(pre + "name_of_the_list1[0].name_of_the_leaf1" +
@@ -519,7 +518,7 @@ public class IdentifierValidationTest {
      * @return service logic context
      */
     private SvcLogicContext createAttListRpc(String pre) {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute(pre + "name_of_the_cont14.name_of_the_leaf28",
                          "abc");
         ctx.setAttribute(pre + "name_of_the_list10[0].name_of_the_leaf29",

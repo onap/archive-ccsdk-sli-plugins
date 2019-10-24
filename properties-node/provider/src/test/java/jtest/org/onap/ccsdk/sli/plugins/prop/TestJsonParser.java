@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.prop.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

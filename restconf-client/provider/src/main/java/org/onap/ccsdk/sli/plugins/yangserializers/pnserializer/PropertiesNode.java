@@ -22,7 +22,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 /**
  * Abstraction of properties node data tree. This intermediate representation

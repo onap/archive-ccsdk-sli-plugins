@@ -20,7 +20,7 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 import static java.lang.String.format;
 import static org.onap.ccsdk.sli.plugins.yangserializers.dfserializer.DfSerializerUtil.FORMAT_ERR;

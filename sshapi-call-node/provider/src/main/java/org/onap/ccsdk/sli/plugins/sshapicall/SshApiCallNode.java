@@ -31,11 +31,11 @@ import java.util.Map;
 
 import org.onap.appc.adapter.ssh.SshAdapter;
 import org.onap.appc.adapter.ssh.SshConnection;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import com.att.eelf.configuration.EELFLogger;
 import com.att.eelf.configuration.EELFManager;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.extensions.SvcLogicJavaPlugin;
 import org.onap.ccsdk.sli.plugins.sshapicall.model.AuthType;
 import org.onap.ccsdk.sli.plugins.sshapicall.model.Parameters;
 import org.onap.ccsdk.sli.plugins.sshapicall.model.ParseParam;

@@ -20,7 +20,7 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 import java.util.Map;
 

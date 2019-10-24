@@ -20,7 +20,7 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.PropertiesNode;

@@ -23,7 +23,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.DefaultPropertiesNodeWalker;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.LeafNode;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.Namespace;

@@ -21,9 +21,9 @@
 package org.onap.ccsdk.sli.plugins.restconfdiscovery;
 
 import java.util.Map;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.extensions.SvcLogicJavaPlugin;
 
 /**
  * Abstraction of a plugin to enable discovery from DG.

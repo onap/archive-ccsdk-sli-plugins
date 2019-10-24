@@ -21,7 +21,7 @@
 package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 
 import org.dom4j.Element;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 /**
  * Abstraction of an entity which provides interface for XML walk. This

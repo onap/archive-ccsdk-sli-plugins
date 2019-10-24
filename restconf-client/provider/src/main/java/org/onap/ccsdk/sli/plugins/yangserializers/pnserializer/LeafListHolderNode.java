@@ -22,7 +22,7 @@
 
 package org.onap.ccsdk.sli.plugins.yangserializers.pnserializer;
 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 
 /**
  * Representation of leaf list holder node which will hold multi instance leaf

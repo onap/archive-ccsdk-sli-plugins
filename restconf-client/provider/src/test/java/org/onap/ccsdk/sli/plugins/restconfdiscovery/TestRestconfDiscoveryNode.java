@@ -20,27 +20,26 @@
 
 package org.onap.ccsdk.sli.plugins.restconfdiscovery;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
-import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.SvcLogicContext;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
+import org.onap.ccsdk.sli.core.sli.provider.base.SvcLogicContextImpl;
 import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.onap.ccsdk.sli.plugins.restconfapicall.RestconfApiCallNode;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class TestRestconfDiscoveryNode {
 
@@ -59,7 +58,7 @@ public class TestRestconfDiscoveryNode {
         RestapiCallNode restApi = new RestapiCallNode();
         doReturn(restApi).when(restconf).getRestapiCallNode();
 
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("prop.encoding-json", "encoding-json");
         ctx.setAttribute("restapi-result.response-code", "200");
         ctx.setAttribute("restapi-result.ietf-subscribed-notifications" +
@@ -95,14 +94,14 @@ public class TestRestconfDiscoveryNode {
         subDg.module("l3VpnService");
         subDg.rpc("createVpn");
         subDg.version("1.0");
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         subDg.executeGraph(ctx);
     }
 
     @Test(expected = SvcLogicException.class)
     public void testEstablishSubscriptionWithoutSubscriberId()
             throws SvcLogicException{
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         Map<String, String> p = new HashMap<>();
         RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
                 new RestconfApiCallNode(new RestapiCallNode()));
@@ -111,7 +110,7 @@ public class TestRestconfDiscoveryNode {
 
     @Test
     public void testResponseCode() {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("restapi-result.response-code", "200");
         ctx.setAttribute("response-code", "404");
         RestconfDiscoveryNode rdn = new RestconfDiscoveryNode(
@@ -124,7 +123,7 @@ public class TestRestconfDiscoveryNode {
 
     @Test
     public void testOutputIdentifier() {
-        SvcLogicContext ctx = new SvcLogicContext();
+        SvcLogicContext ctx = new SvcLogicContextImpl();
         ctx.setAttribute("restapi-result.ietf-subscribed-notifications:" +
                                  "establish-subscription.output.identifier",
                          "89");

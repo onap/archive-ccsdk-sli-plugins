@@ -23,7 +23,7 @@ package org.onap.ccsdk.sli.plugins.yangserializers.dfserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException;
 import org.onap.ccsdk.sli.plugins.yangserializers.pnserializer.NodeType;
 
 import java.util.Iterator;
