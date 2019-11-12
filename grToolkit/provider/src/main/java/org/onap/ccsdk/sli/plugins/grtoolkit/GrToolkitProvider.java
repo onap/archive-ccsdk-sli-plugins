@@ -103,6 +103,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     private static final String FAULTY = "FAULTY";
     private static final String VALUE = "value";
     private static final String OUTPUT = "output";
+    private static final int CONNECTION_TIMEOUT = 5000; // 5 second timeout
     private String akkaConfig;
     private String jolokiaClusterPath;
     private String shardManagerPath;
@@ -256,7 +257,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         outputBuilder.setStatus("200");
         outputBuilder.setHealth(getAdminHealth());
         outputBuilder.setServedBy(member);
-
+        log.info(outputBuilder.build().toString());
         return Futures.immediateFuture(RpcResultBuilder.<AdminHealthOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
@@ -484,6 +485,10 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
 
         outputBuilder.setServedBy(member);
         RpcResult<ClusterHealthOutput> rpcResult = RpcResultBuilder.<ClusterHealthOutput>status(true).withResult(outputBuilder.build()).build();
+        log.info("{}:cluster-health: Site 1 | Healthy ODLs {}", APP_NAME, site1Health);
+        if(siteConfiguration == SiteConfiguration.GEO) {
+            log.info("{}:cluster-health: Site 2 | Healthy ODLs {}", APP_NAME, site2Health);
+        }
         return Futures.immediateFuture(rpcResult);
     }
 
@@ -557,6 +562,8 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                 outputBuilder.getSites().add(builder.build());
                 builder = getSitesBuilder(site2HealthyODLs, site2Voting, crossSiteAdminHealthy, crossSiteDbHealthy, crossSiteIdentifier);
                 outputBuilder.getSites().add(builder.build());
+                log.info("{}:site-health: Site 1 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, siteIdentifier, site1Voting, site1HealthyODLs, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth));
+                log.info("{}:site-health: Site 2 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, crossSiteIdentifier, site2Voting, site2HealthyODLs, crossSiteAdminHealthy, crossSiteDbHealthy);
             }
             else {
                 // Make calls over to site 1 healthchecks
@@ -595,6 +602,8 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                 outputBuilder.getSites().add(builder.build());
                 builder = getSitesBuilder(site2HealthyODLs, site2Voting, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth), siteIdentifier);
                 outputBuilder.getSites().add(builder.build());
+                log.info("{}:site-health: Site 1 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, siteIdentifier, site1Voting, site1HealthyODLs, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth));
+                log.info("{}:site-health: Site 2 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, crossSiteIdentifier, site2Voting, site2HealthyODLs, crossSiteAdminHealthy, crossSiteDbHealthy);
             }
         }
 
@@ -931,6 +940,8 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         connection.addRequestProperty("Authorization", auth);
         connection.setRequestProperty("Connection", "keep-alive");
         connection.setRequestProperty("Proxy-Connection", "keep-alive");
+        connection.setConnectTimeout(CONNECTION_TIMEOUT);
+        connection.setReadTimeout(CONNECTION_TIMEOUT);
         return connection;
     }
 
