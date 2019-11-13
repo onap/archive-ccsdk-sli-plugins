@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>binding-parent</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.0</version>
         <relativePath/>
     </parent>
     <name>ccsdk-sli-plugins :: gr-toolkit :: ${project.artifactId}</name>
@@ -12,6 +12,10 @@
     <artifactId>gr-toolkit-provider</artifactId>
     <version>0.7.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+
+    <properties>
+        <ccsdk.sli.core.version>${project.version}</ccsdk.sli.core.version>
+    </properties>
 
     <build>
         <plugins>
