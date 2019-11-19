@@ -15,6 +15,10 @@
 
     <name>ccsdk-sli-plugins :: restconf-client :: ${project.artifactId}</name>
 
+    <properties>
+        <ccsdk.sli.core.version>${project.version}</ccsdk.sli.core.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
