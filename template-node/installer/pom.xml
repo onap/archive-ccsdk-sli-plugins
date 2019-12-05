@@ -100,7 +100,7 @@
 							<useRepositoryLayout>true</useRepositoryLayout>
 							<addParentPoms>false</addParentPoms>
 							<copyPom>false</copyPom>
-							<includeGroupIds>org.onap.ccsdk.sli.plugins,org.apache.velocity</includeGroupIds>
+							<includeGroupIds>org.onap.ccsdk.sli.plugins</includeGroupIds>
 							<scope>provided</scope>
 						</configuration>
 					</execution>

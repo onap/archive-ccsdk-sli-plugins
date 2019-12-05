@@ -103,7 +103,7 @@
                             <useRepositoryLayout>true</useRepositoryLayout>
                             <addParentPoms>false</addParentPoms>
                             <copyPom>false</copyPom>
-                            <excludeGroupIds>org.onap.ccsdk.sli.core</excludeGroupIds>
+                            <includeGroupIds>org.onap.ccsdk.sli.plugins</includeGroupIds>
                             <scope>provided</scope>
                         </configuration>
                     </execution>

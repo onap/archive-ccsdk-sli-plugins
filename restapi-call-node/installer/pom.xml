@@ -43,14 +43,6 @@
 			<artifactId>restapi-call-node-provider</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
 	</dependencies>
 
 	<build>
@@ -110,7 +102,7 @@
 							<useRepositoryLayout>true</useRepositoryLayout>
 							<addParentPoms>false</addParentPoms>
 							<copyPom>false</copyPom>
-							<excludeGroupIds>org.onap.ccsdk.sli.core</excludeGroupIds>
+							<includeGroupIds>org.onap.ccsdk.sli.plugins</includeGroupIds>
 							<scope>provided</scope>
 						</configuration>
 					</execution>
