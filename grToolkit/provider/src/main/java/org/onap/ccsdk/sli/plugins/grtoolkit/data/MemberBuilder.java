@@ -30,6 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Extends the {@code MembersBuilder} generated from the gr-toolkit.yang model.
+ * Uses information from a {@code ClusterActor} to populate the builder fields.
+ *
+ * @author Anthony Haddox
+ * @see ClusterActor
+ * @see org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.cluster.health.output.MembersBuilder
+ */
 public class MemberBuilder extends MembersBuilder {
     public MemberBuilder(ClusterActor actor) {
         super();

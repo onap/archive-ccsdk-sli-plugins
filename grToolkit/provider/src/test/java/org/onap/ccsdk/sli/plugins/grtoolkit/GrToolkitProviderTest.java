@@ -20,14 +20,19 @@
  */
 
 package org.onap.ccsdk.sli.plugins.grtoolkit;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
 import com.google.common.util.concurrent.ListenableFuture;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+
 import org.onap.ccsdk.sli.core.dblib.DBLibConnection;
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
+
 import org.opendaylight.controller.cluster.access.concepts.MemberName;
 import org.opendaylight.controller.cluster.datastore.DistributedDataStoreInterface;
 import org.opendaylight.controller.cluster.datastore.utils.ActorContext;
@@ -38,22 +43,34 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.ClusterHealthOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.DatabaseHealthOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.FailoverOutput;
-import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.FailoverOutputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.HaltAkkaTrafficInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.HaltAkkaTrafficOutput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.ResumeAkkaTrafficInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.ResumeAkkaTrafficOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.SiteHealthOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.SiteIdentifierOutput;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -67,13 +84,16 @@ public class GrToolkitProviderTest {
     DistributedDataStoreInterface configDatastore;
     DbLibService dbLibService;
     DBLibConnection connection;
+    Properties properties;
 
     @Rule
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(9999);
 
     @Before
     public void setup() {
-        environmentVariables.set("SDNC_CONFIG_DIR","src/test/resources/");
+        environmentVariables.set("SDNC_CONFIG_DIR","src/test/resources");
         dataBroker = mock(DataBroker.class);
         notificationProviderService = mock(NotificationPublishService.class);
         rpcProviderRegistry = mock(RpcProviderRegistry.class);
@@ -99,14 +119,14 @@ public class GrToolkitProviderTest {
         provider = new GrToolkitProvider(dataBroker, notificationProviderService,
                 rpcProviderRegistry, configDatastore, dbLibService);
         providerSpy = spy(provider);
+        stubController();
     }
 
     @Test
     public void closeTest() {
         try {
             provider.close();
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             // Exception expected
         }
     }
@@ -117,11 +137,47 @@ public class GrToolkitProviderTest {
         // onDataTreeChanged is an empty stub
     }
 
+    private void stubController() {
+        String clusterBody = null;
+        String shardManagerBody = null;
+        String shardDefaultBody = null;
+        String shardOperationalBody = null;
+        try(Stream<String> stream = Files.lines(Paths.get("src/test/resources/three/cluster.json"))) {
+            clusterBody = stream.collect(Collectors.joining());
+        } catch(IOException e) {
+            fail();
+        }
+        try(Stream<String> stream = Files.lines(Paths.get("src/test/resources/three/shard-manager.json"))) {
+            shardManagerBody = stream.collect(Collectors.joining());
+        } catch(IOException e) {
+            fail();
+        }
+        try(Stream<String> stream = Files.lines(Paths.get("src/test/resources/three/default-config.json"))) {
+            shardDefaultBody = stream.collect(Collectors.joining());
+        } catch(IOException e) {
+            fail();
+        }
+        try(Stream<String> stream = Files.lines(Paths.get("src/test/resources/three/default-operational.json"))) {
+            shardOperationalBody = stream.collect(Collectors.joining());
+        } catch(IOException e) {
+            fail();
+        }
+
+        if(clusterBody == null || shardManagerBody == null || shardDefaultBody == null || shardOperationalBody == null) {
+            fail();
+        }
+        stubFor(get(urlEqualTo("/adm/healthcheck")).willReturn(aResponse().withStatus(200)));
+        stubFor(get(urlEqualTo("/jolokia/read/akka:type=Cluster")).willReturn(aResponse().withStatus(200).withBody(clusterBody)));
+        stubFor(get(urlEqualTo("/jolokia/read/org.opendaylight.controller:Category=ShardManager,name=shard-manager-config,type=DistributedConfigDatastore")).inScenario("testing").willReturn(aResponse().withStatus(200).withBody(shardManagerBody)).willSetStateTo("next"));
+        stubFor(get(urlEqualTo("/jolokia/read/org.opendaylight.controller:Category=Shards,name=member-1-shard-default-config,type=DistributedConfigDatastore")).inScenario("testing").willReturn(aResponse().withStatus(200).withBody(shardDefaultBody)).willSetStateTo("next"));
+        stubFor(get(urlEqualTo("/jolokia/read/org.opendaylight.controller:Category=Shards,name=member-1-shard-default-operational,type=DistributedOperationalDatastore")).willReturn(aResponse().withStatus(200).withBody(shardOperationalBody)));
+    }
+
     @Test
     public void clusterHealthTest() {
         ListenableFuture<RpcResult<ClusterHealthOutput>> result = provider.clusterHealth(null);
         try {
-            assertEquals("200", result.get().getResult().getStatus());
+            assertEquals("0", result.get().getResult().getStatus());
         } catch(InterruptedException | ExecutionException e) {
             fail();
         }
@@ -129,51 +185,6 @@ public class GrToolkitProviderTest {
 
     @Test
     public void siteHealthTest() {
-        ListenableFuture<RpcResult<SiteHealthOutput>> result = provider.siteHealth(null);
-        try {
-            assertEquals("200", result.get().getResult().getStatus());
-        } catch(InterruptedException | ExecutionException e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void siteHealth6NodeTest() {
-        Map<String, ClusterActor> memberMap = new HashMap<>();
-        ClusterActor actor;
-        for(int ndx = 0; ndx < 6; ndx++) {
-            actor = new ClusterActor();
-            actor.setNode("member-" + (ndx + 1));
-            actor.setUp(true);
-            actor.setUnreachable(false);
-
-            memberMap.put(actor.getNode(),  actor);
-        }
-
-        try {
-            Field field = provider.getClass().getDeclaredField("siteConfiguration");
-            field.setAccessible(true);
-            field.set(provider, GrToolkitProvider.SiteConfiguration.GEO);
-
-            field = provider.getClass().getDeclaredField("memberMap");
-            field.setAccessible(true);
-            field.set(provider, memberMap);
-
-
-            actor = new ClusterActor();
-            actor.setNode("member-1");
-            field = provider.getClass().getDeclaredField("self");
-            field.setAccessible(true);
-            field.set(provider, actor);
-
-            field = provider.getClass().getDeclaredField("member");
-            field.setAccessible(true);
-            field.set(provider, actor.getNode());
-        }
-        catch(IllegalAccessException | NoSuchFieldException e) {
-            fail();
-        }
-
         ListenableFuture<RpcResult<SiteHealthOutput>> result = provider.siteHealth(null);
         try {
             assertEquals("200", result.get().getResult().getStatus());
@@ -201,7 +212,7 @@ public class GrToolkitProviderTest {
         }
         ListenableFuture<RpcResult<DatabaseHealthOutput>> result = provider.databaseHealth(null);
         try {
-            assertEquals("200", result.get().getResult().getStatus());
+            assertEquals("500", result.get().getResult().getStatus());
         } catch(InterruptedException | ExecutionException e) {
             fail();
         }
@@ -216,7 +227,7 @@ public class GrToolkitProviderTest {
         }
         ListenableFuture<RpcResult<DatabaseHealthOutput>> result = provider.databaseHealth(null);
         try {
-            assertEquals("200", result.get().getResult().getStatus());
+            assertEquals("500", result.get().getResult().getStatus());
         } catch(InterruptedException | ExecutionException e) {
             fail();
         }
@@ -253,13 +264,36 @@ public class GrToolkitProviderTest {
     }
 
     @Test
+    public void haltTrafficTest() {
+        HaltAkkaTrafficInputBuilder builder = new HaltAkkaTrafficInputBuilder();
+        builder.setNodeInfo(new ArrayList<>());
+        ListenableFuture<RpcResult<HaltAkkaTrafficOutput>> result = provider.haltAkkaTraffic(builder.build());
+        try {
+            assertEquals("200", result.get().getResult().getStatus());
+        } catch(InterruptedException | ExecutionException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void resumeTrafficTest() {
+        ResumeAkkaTrafficInputBuilder builder = new ResumeAkkaTrafficInputBuilder();
+        builder.setNodeInfo(new ArrayList<>());
+        ListenableFuture<RpcResult<ResumeAkkaTrafficOutput>> result = provider.resumeAkkaTraffic(builder.build());
+        try {
+            assertEquals("200", result.get().getResult().getStatus());
+        } catch(InterruptedException | ExecutionException e) {
+            fail();
+        }
+    }
+
+    @Test
     public void executeCommandTest() {
         try {
             Method method = provider.getClass().getDeclaredMethod("executeCommand", String.class);
             method.setAccessible(true);
             method.invoke(provider, "ls");
-        }
-        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             fail();
         }
     }
@@ -277,8 +311,7 @@ public class GrToolkitProviderTest {
             Method method = provider.getClass().getDeclaredMethod("isolateSiteFromCluster", ArrayList.class, ArrayList.class, String.class);
             method.setAccessible(true);
             method.invoke(provider, activeList, standbyList, "80");
-        }
-        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             fail();
         }
     }
@@ -296,30 +329,7 @@ public class GrToolkitProviderTest {
             Method method = provider.getClass().getDeclaredMethod("downUnreachableNodes", ArrayList.class, ArrayList.class, String.class);
             method.setAccessible(true);
             method.invoke(provider, activeList, standbyList, "80");
-        }
-        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void changeClusterVotingTest() {
-        try {
-            ClusterActor actor = new ClusterActor();
-            actor.setMember("some-member");
-            actor.setNode("some-Node");
-            ArrayList<ClusterActor> activeList = new ArrayList<>();
-            activeList.add(actor);
-            ArrayList<ClusterActor> standbyList = new ArrayList<>();
-            standbyList.add(actor);
-            Field field = provider.getClass().getDeclaredField("self");
-            field.setAccessible(true);
-            field.set(provider, actor);
-            Method method = provider.getClass().getDeclaredMethod("changeClusterVoting", FailoverOutputBuilder.class, ArrayList.class, ArrayList.class, String.class);
-            method.setAccessible(true);
-            method.invoke(provider, new FailoverOutputBuilder(), activeList, standbyList, "80");
-        }
-        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
+        } catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             fail();
         }
     }
@@ -335,10 +345,8 @@ public class GrToolkitProviderTest {
             Method method = provider.getClass().getDeclaredMethod("backupMdSal", ArrayList.class, String.class);
             method.setAccessible(true);
             method.invoke(provider, activeList, "80");
-        }
-        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             fail();
         }
     }
-
 }

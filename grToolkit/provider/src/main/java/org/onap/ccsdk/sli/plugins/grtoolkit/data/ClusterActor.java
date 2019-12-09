@@ -26,6 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A data container with information about an actor in the Akka cluster.
+ *
+ * @author Anthony Haddox
+ */
 public class ClusterActor {
     private String node;
     private String member;
@@ -165,8 +170,10 @@ public class ClusterActor {
             builder.append(" Up");
         else
             builder.append(" Down");
-        if(unreachable)
+        if(unreachable) {
             builder.append(" [ UNREACHABLE ]");
+            return builder.toString();
+        }
 
         if(voting)
             builder.append(" (Voting)");

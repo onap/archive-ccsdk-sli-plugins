@@ -27,33 +27,41 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
+import org.onap.ccsdk.sli.plugins.grtoolkit.connection.ConnectionManager;
+import org.onap.ccsdk.sli.plugins.grtoolkit.connection.ConnectionResponse;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.AdminHealth;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.DatabaseHealth;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.FailoverStatus;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.Health;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.MemberBuilder;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.PropertyKeys;
+import org.onap.ccsdk.sli.plugins.grtoolkit.data.SiteHealth;
+import org.onap.ccsdk.sli.plugins.grtoolkit.resolver.HealthResolver;
+import org.onap.ccsdk.sli.plugins.grtoolkit.resolver.SingleNodeHealthResolver;
+import org.onap.ccsdk.sli.plugins.grtoolkit.resolver.SixNodeHealthResolver;
+import org.onap.ccsdk.sli.plugins.grtoolkit.resolver.ThreeNodeHealthResolver;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.opendaylight.controller.cluster.datastore.DistributedDataStoreInterface;
@@ -96,19 +104,29 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * API implementation of the {@code GrToolkitService} interface generated from
+ * the gr-toolkit.yang model. The RPCs contained within this class are meant to
+ * run in an architecture agnostic fashion, where the response is repeatable
+ * and predictable across any given node configuration. To facilitate this,
+ * health checking and failover logic has been abstracted into the
+ * {@code HealthResolver} classes.
+ * <p>
+ * Anyone who wishes to write a custom resolver for use with GR Toolkit should
+ * extend the {@code HealthResolver} class. The currently provided resolvers
+ * are useful references for further implementation.
+ *
+ * @author Anthony Haddox
+ * @see GrToolkitService
+ * @see HealthResolver
+ * @see SingleNodeHealthResolver
+ * @see ThreeNodeHealthResolver
+ * @see SixNodeHealthResolver
+ */
 public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataTreeChangeListener {
     private static final String APP_NAME = "gr-toolkit";
     private static final String PROPERTIES_FILE = System.getenv("SDNC_CONFIG_DIR") + "/gr-toolkit.properties";
-    private static final String HEALTHY = "HEALTHY";
-    private static final String FAULTY = "FAULTY";
-    private static final String VALUE = "value";
-    private static final String OUTPUT = "output";
-    private static final int CONNECTION_TIMEOUT = 5000; // 5 second timeout
     private String akkaConfig;
-    private String jolokiaClusterPath;
-    private String shardManagerPath;
-    private String shardPathTemplate;
-    private String credentials;
     private String httpProtocol;
     private String siteIdentifier = System.getenv("SITE_NAME");
     private final Logger log = LoggerFactory.getLogger(GrToolkitProvider.class);
@@ -121,15 +139,26 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     private String member;
     private ClusterActor self;
     private HashMap<String, ClusterActor> memberMap;
-    private SiteConfiguration siteConfiguration;
     private Properties properties;
     private DistributedDataStoreInterface configDatastore;
+    private HealthResolver resolver;
+
+    /**
+     * Constructs the provider for the GR Toolkit API. Dependencies are
+     * injected using the GrToolkit.xml blueprint.
+     *
+     * @param dataBroker The Data Broker
+     * @param notificationProviderService The Notification Service
+     * @param rpcProviderRegistry The RPC Registry
+     * @param configDatastore The Configuration Data Store provided by the controller
+     * @param dbLibService Reference to the controller provided DbLibService
+     */
     public GrToolkitProvider(DataBroker dataBroker,
                              NotificationPublishService notificationProviderService,
                              RpcProviderRegistry rpcProviderRegistry,
                              DistributedDataStoreInterface configDatastore,
                              DbLibService dbLibService) {
-        this.log.info("Creating provider for {}", APP_NAME);
+        log.info("Creating provider for {}", APP_NAME);
         this.executor = Executors.newFixedThreadPool(1);
         this.dataBroker = dataBroker;
         this.notificationService = notificationProviderService;
@@ -139,51 +168,59 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         initialize();
     }
 
+    /**
+     * Initializes some structures necessary to hold health check information
+     * and perform failovers.
+     */
     private void initialize() {
         log.info("Initializing provider for {}", APP_NAME);
-        // Create the top level containers
         createContainers();
         setProperties();
         defineMembers();
-
         rpcRegistration = rpcRegistry.addRpcImplementation(GrToolkitService.class, this);
         log.info("Initialization complete for {}", APP_NAME);
     }
 
+    /**
+     * Creates the {@code Properties} object with the contents of
+     * gr-toolkit.properties, found at the {@code SDNC_CONFIG_DIR} directory,
+     * which should be set as an environment variable. If the properties file
+     * is not found, GR Toolkit will not function.
+     */
     private void setProperties() {
         log.info("Loading properties from {}", PROPERTIES_FILE);
         properties = new Properties();
         File propertiesFile = new File(PROPERTIES_FILE);
         if(!propertiesFile.exists()) {
-            log.warn("Properties file not found.");
-            return;
-        }
-        try(FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
-            properties.load(fileInputStream);
-            if(!properties.containsKey(PropertyKeys.SITE_IDENTIFIER)) {
-                properties.put(PropertyKeys.SITE_IDENTIFIER, "Unknown Site");
+            log.warn("setProperties(): Properties file not found.");
+        } else {
+            try(FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
+                properties.load(fileInputStream);
+                if(!properties.containsKey(PropertyKeys.SITE_IDENTIFIER)) {
+                    properties.put(PropertyKeys.SITE_IDENTIFIER, "Unknown Site");
+                }
+                httpProtocol = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL).trim()) ? "https://" : "http://";
+                akkaConfig = properties.getProperty(PropertyKeys.AKKA_CONF_LOCATION).trim();
+                if(StringUtils.isEmpty(siteIdentifier)) {
+                    siteIdentifier = properties.getProperty(PropertyKeys.SITE_IDENTIFIER).trim();
+                }
+                log.info("setProperties(): Loaded properties.");
+            } catch(IOException e) {
+                log.error("setProperties(): Error loading properties.", e);
             }
-            String port = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL).trim()) ? properties.getProperty(PropertyKeys.CONTROLLER_PORT_SSL).trim() : properties.getProperty(PropertyKeys.CONTROLLER_PORT_HTTP).trim();
-            httpProtocol = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL).trim()) ? "https://" : "http://";
-            akkaConfig = properties.getProperty(PropertyKeys.AKKA_CONF_LOCATION).trim();
-            jolokiaClusterPath = ":" + port + properties.getProperty(PropertyKeys.MBEAN_CLUSTER).trim();
-            shardManagerPath = ":" + port + properties.getProperty(PropertyKeys.MBEAN_SHARD_MANAGER).trim();
-            shardPathTemplate = ":" + port + properties.getProperty(PropertyKeys.MBEAN_SHARD_CONFIG).trim();
-            if(siteIdentifier == null || siteIdentifier.isEmpty()) {
-                siteIdentifier = properties.getProperty(PropertyKeys.SITE_IDENTIFIER).trim();
-            }
-            credentials = properties.getProperty(PropertyKeys.CONTROLLER_CREDENTIALS).trim();
-            log.info("Loaded properties.");
-        } catch(IOException e) {
-            log.error("Error loading properties.", e);
         }
     }
 
+    /**
+     * Parses the akka.conf file used by the controller to define an akka
+     * cluster. This method requires the <i>seed-nodes</i> definition to exist
+     * on a single line.
+     */
     private void defineMembers() {
         member = configDatastore.getActorContext().getCurrentMemberName().getName();
-        log.info("Cluster member: {}", member);
+        log.info("defineMembers(): Cluster member: {}", member);
 
-        log.info("Parsing akka.conf for cluster memberMap...");
+        log.info("defineMembers(): Parsing akka.conf for cluster memberMap...");
         try {
             File akkaConfigFile = new File(this.akkaConfig);
             try(FileReader fileReader = new FileReader(akkaConfigFile);
@@ -197,70 +234,136 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                 }
             }
         } catch(IOException e) {
-            log.error("Couldn't load akka", e);
+            log.error("defineMembers(): Couldn't load akka", e);
         } catch(NullPointerException e) {
-            log.error("akkaConfig is null. Check properties file and restart {} bundle.", APP_NAME);
+            log.error("defineMembers(): akkaConfig is null. Check properties file and restart {} bundle.", APP_NAME);
+            log.error("defineMembers(): NullPointerException", e);
         }
         log.info("self:\n{}", self);
     }
 
+    /**
+     * Sets up the {@code InstanceIdentifier}s for Data Store transactions.
+     */
     private void createContainers() {
         // Replace with MD-SAL write for FailoverStatus
     }
 
-    protected void initializeChild() {
-        // Override if you have custom initialization intelligence
-    }
-
+    /**
+     * Shuts down the {@code ExecutorService} and closes the RPC Provider Registry.
+     */
     @Override
     public void close() throws Exception {
         log.info("Closing provider for {}", APP_NAME);
         executor.shutdown();
         rpcRegistration.close();
-        log.info("Successfully closed provider for {}", APP_NAME);
+        log.info("close(): Successfully closed provider for {}", APP_NAME);
     }
 
+    /**
+     * Listens for changes to the Data tree.
+     *
+     * @param changes Data tree changes.
+     */
     @Override
     public void onDataTreeChanged(@Nonnull Collection changes) {
-        log.info("onDataTreeChanged() called. but there is no change here");
+        log.info("onDataTreeChanged(): No changes.");
     }
 
+    /**
+     * Makes a call to {@code resolver.getClusterHealth()} to determine the
+     * health of the akka clustered controllers.
+     *
+     * @param input request body adhering to the model for
+     *        {@code ClusterHealthInput}
+     * @return response adhering to the model for {@code ClusterHealthOutput}
+     * @see HealthResolver
+     * @see ClusterHealthInput
+     * @see ClusterHealthOutput
+     */
     @Override
     public ListenableFuture<RpcResult<ClusterHealthOutput>> clusterHealth(ClusterHealthInput input) {
         log.info("{}:cluster-health invoked.", APP_NAME);
-        getControllerHealth();
-        return buildClusterHealthOutput("200");
+        resolver.getClusterHealth();
+        return buildClusterHealthOutput();
     }
 
+    /**
+     * Makes a call to {@code resolver.getSiteHealth()} to determine the health
+     * of all of the application components of a site. In a multi-site config,
+     * this will gather the health of all sites.
+     *
+     * @param input request body adhering to the model for
+     *        {@code SiteHealthInput}
+     * @return response adhering to the model for {@code SiteHealthOutput}
+     * @see HealthResolver
+     * @see SiteHealthInput
+     * @see SiteHealthOutput
+     */
     @Override
     public ListenableFuture<RpcResult<SiteHealthOutput>> siteHealth(SiteHealthInput input) {
         log.info("{}:site-health invoked.", APP_NAME);
-        getControllerHealth();
-        return buildSiteHealthOutput("200", getAdminHealth(), getDatabaseHealth());
+        List<SiteHealth> sites = resolver.getSiteHealth();
+        return buildSiteHealthOutput(sites);
     }
 
+    /**
+     * Makes a call to {@code resolver.getDatabaseHealth()} to determine the
+     * health of the database(s) used by the controller.
+     *
+     * @param input request body adhering to the model for
+     *        {@code DatabaseHealthInput}
+     * @return response adhering to the model for {@code DatabaseHealthOutput}
+     * @see HealthResolver
+     * @see DatabaseHealthInput
+     * @see DatabaseHealthOutput
+     */
     @Override
     public ListenableFuture<RpcResult<DatabaseHealthOutput>> databaseHealth(DatabaseHealthInput input) {
         log.info("{}:database-health invoked.", APP_NAME);
         DatabaseHealthOutputBuilder outputBuilder = new DatabaseHealthOutputBuilder();
-        outputBuilder.setStatus("200");
-        outputBuilder.setHealth(getDatabaseHealth());
+        DatabaseHealth health = resolver.getDatabaseHealth();
+        outputBuilder.setStatus(health.getHealth().equals(Health.HEALTHY) ? "200" : "500");
+        outputBuilder.setHealth(health.getHealth().toString());
         outputBuilder.setServedBy(member);
-
+        log.info("databaseHealth(): Health: {}", health.getHealth());
         return Futures.immediateFuture(RpcResultBuilder.<DatabaseHealthOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
+    /**
+     * Makes a call to {@code resolver.getAdminHealth()} to determine the
+     * health of the administrative portal(s) used by the controller.
+     *
+     * @param input request body adhering to the model for
+     *        {@code AdminHealthInput}
+     * @return response adhering to the model for {@code AdminHealthOutput}
+     * @see HealthResolver
+     * @see AdminHealthInput
+     * @see AdminHealthOutput
+     */
     @Override
     public ListenableFuture<RpcResult<AdminHealthOutput>> adminHealth(AdminHealthInput input) {
         log.info("{}:admin-health invoked.", APP_NAME);
         AdminHealthOutputBuilder outputBuilder = new AdminHealthOutputBuilder();
-        outputBuilder.setStatus("200");
-        outputBuilder.setHealth(getAdminHealth());
+        AdminHealth adminHealth = resolver.getAdminHealth();
+        outputBuilder.setStatus(Integer.toString(adminHealth.getStatusCode()));
+        outputBuilder.setHealth(adminHealth.getHealth().toString());
         outputBuilder.setServedBy(member);
-        log.info(outputBuilder.build().toString());
+        log.info("adminHealth(): Status: {} | Health: {}", adminHealth.getStatusCode(), adminHealth.getHealth());
         return Futures.immediateFuture(RpcResultBuilder.<AdminHealthOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
+    /**
+     * Places IP Tables rules in place to drop akka communications traffic with
+     * one or mode nodes. This method does not not perform any checks to see if
+     * rules currently exist, and assumes success.
+     *
+     * @param input request body adhering to the model for
+     *        {@code HaltAkkaTrafficInput}
+     * @return response adhering to the model for {@code HaltAkkaTrafficOutput}
+     * @see HaltAkkaTrafficInput
+     * @see HaltAkkaTrafficOutput
+     */
     @Override
     public ListenableFuture<RpcResult<HaltAkkaTrafficOutput>> haltAkkaTraffic(HaltAkkaTrafficInput input) {
         log.info("{}:halt-akka-traffic invoked.", APP_NAME);
@@ -272,6 +375,17 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         return Futures.immediateFuture(RpcResultBuilder.<HaltAkkaTrafficOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
+    /**
+     * Removes IP Tables rules in place to permit akka communications traffic
+     * with one or mode nodes. This method does not not perform any checks to
+     * see if rules currently exist, and assumes success.
+     *
+     * @param input request body adhering to the model for
+     *        {@code ResumeAkkaTrafficInput}
+     * @return response adhering to the model for {@code ResumeAkkaTrafficOutput}
+     * @see ResumeAkkaTrafficInput
+     * @see ResumeAkkaTrafficOutput
+     */
     @Override
     public ListenableFuture<RpcResult<ResumeAkkaTrafficOutput>> resumeAkkaTraffic(ResumeAkkaTrafficInput input) {
         log.info("{}:resume-akka-traffic invoked.", APP_NAME);
@@ -283,6 +397,16 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         return Futures.immediateFuture(RpcResultBuilder.<ResumeAkkaTrafficOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
+    /**
+     * Returns a canned response containing the identifier for this
+     * controller's site.
+     *
+     * @param input request body adhering to the model for
+     *        {@code SiteIdentifierInput}
+     * @return response adhering to the model for {@code SiteIdentifierOutput}
+     * @see SiteIdentifierInput
+     * @see SiteIdentifierOutput
+     */
     @Override
     public ListenableFuture<RpcResult<SiteIdentifierOutput>> siteIdentifier(SiteIdentifierInput input) {
         log.info("{}:site-identifier invoked.", APP_NAME);
@@ -290,72 +414,50 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         outputBuilder.setStatus("200");
         outputBuilder.setId(siteIdentifier);
         outputBuilder.setServedBy(member);
-
         return Futures.immediateFuture(RpcResultBuilder.<SiteIdentifierOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
+    /**
+     * Makes a call to {@code resolver.tryFailover()} to try a failover defined
+     * by the active {@code HealthResolver}.
+     *
+     * @param input request body adhering to the model for
+     *        {@code FailoverInput}
+     * @return response adhering to the model for {@code FailoverOutput}
+     * @see HealthResolver
+     * @see FailoverInput
+     * @see FailoverOutput
+     */
     @Override
     public ListenableFuture<RpcResult<FailoverOutput>> failover(FailoverInput input) {
         log.info("{}:failover invoked.", APP_NAME);
         FailoverOutputBuilder outputBuilder = new FailoverOutputBuilder();
+        FailoverStatus failoverStatus = resolver.tryFailover(input);
         outputBuilder.setServedBy(member);
-        if(siteConfiguration != SiteConfiguration.GEO) {
-            log.info("Cannot failover non-GEO site.");
-            outputBuilder.setMessage("Failover aborted. This is not a GEO configuration.");
-            outputBuilder.setStatus("400");
-            return Futures.immediateFuture(RpcResultBuilder.<FailoverOutput>status(true).withResult(outputBuilder.build()).build());
-        }
-        ArrayList<ClusterActor> activeSite = new ArrayList<>();
-        ArrayList<ClusterActor> standbySite = new ArrayList<>();
-
-        log.info("Performing preliminary cluster health check...");
-        // Necessary to populate all member info. Health is not used for judgement calls.
-        getControllerHealth();
-
-        log.info("Determining active site...");
-        for(Map.Entry<String, ClusterActor> entry : memberMap.entrySet()) {
-            String key = entry.getKey();
-            ClusterActor clusterActor = entry.getValue();
-            if(clusterActor.isVoting()) {
-                activeSite.add(clusterActor);
-                log.debug("Active Site member: {}", key);
-            }
-            else {
-                standbySite.add(clusterActor);
-                log.debug("Standby Site member: {}", key);
-            }
-        }
-
-        String port = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL)) ? properties.getProperty(PropertyKeys.CONTROLLER_PORT_SSL) : properties.getProperty(PropertyKeys.CONTROLLER_PORT_HTTP);
-
-        if(Boolean.parseBoolean(input.getBackupData())) {
-            backupMdSal(activeSite, port);
-        }
-
-        if(!changeClusterVoting(outputBuilder, activeSite, standbySite, port))
-            return Futures.immediateFuture(RpcResultBuilder.<FailoverOutput>status(true).withResult(outputBuilder.build()).build());
-
-        if(Boolean.parseBoolean(input.getIsolate())) {
-            isolateSiteFromCluster(activeSite, standbySite, port);
-
-            if(Boolean.parseBoolean(input.getDownUnreachable())) {
-                downUnreachableNodes(activeSite, standbySite, port);
-            }
-        }
-
-        log.info("{}:failover complete.", APP_NAME);
-
-        outputBuilder.setMessage("Failover complete.");
-        outputBuilder.setStatus("200");
+        outputBuilder.setMessage(failoverStatus.getMessage());
+        outputBuilder.setStatus(Integer.toString(failoverStatus.getStatusCode()));
+        log.info("{}:{}.", APP_NAME, failoverStatus.getMessage());
         return Futures.immediateFuture(RpcResultBuilder.<FailoverOutput>status(true).withResult(outputBuilder.build()).build());
     }
 
+    /**
+     * Performs an akka traffic isolation of the active site from the standby
+     * site in an Active/Standby architecture. Invokes the
+     * {@code halt-akka-traffic} RPC against the standby site nodes using the
+     * information of the active site nodes.
+     *
+     * @param activeSite list of nodes in the active site
+     * @param standbySite list of nodes in the standby site
+     * @param port http or https port of the controller
+     * @deprecated No longer used since the refactor to use the HealthResolver
+     *             pattern. Retained so the logic can be replicated later.
+     */
     private void isolateSiteFromCluster(ArrayList<ClusterActor> activeSite, ArrayList<ClusterActor> standbySite, String port) {
-        log.info("Halting Akka traffic...");
+        log.info("isolateSiteFromCluster(): Halting Akka traffic...");
         for(ClusterActor actor : standbySite) {
             try {
                 log.info("Halting Akka traffic for: {}", actor.getNode());
-                // Build JSON with activeSite actor Node and actor  AkkaPort
+                // Build JSON with activeSite actor Node and actor AkkaPort
                 JSONObject akkaInput = new JSONObject();
                 JSONObject inputBlock = new JSONObject();
                 JSONArray votingStateArray = new JSONArray();
@@ -368,15 +470,24 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                 }
                 inputBlock.put("node-info", votingStateArray);
                 akkaInput.put("input", inputBlock);
-                getRequestContent(httpProtocol + actor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:halt-akka-traffic", HttpMethod.POST, akkaInput.toString());
+                ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + actor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:halt-akka-traffic", ConnectionManager.HttpMethod.POST, akkaInput.toString(), "");
             } catch(IOException e) {
-                log.error("Could not halt Akka traffic for: " + actor.getNode(), e);
+                log.error("isolateSiteFromCluster(): Could not halt Akka traffic for: " + actor.getNode(), e);
             }
         }
     }
 
+    /**
+     * Invokes the down unreachable action through the Jolokia mbean API.
+     *
+     * @param activeSite list of nodes in the active site
+     * @param standbySite list of nodes in the standby site
+     * @param port http or https port of the controller
+     * @deprecated No longer used since the refactor to use the HealthResolver
+     *             pattern. Retained so the logic can be replicated later.
+     */
     private void downUnreachableNodes(ArrayList<ClusterActor> activeSite, ArrayList<ClusterActor> standbySite, String port) {
-        log.info("Setting site unreachable...");
+        log.info("downUnreachableNodes(): Setting site unreachable...");
         JSONObject jolokiaInput = new JSONObject();
         jolokiaInput.put("type", "EXEC");
         jolokiaInput.put("mbean", "akka:type=Cluster");
@@ -388,223 +499,112 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
             arguments.put("akka.tcp://opendaylight-cluster-data@" + actor.getNode() + ":" + properties.getProperty(PropertyKeys.CONTROLLER_PORT_AKKA));
         }
         jolokiaInput.put("arguments", arguments);
-        log.debug("{}", jolokiaInput);
+        log.debug("downUnreachableNodes(): {}", jolokiaInput);
         try {
-            log.info("Setting nodes unreachable");
-            getRequestContent(httpProtocol + standbySite.get(0).getNode() + ":" + port + "/jolokia", HttpMethod.POST, jolokiaInput.toString());
+            log.info("downUnreachableNodes(): Setting nodes unreachable");
+            ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + standbySite.get(0).getNode() + ":" + port + "/jolokia", ConnectionManager.HttpMethod.POST, jolokiaInput.toString(), "");
         } catch(IOException e) {
-            log.error("Error setting nodes unreachable", e);
+            log.error("downUnreachableNodes(): Error setting nodes unreachable", e);
         }
     }
 
-    private boolean changeClusterVoting(FailoverOutputBuilder outputBuilder, ArrayList<ClusterActor> activeSite, ArrayList<ClusterActor> standbySite, String port) {
-        log.info("Changing voting for all shards to standby site...");
-        try {
-            JSONObject votingInput = new JSONObject();
-            JSONObject inputBlock = new JSONObject();
-            JSONArray votingStateArray = new JSONArray();
-            JSONObject memberVotingState;
-            for(ClusterActor actor : activeSite) {
-                memberVotingState = new JSONObject();
-                memberVotingState.put("member-name", actor.getMember());
-                memberVotingState.put("voting", false);
-                votingStateArray.put(memberVotingState);
-            }
-            for(ClusterActor actor : standbySite) {
-                memberVotingState = new JSONObject();
-                memberVotingState.put("member-name", actor.getMember());
-                memberVotingState.put("voting", true);
-                votingStateArray.put(memberVotingState);
-            }
-            inputBlock.put("member-voting-state", votingStateArray);
-            votingInput.put("input", inputBlock);
-            log.debug("{}", votingInput);
-            // Change voting all shards
-            getRequestContent(httpProtocol + self.getNode() + ":" + port + "/restconf/operations/cluster-admin:change-member-voting-states-for-all-shards", HttpMethod.POST, votingInput.toString());
-        } catch(IOException e) {
-            log.error("Changing voting", e);
-            outputBuilder.setMessage("Failover aborted. Failed to change voting.");
-            outputBuilder.setStatus("500");
-            return false;
-        }
-        return true;
-    }
-
+    /**
+     * Triggers a data backup and export sequence of MD-SAL data. Invokes the
+     * {@code data-export-import:schedule-export} RPC to schedule a data export
+     * and subsequently the {@code daexim-offsite-backup:backup-data} RPC
+     * against the active site to export and backup the data. Assumes the
+     * controllers have the org.onap.ccsdk.sli.northbound.daeximoffsitebackup
+     * bundle installed.
+     *
+     * @param activeSite list of nodes in the active site
+     * @param port http or https port of the controller
+     * @deprecated No longer used since the refactor to use the HealthResolver
+     *             pattern. Retained so the logic can be replicated later.
+     */
     private void backupMdSal(ArrayList<ClusterActor> activeSite, String port) {
-        log.info("Backing up data...");
+        log.info("backupMdSal(): Backing up data...");
         try {
-            log.info("Scheduling backup for: {}", activeSite.get(0).getNode());
-            getRequestContent(httpProtocol + activeSite.get(0).getNode() + ":" + port + "/restconf/operations/data-export-import:schedule-export", HttpMethod.POST, "{ \"input\": { \"run-at\": \"30\" } }");
+            log.info("backupMdSal(): Scheduling backup for: {}", activeSite.get(0).getNode());
+            ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + activeSite.get(0).getNode() + ":" + port + "/restconf/operations/data-export-import:schedule-export", ConnectionManager.HttpMethod.POST, "{ \"input\": { \"run-at\": \"30\" } }", "");
         } catch(IOException e) {
-            log.error("Error backing up MD-SAL", e);
+            log.error("backupMdSal(): Error backing up MD-SAL", e);
         }
         for(ClusterActor actor : activeSite) {
             try {
                 // Move data offsite
-                log.info("Backing up data for: {}", actor.getNode());
-                getRequestContent(httpProtocol + actor.getNode() + ":" + port + "/restconf/operations/daexim-offsite-backup:backup-data", HttpMethod.POST);
+                log.info("backupMdSal(): Backing up data for: {}", actor.getNode());
+                ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + actor.getNode() + ":" + port + "/restconf/operations/daexim-offsite-backup:backup-data", ConnectionManager.HttpMethod.POST, null, "");
             } catch(IOException e) {
-                log.error("Error backing up data.", e);
+                log.error("backupMdSal(): Error backing up data.", e);
             }
         }
     }
 
-    private ListenableFuture<RpcResult<ClusterHealthOutput>> buildClusterHealthOutput(String statusCode) {
+    /**
+     * Builds a response object for {@code clusterHealth()}. Sorts and iterates
+     * over the contents of the {@code memberMap}, which contains the health
+     * information of the cluster, and adds them to the {@code outputBuilder}.
+     * If the ClusterActor is healthy, according to
+     * {@code resolver.isControllerHealthy()}, the {@code ClusterHealthOutput}
+     * status has a {@code 0} appended, otherwise a {@code 1} is appended. A
+     * status of all zeroes denotes a healthy cluster. This status should be
+     * easily decoded by tools which use the output.
+     *
+     * @return future containing a completed {@code ClusterHealthOutput}
+     * @see ClusterActor
+     * @see ClusterHealthOutput
+     * @see HealthResolver
+     */
+    @SuppressWarnings("unchecked")
+    private ListenableFuture<RpcResult<ClusterHealthOutput>> buildClusterHealthOutput() {
         ClusterHealthOutputBuilder outputBuilder = new ClusterHealthOutputBuilder();
-        outputBuilder.setStatus(statusCode);
-        outputBuilder.setMembers((List) new ArrayList<Member>());
-        int site1Health = 0;
-        int site2Health = 0;
-
-        for(Map.Entry<String, ClusterActor> entry : memberMap.entrySet()) {
-            ClusterActor clusterActor = entry.getValue();
-            if(clusterActor.isUp() && !clusterActor.isUnreachable()) {
-                if(ClusterActor.SITE_1.equals(clusterActor.getSite()))
-                    site1Health++;
-                else if(ClusterActor.SITE_2.equals(clusterActor.getSite()))
-                    site2Health++;
-            }
-            outputBuilder.getMembers().add(new MemberBuilder(clusterActor).build());
-        }
-        if(siteConfiguration == SiteConfiguration.SOLO) {
-            outputBuilder.setSite1Health(HEALTHY);
-        }
-        else if(site1Health > 1) {
-            outputBuilder.setSite1Health(HEALTHY);
-        }
-        else {
-            outputBuilder.setSite1Health(FAULTY);
-        }
-
-        if(siteConfiguration == SiteConfiguration.GEO && site2Health > 1) {
-            outputBuilder.setSite2Health(HEALTHY);
-        }
-        else if(siteConfiguration == SiteConfiguration.GEO) {
-            outputBuilder.setSite2Health(FAULTY);
-        }
-
         outputBuilder.setServedBy(member);
+        List memberList = new ArrayList<Member>();
+        StringBuilder stat = new StringBuilder();
+        memberMap.values()
+                .stream()
+                .sorted(Comparator.comparingInt(member -> Integer.parseInt(member.getMember().split("-")[1])))
+                .forEach(member -> {
+                    memberList.add(new MemberBuilder(member).build());
+                    // 0 is a healthy controller, 1 is unhealthy.
+                    // The list is sorted so users can decode to find unhealthy nodes
+                    // This will also let them figure out health on a per-site basis
+                    // Depending on any tools they use with this API
+                    if(resolver.isControllerHealthy(member)) {
+                        stat.append("0");
+                    } else {
+                        stat.append("1");
+                    }
+                });
+        outputBuilder.setStatus(stat.toString());
+        outputBuilder.setMembers(memberList);
         RpcResult<ClusterHealthOutput> rpcResult = RpcResultBuilder.<ClusterHealthOutput>status(true).withResult(outputBuilder.build()).build();
-        log.info("{}:cluster-health: Site 1 | Healthy ODLs {}", APP_NAME, site1Health);
-        if(siteConfiguration == SiteConfiguration.GEO) {
-            log.info("{}:cluster-health: Site 2 | Healthy ODLs {}", APP_NAME, site2Health);
-        }
         return Futures.immediateFuture(rpcResult);
     }
 
-    private ListenableFuture<RpcResult<SiteHealthOutput>> buildSiteHealthOutput(String statusCode, String adminHealth, String databaseHealth) {
+    /**
+     * Builds a response object for {@code siteHealth()}. Iterates over a list
+     * of {@code SiteHealth} objects and populates the {@code SiteHealthOutput}
+     * with the information.
+     *
+     * @param sites list of sites
+     * @return future containing a completed {@code SiteHealthOutput}
+     * @see SiteHealth
+     * @see HealthResolver
+     */
+    @SuppressWarnings("unchecked")
+    private ListenableFuture<RpcResult<SiteHealthOutput>> buildSiteHealthOutput(List<SiteHealth> sites) {
         SiteHealthOutputBuilder outputBuilder = new SiteHealthOutputBuilder();
-        outputBuilder.setStatus(statusCode);
+        SitesBuilder siteBuilder = new SitesBuilder();
+        outputBuilder.setStatus("200");
         outputBuilder.setSites((List) new ArrayList<Site>());
 
-        if(siteConfiguration != SiteConfiguration.GEO) {
-            int healthyODLs = 0;
-            SitesBuilder builder = new SitesBuilder();
-            for(Map.Entry<String, ClusterActor> entry : memberMap.entrySet()) {
-                ClusterActor clusterActor = entry.getValue();
-                if(clusterActor.isUp() && !clusterActor.isUnreachable()) {
-                    healthyODLs++;
-                }
-            }
-            if(siteConfiguration != SiteConfiguration.SOLO) {
-                builder.setHealth(HEALTHY);
-                builder.setRole("ACTIVE");
-                builder.setId(siteIdentifier);
-            }
-            else {
-                builder = getSitesBuilder(healthyODLs, true, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth), siteIdentifier);
-            }
-            outputBuilder.getSites().add(builder.build());
-        }
-        else {
-            int site1HealthyODLs = 0;
-            int site2HealthyODLs = 0;
-            boolean site1Voting = false;
-            boolean site2Voting = false;
-            boolean performedCrossSiteHealthCheck = false;
-            boolean crossSiteAdminHealthy = false;
-            boolean crossSiteDbHealthy = false;
-            String crossSiteIdentifier = "UNKNOWN_SITE";
-            String port = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL)) ? properties.getProperty(PropertyKeys.CONTROLLER_PORT_SSL) : properties.getProperty(PropertyKeys.CONTROLLER_PORT_HTTP);
-            if(isSite1()) {
-                // Make calls over to site 2 healthchecks
-                for(Map.Entry<String, ClusterActor> entry : memberMap.entrySet()) {
-                    ClusterActor clusterActor = entry.getValue();
-                    if(clusterActor.isUp() && !clusterActor.isUnreachable()) {
-                        if(ClusterActor.SITE_1.equals(clusterActor.getSite())) {
-                            site1HealthyODLs++;
-                            if(clusterActor.isVoting()) {
-                                site1Voting = true;
-                            }
-                        }
-                        else {
-                            site2HealthyODLs++;
-                            if(clusterActor.isVoting()) {
-                                site2Voting = true;
-                            }
-                            if(!performedCrossSiteHealthCheck) {
-                                try {
-                                    String content = getRequestContent(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:site-identifier", HttpMethod.POST);
-                                    crossSiteIdentifier = new JSONObject(content).getJSONObject(OUTPUT).getString("id");
-                                    crossSiteDbHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:database-health");
-                                    crossSiteAdminHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:admin-health");
-                                    performedCrossSiteHealthCheck = true;
-                                } catch(Exception e) {
-                                    log.info("Cannot get cross site health from {}", clusterActor.getNode());
-                                    log.info("siteIdentifier: {} | dbHealth: {} | adminHealth: {}", crossSiteIdentifier, crossSiteDbHealthy, crossSiteAdminHealthy);
-                                    log.error("Site Health Error", e);
-                                }
-                            }
-                        }
-                    }
-                }
-                SitesBuilder builder = getSitesBuilder(site1HealthyODLs, site1Voting, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth), siteIdentifier);
-                outputBuilder.getSites().add(builder.build());
-                builder = getSitesBuilder(site2HealthyODLs, site2Voting, crossSiteAdminHealthy, crossSiteDbHealthy, crossSiteIdentifier);
-                outputBuilder.getSites().add(builder.build());
-                log.info("{}:site-health: Site 1 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, siteIdentifier, site1Voting, site1HealthyODLs, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth));
-                log.info("{}:site-health: Site 2 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, crossSiteIdentifier, site2Voting, site2HealthyODLs, crossSiteAdminHealthy, crossSiteDbHealthy);
-            }
-            else {
-                // Make calls over to site 1 healthchecks
-                for(Map.Entry<String, ClusterActor> entry : memberMap.entrySet()) {
-                    ClusterActor clusterActor = entry.getValue();
-                    if(clusterActor.isUp() && !clusterActor.isUnreachable()) {
-                        if(ClusterActor.SITE_1.equals(clusterActor.getSite())) {
-                            site1HealthyODLs++;
-                            if(clusterActor.isVoting()) {
-                                site1Voting = true;
-                            }
-                            if(!performedCrossSiteHealthCheck) {
-                                try {
-                                    String content = getRequestContent(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:site-identifier", HttpMethod.POST);
-                                    crossSiteIdentifier = new JSONObject(content).getJSONObject(OUTPUT).getString("id");
-                                    crossSiteDbHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:database-health");
-                                    crossSiteAdminHealthy = crossSiteHealthRequest(httpProtocol + clusterActor.getNode() + ":" + port + "/restconf/operations/gr-toolkit:admin-health");
-                                    performedCrossSiteHealthCheck = true;
-                                } catch(Exception e) {
-                                    log.info("Cannot get cross site health from {}", clusterActor.getNode());
-                                    log.info("siteIdentifier: {} | dbHealth: {} | adminHealth: {}", crossSiteIdentifier, crossSiteDbHealthy, crossSiteAdminHealthy);
-                                    log.error("Site Health Error", e);
-                                }
-                            }
-                        }
-                        else {
-                            site2HealthyODLs++;
-                            if(clusterActor.isVoting()) {
-                                site2Voting = true;
-                            }
-                        }
-                    }
-                }
-                // Build Output
-                SitesBuilder builder = getSitesBuilder(site1HealthyODLs, site1Voting, crossSiteAdminHealthy, crossSiteDbHealthy, crossSiteIdentifier);
-                outputBuilder.getSites().add(builder.build());
-                builder = getSitesBuilder(site2HealthyODLs, site2Voting, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth), siteIdentifier);
-                outputBuilder.getSites().add(builder.build());
-                log.info("{}:site-health: Site 1 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, siteIdentifier, site1Voting, site1HealthyODLs, HEALTHY.equals(adminHealth), HEALTHY.equals(databaseHealth));
-                log.info("{}:site-health: Site 2 ({}) | hasVotingMembers?: {} | Healthy ODLs: {} | ADM isHealthy?: {} | DB isHealthy?: {}", APP_NAME, crossSiteIdentifier, site2Voting, site2HealthyODLs, crossSiteAdminHealthy, crossSiteDbHealthy);
-            }
+        for(SiteHealth site : sites) {
+            siteBuilder.setHealth(site.getHealth().toString());
+            siteBuilder.setRole(site.getRole());
+            siteBuilder.setId(site.getId());
+            outputBuilder.getSites().add(siteBuilder.build());
+            log.info("buildSiteHealthOutput(): Health for {}: {}", site.getId(), site.getHealth().getHealth());
         }
 
         outputBuilder.setServedBy(member);
@@ -612,40 +612,21 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         return Futures.immediateFuture(rpcResult);
     }
 
-    private SitesBuilder getSitesBuilder(int siteHealthyODLs, boolean siteVoting, boolean adminHealthy, boolean dbHealthy, String siteIdentifier) {
-        SitesBuilder builder = new SitesBuilder();
-        if(siteHealthyODLs > 1) {
-            builder.setHealth(HEALTHY);
-        }
-        else {
-            log.warn("{} Healthy ODLs: {}", siteIdentifier, siteHealthyODLs);
-            builder.setHealth(FAULTY);
-        }
-        if(!adminHealthy) {
-            log.warn("{} Admin Health: {}", siteIdentifier, FAULTY);
-            builder.setHealth(FAULTY);
-        }
-        if(!dbHealthy) {
-            log.warn("{} Database Health: {}", siteIdentifier, FAULTY);
-            builder.setHealth(FAULTY);
-        }
-        if(siteVoting) {
-            builder.setRole("ACTIVE");
-        }
-        else {
-            builder.setRole("STANDBY");
-        }
-        builder.setId(siteIdentifier);
-        return builder;
-    }
-
-    private boolean isSite1() {
-        int memberNumber = Integer.parseInt(member.split("-")[1]);
-        boolean isSite1 = memberNumber < 4;
-        log.info("isSite1(): {}", isSite1);
-        return isSite1;
-    }
-
+    /**
+     * Parses a line containing the akka networking information of the akka
+     * controller cluster. Assumes entries of the format:
+     * <p>
+     * akka.tcp://opendaylight-cluster-data@<FQDN>:<AKKA_PORT>
+     * <p>
+     * The information is stored in a {@code ClusterActor} object, and then
+     * added to the memberMap HashMap, with the {@code FQDN} as the key. The
+     * final step is a call to {@code createHealthResolver} to create the
+     * health resolver for the provider.
+     *
+     * @param line the line containing all of the seed nodes
+     * @see ClusterActor
+     * @see HealthResolver
+     */
     private void parseSeedNodes(String line) {
         memberMap = new HashMap<>();
         line = line.substring(line.indexOf("[\""), line.indexOf(']'));
@@ -656,156 +637,105 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
             int delimLocation = nodeName.indexOf('@');
             String port = nodeName.substring(splits[ndx].indexOf(':', delimLocation) + 1, splits[ndx].indexOf('"', splits[ndx].indexOf(':')));
             splits[ndx] = nodeName.substring(delimLocation + 1, splits[ndx].indexOf(':', delimLocation));
-            log.info("Adding node: {}:{}", splits[ndx], port);
+            log.info("parseSeedNodes(): Adding node: {}:{}", splits[ndx], port);
             ClusterActor clusterActor = new ClusterActor();
             clusterActor.setNode(splits[ndx]);
             clusterActor.setAkkaPort(port);
             clusterActor.setMember("member-" + (ndx + 1));
-            if(ndx < 3) {
-                clusterActor.setSite(ClusterActor.SITE_1);
-            }
-            else {
-                clusterActor.setSite(ClusterActor.SITE_2);
-            }
-
             if(member.equals(clusterActor.getMember())) {
                 self = clusterActor;
             }
             memberMap.put(clusterActor.getNode(), clusterActor);
-            log.info("{}", clusterActor);
+            log.info("parseSeedNodes(): {}", clusterActor);
         }
 
-        if(memberMap.size() == 1) {
-            log.info("1 member found. This is a solo environment.");
-            siteConfiguration = SiteConfiguration.SOLO;
-        }
-        else if(memberMap.size() == 3) {
-            log.info("This is a single site.");
-            siteConfiguration = SiteConfiguration.SINGLE;
-        }
-        else if(memberMap.size() == 6) {
-            log.info("This is a georedundant site.");
-            siteConfiguration = SiteConfiguration.GEO;
-        }
+        createHealthResolver();
     }
 
-    private void getMemberStatus(ClusterActor clusterActor) throws IOException {
-        log.info("Getting member status for {}", clusterActor.getNode());
-        String content = getRequestContent(httpProtocol + clusterActor.getNode() + jolokiaClusterPath, HttpMethod.GET);
+    /**
+     * Creates the specific health resolver requested by the user, as specified
+     * in the gr-toolkit.properties file. If a resolver is not specified, or
+     * there is an issue creating the resolver, it will use a fallback resolver
+     * based on how many nodes are added to the memberMap HashMap.
+     *
+     * @see HealthResolver
+     * @see SingleNodeHealthResolver
+     * @see ThreeNodeHealthResolver
+     * @see SixNodeHealthResolver
+     */
+    private void createHealthResolver() {
+        log.info("createHealthResolver(): Creating health resolver...");
         try {
-            JSONObject responseJson = new JSONObject(content);
-            JSONObject responseValue = responseJson.getJSONObject(VALUE);
-            clusterActor.setUp("Up".equals(responseValue.getString("MemberStatus")));
-            clusterActor.setUnreachable(false);
-        } catch(JSONException e) {
-            log.error("Error parsing response from {}", clusterActor.getNode(), e);
-            clusterActor.setUp(false);
-            clusterActor.setUnreachable(true);
-        }
-    }
-
-    private void getShardStatus(ClusterActor clusterActor) throws IOException {
-        log.info("Getting shard status for {}", clusterActor.getNode());
-        String content = getRequestContent(httpProtocol + clusterActor.getNode() + shardManagerPath, HttpMethod.GET);
-        try {
-            JSONObject responseValue = new JSONObject(content).getJSONObject(VALUE);
-            JSONArray shardList = responseValue.getJSONArray("LocalShards");
-
-            String pattern = "-config$";
-            Pattern r = Pattern.compile(pattern);
-            Matcher m;
-            for(int ndx = 0; ndx < shardList.length(); ndx++) {
-                String configShardName = shardList.getString(ndx);
-                m = r.matcher(configShardName);
-                String operationalShardName = m.replaceFirst("-operational");
-                String shardConfigPath = String.format(shardPathTemplate, configShardName);
-                String shardOperationalPath = String.format(shardPathTemplate, operationalShardName).replace("Config", "Operational");
-                extractShardInfo(clusterActor, configShardName, shardConfigPath);
-                extractShardInfo(clusterActor, operationalShardName, shardOperationalPath);
+            Class resolverClass = null;
+            String userDefinedResolver = properties.getProperty(PropertyKeys.RESOLVER);
+            if(StringUtils.isEmpty(userDefinedResolver)) {
+                throw new InstantiationException();
             }
-        } catch(JSONException e) {
-            log.error("Error parsing response from " + clusterActor.getNode(), e);
-        }
-    }
-
-    private void extractShardInfo(ClusterActor clusterActor, String shardName, String shardPath) throws IOException {
-        log.info("Extracting shard info for {}", shardName);
-        log.debug("Pulling config info for {} from: {}", shardName, shardPath);
-        String content = getRequestContent(httpProtocol + clusterActor.getNode() + shardPath, HttpMethod.GET);
-        log.debug("Response: {}", content);
-
-        try {
-            JSONObject shardValue = new JSONObject(content).getJSONObject(VALUE);
-            clusterActor.setVoting(shardValue.getBoolean("Voting"));
-            if(shardValue.getString("PeerAddresses").length() > 0) {
-                clusterActor.getReplicaShards().add(shardName);
-                if(shardValue.getString("Leader").startsWith(clusterActor.getMember())) {
-                    clusterActor.getShardLeader().add(shardName);
-                }
-            }
-            else {
-                clusterActor.getNonReplicaShards().add(shardName);
-            }
-            JSONArray followerInfo = shardValue.getJSONArray("FollowerInfo");
-            for(int followerNdx = 0; followerNdx < followerInfo.length(); followerNdx++) {
-                int commitIndex = shardValue.getInt("CommitIndex");
-                int matchIndex = followerInfo.getJSONObject(followerNdx).getInt("matchIndex");
-                if(commitIndex != -1 && matchIndex != -1) {
-                    int commitsBehind = commitIndex - matchIndex;
-                    clusterActor.getCommits().put(followerInfo.getJSONObject(followerNdx).getString("id"), commitsBehind);
-                }
-            }
-        } catch(JSONException e) {
-            log.error("Error parsing response from " + clusterActor.getNode(), e);
-        }
-    }
-
-    private void getControllerHealth() {
-        for(Map.Entry<String, ClusterActor> entry : memberMap.entrySet()) {
-            ClusterActor clusterActor = entry.getValue();
-            String key = entry.getKey();
-            try {
-                // First flush out the old values
-                clusterActor.flush();
-                log.info("Gathering info for {}", clusterActor.getNode());
-                getMemberStatus(clusterActor);
-                getShardStatus(clusterActor);
-                log.info("MemberInfo:\n{}", clusterActor);
-            } catch(IOException e) {
-                log.error("Connection Error", e);
-                memberMap.get(key).setUnreachable(true);
-                memberMap.get(key).setUp(false);
-                log.info("MemberInfo:\n{}", memberMap.get(key));
+            resolverClass = Class.forName(userDefinedResolver);
+            Class[] types = { Map.class , properties.getClass(), DbLibService.class };
+            Constructor<HealthResolver> constructor = resolverClass.getConstructor(types);
+            Object[] parameters = { memberMap, properties, dbLib };
+            resolver = constructor.newInstance(parameters);
+            log.info("createHealthResolver(): Created resolver from name {}", resolver.toString());
+        } catch(ClassNotFoundException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            log.warn("createHealthResolver(): Could not create user defined resolver", e);
+            if(memberMap.size() == 1) {
+                log.info("createHealthResolver(): FALLBACK: Initializing SingleNodeHealthResolver...");
+                resolver  = new SingleNodeHealthResolver(memberMap, properties, dbLib);
+            } else if(memberMap.size() == 3) {
+                log.info("createHealthResolver(): FALLBACK: Initializing ThreeNodeHealthResolver...");
+                resolver  = new ThreeNodeHealthResolver(memberMap, properties, dbLib);
+            } else if(memberMap.size() == 6) {
+                log.info("createHealthResolver(): FALLBACK: Initializing SixNodeHealthResolver...");
+                resolver  = new SixNodeHealthResolver(memberMap, properties, dbLib);
             }
         }
     }
 
+    /**
+     * Adds or drops IPTables rules to block or resume akka traffic for a node
+     * in the akka cluster. Assumes that the user or group that the controller
+     * is run as has the ability to run sudo /sbin/iptables without requiring a
+     * password. This method will run indefinitely if that assumption is not
+     * correct. This method does not check to see if any rules around the node
+     * are preexisting, so multiple uses will result in multiple additions and
+     * removals from IPTables.
+     *
+     * @param task the operation to be performed against IPTables
+     * @param nodeInfo array containing the nodes to be added or dropped from
+     *                 IPTables
+     */
     private void modifyIpTables(IpTables task, Object[] nodeInfo) {
-        log.info("Modifying IPTables rules...");
+        log.info("modifyIpTables(): Modifying IPTables rules...");
         if(task == IpTables.ADD) {
             for(Object node : nodeInfo) {
                 org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.halt.akka.traffic.input.NodeInfo n =
                         (org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.halt.akka.traffic.input.NodeInfo) node;
-                log.info("Isolating {}", n.getNode());
+                log.info("modifyIpTables(): Isolating {}", n.getNode());
                 executeCommand(String.format("sudo /sbin/iptables -A INPUT -p tcp --destination-port %s -j DROP -s %s", properties.get(PropertyKeys.CONTROLLER_PORT_AKKA), n.getNode()));
                 executeCommand(String.format("sudo /sbin/iptables -A OUTPUT -p tcp --destination-port %s -j DROP -d %s", n.getPort(), n.getNode()));
             }
-
         } else if(task == IpTables.DELETE) {
             for(Object node : nodeInfo) {
                 org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.resume.akka.traffic.input.NodeInfo n =
                         (org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.plugins.gr.toolkit.rev180926.resume.akka.traffic.input.NodeInfo) node;
-                log.info("De-isolating {}", n.getNode());
+                log.info("modifyIpTables(): De-isolating {}", n.getNode());
                 executeCommand(String.format("sudo /sbin/iptables -D INPUT -p tcp --destination-port %s -j DROP -s %s", properties.get(PropertyKeys.CONTROLLER_PORT_AKKA), n.getNode()));
                 executeCommand(String.format("sudo /sbin/iptables -D OUTPUT -p tcp --destination-port %s -j DROP -d %s", n.getPort(), n.getNode()));
             }
-
         }
-        executeCommand("sudo /sbin/iptables -L");
+        if(nodeInfo.length > 0) {
+            executeCommand("sudo /sbin/iptables -L");
+        }
     }
 
+    /**
+     * Opens a shell session and executes a command.
+     *
+     * @param command the shell command to execute
+     */
     private void executeCommand(String command) {
-        log.info("Executing command: {}", command);
+        log.info("executeCommand(): Executing command: {}", command);
         String[] cmd = command.split(" ");
         try {
             Process p = Runtime.getRuntime().exec(cmd);
@@ -816,174 +746,17 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                 content.append(inputLine);
             }
             bufferedReader.close();
-            log.info("{}", content);
+            log.info("executeCommand(): {}", content);
         } catch(IOException e) {
-            log.error("Error executing command", e);
+            log.error("executeCommand(): Error executing command", e);
         }
     }
 
-    private boolean crossSiteHealthRequest(String path) throws IOException {
-        String content = getRequestContent(path, HttpMethod.POST);
-        try {
-            JSONObject responseJson = new JSONObject(content);
-            JSONObject responseValue = responseJson.getJSONObject(OUTPUT);
-            return HEALTHY.equals(responseValue.getString("health"));
-        } catch(JSONException e) {
-            log.error("Error parsing JSON", e);
-            throw new IOException();
-        }
-    }
-
-    private String getAdminHealth() {
-        String protocol = "true".equals(properties.getProperty(PropertyKeys.ADM_USE_SSL)) ? "https://" : "http://";
-        String port = "true".equals(properties.getProperty(PropertyKeys.ADM_USE_SSL)) ? properties.getProperty(PropertyKeys.ADM_PORT_SSL) : properties.getProperty(PropertyKeys.ADM_PORT_HTTP);
-        String path = protocol + properties.getProperty(PropertyKeys.ADM_FQDN) + ":" + port + properties.getProperty(PropertyKeys.ADM_HEALTHCHECK);
-        log.info("Requesting healthcheck from {}", path);
-        try {
-            int response = getRequestStatus(path, HttpMethod.GET);
-            log.info("Response: {}", response);
-            if(response == 200)
-                return HEALTHY;
-            return FAULTY;
-        } catch(IOException e) {
-            log.error("Problem getting ADM health.", e);
-            return FAULTY;
-        }
-    }
-
-    private String getDatabaseHealth() {
-        log.info("Determining database health...");
-        try {
-            Connection connection = dbLib.getConnection();
-            log.debug("DBLib isActive(): {}", dbLib.isActive());
-            log.debug("DBLib isReadOnly(): {}", connection.isReadOnly());
-            log.debug("DBLib isClosed(): {}", connection.isClosed());
-            if(!dbLib.isActive() || connection.isClosed() || connection.isReadOnly()) {
-                log.warn("Database is FAULTY");
-                connection.close();
-                return FAULTY;
-            }
-            connection.close();
-            log.info("Database is HEALTHY");
-        } catch(SQLException e) {
-            log.error("Database is FAULTY");
-            log.error("Error", e);
-            return FAULTY;
-        }
-
-        return HEALTHY;
-    }
-
-    private String getRequestContent(String path, HttpMethod method) throws IOException {
-        return getRequestContent(path, method, null);
-    }
-
-    private String getRequestContent(String path, HttpMethod method, String input) throws IOException {
-        HttpURLConnection connection = getConnection(path);
-        connection.setRequestMethod(method.getMethod());
-        connection.setDoInput(true);
-
-        if(input != null) {
-            sendPayload(input, connection);
-        }
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while((inputLine = bufferedReader.readLine()) != null) {
-            content.append(inputLine);
-        }
-        bufferedReader.close();
-        connection.disconnect();
-
-        String response = content.toString();
-        log.debug("getRequestContent(): Response:\n{}", response);
-        return response;
-    }
-
-    private int getRequestStatus(String path, HttpMethod method) throws IOException {
-        return getRequestStatus(path, method, null);
-    }
-
-    private int getRequestStatus(String path, HttpMethod method, String input) throws IOException {
-        HttpURLConnection connection = getConnection(path);
-        connection.setRequestMethod(method.getMethod());
-        connection.setDoInput(true);
-
-        if(input != null) {
-            sendPayload(input, connection);
-        }
-        int response = connection.getResponseCode();
-        log.info("Received {} response code from {}", response, path);
-        connection.disconnect();
-        return response;
-    }
-
-    private void sendPayload(String input, HttpURLConnection connection) throws IOException {
-        byte[] out = input.getBytes(StandardCharsets.UTF_8);
-        int length = out.length;
-
-        connection.setFixedLengthStreamingMode(length);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
-        connection.connect();
-        try(OutputStream os = connection.getOutputStream()) {
-            os.write(out);
-        }
-    }
-
-    private HttpURLConnection getConnection(String host) throws IOException {
-        log.info("Getting connection to: {}", host);
-        URL url = new URL(host);
-        String auth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(credentials.getBytes());
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.addRequestProperty("Authorization", auth);
-        connection.setRequestProperty("Connection", "keep-alive");
-        connection.setRequestProperty("Proxy-Connection", "keep-alive");
-        connection.setConnectTimeout(CONNECTION_TIMEOUT);
-        connection.setReadTimeout(CONNECTION_TIMEOUT);
-        return connection;
-    }
-
+    /**
+     * The IPTables operations this module can perform.
+     */
     enum IpTables {
         ADD,
         DELETE
-    }
-
-    enum SiteConfiguration {
-        SOLO,
-        SINGLE,
-        GEO
-    }
-
-    enum HttpMethod {
-        GET("GET"),
-        POST("POST");
-
-        private String method;
-        HttpMethod(String method) {
-            this.method = method;
-        }
-        public String getMethod() {
-            return method;
-        }
-    }
-
-    class PropertyKeys {
-        static final String SITE_IDENTIFIER = "site.identifier";
-        static final String CONTROLLER_USE_SSL = "controller.useSsl";
-        static final String CONTROLLER_PORT_SSL = "controller.port.ssl";
-        static final String CONTROLLER_PORT_HTTP = "controller.port.http";
-        static final String CONTROLLER_PORT_AKKA = "controller.port.akka";
-        static final String CONTROLLER_CREDENTIALS = "controller.credentials";
-        static final String AKKA_CONF_LOCATION = "akka.conf.location";
-        static final String MBEAN_CLUSTER = "mbean.cluster";
-        static final String MBEAN_SHARD_MANAGER  = "mbean.shardManager";
-        static final String MBEAN_SHARD_CONFIG = "mbean.shard.config";
-        static final String ADM_USE_SSL = "adm.useSsl";
-        static final String ADM_PORT_SSL = "adm.port.ssl";
-        static final String ADM_PORT_HTTP = "adm.port.http";
-        static final String ADM_FQDN = "adm.fqdn";
-        static final String ADM_HEALTHCHECK= "adm.healthcheck";
     }
 }
