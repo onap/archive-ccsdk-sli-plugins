@@ -19,20 +19,12 @@
 
     <modules>
         <module>model</module>
-        <module>features</module>
         <module>installer</module>
         <module>provider</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.onap.ccsdk.sli.plugins</groupId>
-                <artifactId>gr-toolkit-features</artifactId>
-                <classifier>features</classifier>
-                <type>xml</type>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.onap.ccsdk.sli.plugins</groupId>
                 <artifactId>gr-toolkit-model</artifactId>

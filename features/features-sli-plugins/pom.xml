@@ -18,6 +18,45 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.onap.ccsdk.sli.plugins</groupId>
+            <artifactId>ccsdk-gr-toolkit</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.ccsdk.sli.plugins</groupId>
+            <artifactId>ccsdk-properties-node</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.ccsdk.sli.plugins</groupId>
+            <artifactId>ccsdk-restapi-call-node</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ccsdk-sli-plugins-all</artifactId>
             <version>${project.version}</version>
