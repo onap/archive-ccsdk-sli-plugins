@@ -29,15 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ResourceConfig;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
-import org.onap.ccsdk.sli.plugins.restapicall.RestapiCallNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +41,11 @@ public class TestRestapiCallNode {
 
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(TestRestapiCallNode.class);
+
+    @Before
+    public void init() {
+        System.setProperty("SDNC_CONFIG_DIR", "src/test/resources");
+    }
 
     @Test
     public void testDelete() throws SvcLogicException {
@@ -476,7 +477,7 @@ public class TestRestapiCallNode {
         assertEquals(partnerTwoUsername,details.username);
         assertEquals(partnerTwoPassword,details.password);
         assertNull(rcn.partnerStore.get("partnerThree"));
-        
+
         //In this scenario the caller expects username, password and url to be picked up from the partners json
         Map<String, String> paramMap = new HashMap<String,String>();
         paramMap.put("partner", partnerTwoKey);
@@ -497,7 +498,7 @@ public class TestRestapiCallNode {
         assertEquals(partnerTwoPassword,p.restapiPassword);
         assertEquals("http://localhost:7002/networking/v1/instance/3",p.restapiUrl);
     }
-    
+
     @Test
     public void retryPolicyBean() throws Exception {
 	Integer retries = 3;

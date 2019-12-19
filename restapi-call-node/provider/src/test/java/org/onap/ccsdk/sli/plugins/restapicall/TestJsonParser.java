@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,14 +68,7 @@ public class TestJsonParser {
         String path = "src/test/resources/ArrayMenu.json";
         String content = new String(Files.readAllBytes(Paths.get(path)));
         Map<String, String> mm = JsonParser.convertToProperties(content);
-        assertEquals("plain", mm.get("name"));
-        assertEquals("true", mm.get("vegetarian"));
-        assertEquals("1", mm.get("id"));
-        assertEquals("1000", mm.get("calories"));
-        assertEquals("pizza", mm.get("type"));
 
-        // The below statements are how I expected it to work, but it does not work this way
-/*
         assertEquals("1000", mm.get("[0].calories"));
         assertEquals("1", mm.get("[0].id"));
         assertEquals("plain", mm.get("[0].name"));
@@ -104,7 +97,6 @@ public class TestJsonParser {
         assertEquals("pizza", mm.get("[2].type"));
         assertEquals("true", mm.get("[2].vegetarian"));
         assertEquals("3", mm.get("_length"));
-*/
     }
 
     @Test
@@ -222,8 +214,8 @@ public class TestJsonParser {
 
         // Break the embedded json object into properties
         mm = JsonParser.convertToProperties(mm.get("input.parameters[0].value"));
-        assertEquals("0.2.0.0/16", mm.get("id"));
-        // assertEquals("ge04::/64", mm.get("id")); this second value gets lost
+        assertEquals("0.2.0.0/16", mm.get("[0].id"));
+        assertEquals("ge04::/64", mm.get("[1].id"));
     }
 
 }

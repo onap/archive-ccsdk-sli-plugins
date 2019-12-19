@@ -10,7 +10,7 @@
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,19 +21,18 @@
 
 package org.onap.ccsdk.sli.plugins.restapicall;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class JsonParser {
 
@@ -45,34 +44,51 @@ public final class JsonParser {
 
     @SuppressWarnings("unchecked")
     public static Map<String, String> convertToProperties(String s)
-        throws SvcLogicException {
+            throws SvcLogicException {
 
         checkNotNull(s, "Input should not be null.");
 
         try {
-            JSONObject json = null;
+            Map<String, Object> wm = new HashMap<>();
+            String topLvlArrLength = null;
+            JSONObject json;
+            JSONArray jsonArr;
             //support top level list in json response
             if (s.startsWith("[")) {
-                JSONArray jsonArr = new JSONArray(s);
-                json = jsonArr.getJSONObject(0);
+                jsonArr = new JSONArray(s);
+                topLvlArrLength = String.valueOf(jsonArr.length());
+                for (int i = 0, length = jsonArr.length(); i < length; i++) {
+                    json = jsonArr.getJSONObject(i);
+                    Iterator<String> ii = json.keys();
+                    while (ii.hasNext()) {
+                        String key = ii.next();
+                        String key1 = "[" + i + "]." + key;
+                        String[] subKey = key1.split(":");
+                        if (subKey.length == 2) {
+                            wm.put(subKey[1], json.get(key));
+                        } else {
+                            wm.put(key1, json.get(key));
+                        }
+                    }
+                }
             } else {
                 json = new JSONObject(s);
-            }
-
-            Map<String, Object> wm = new HashMap<>();
-            Iterator<String> ii = json.keys();
-            while (ii.hasNext()) {
-                String key1 = ii.next();
-                String[] subKey = key1.split(":");
-                if (subKey.length == 2) {
-                    wm.put(subKey[1], json.get(key1));
-                } else {
-                    wm.put(key1, json.get(key1));
+                Iterator<String> ii = json.keys();
+                while (ii.hasNext()) {
+                    String key1 = ii.next();
+                    String[] subKey = key1.split(":");
+                    if (subKey.length == 2) {
+                        wm.put(subKey[1], json.get(key1));
+                    } else {
+                        wm.put(key1, json.get(key1));
+                    }
                 }
             }
 
             Map<String, String> mm = new HashMap<>();
-
+            if (topLvlArrLength != null) {
+                mm.put("_length", topLvlArrLength);
+            }
             while (!wm.isEmpty()) {
                 for (String key : new ArrayList<>(wm.keySet())) {
                     Object o = wm.get(key);
@@ -111,4 +127,5 @@ public final class JsonParser {
             throw new SvcLogicException("Unable to convert JSON to properties" + e.getLocalizedMessage(), e);
         }
     }
+
 }
