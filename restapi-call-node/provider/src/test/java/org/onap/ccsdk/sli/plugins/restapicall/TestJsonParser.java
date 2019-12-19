@@ -134,7 +134,7 @@ public class TestJsonParser {
         assertEquals("3", mm.get("menu_length"));
     }
 
-    @Test(expected = SvcLogicException.class) // current behavior is multidimensional arrays are not supported
+    @Test
     public void test2dJsonStringToCtx() throws Exception {
         String path = "src/test/resources/2dArray.json";
         String content = new String(Files.readAllBytes(Paths.get(path)));
@@ -145,6 +145,7 @@ public class TestJsonParser {
         assertEquals("orange", mm.get("[0][1]"));
         assertEquals("banana", mm.get("[0][2]"));
         assertEquals("3", mm.get("[0]_length"));
+
         assertEquals("squash", mm.get("[1][0]"));
         assertEquals("broccoli", mm.get("[1][1]"));
         assertEquals("cauliflower", mm.get("[1][2]"));
@@ -152,28 +153,48 @@ public class TestJsonParser {
         assertEquals("2", mm.get("_length"));
     }
 
-    @Test(expected = SvcLogicException.class) // current behavior is multidimensional arrays are not supported
+    @Test
     public void test3dJsonStringToCtx() throws Exception {
         String path = "src/test/resources/3dArray.json";
         String content = new String(Files.readAllBytes(Paths.get(path)));
         Map<String, String> mm = JsonParser.convertToProperties(content);
 
-        // code will crash before these tests
-        assertEquals("a", mm.get("[0][0][0]"));
-        assertEquals("b", mm.get("[0][0][1]"));
-        assertEquals("c", mm.get("[0][0][2]"));
+        assertEquals("3", mm.get("_length"));
+        assertEquals("1", mm.get("[0]_length"));
         assertEquals("3", mm.get("[0][0]_length"));
-        assertEquals("d", mm.get("[0][1][0]"));
-        assertEquals("e", mm.get("[0][1][1]"));
-        assertEquals("f", mm.get("[0][1][2]"));
-        assertEquals("3", mm.get("[0][1]_length"));
-        assertEquals("2", mm.get("[0]_length"));
-        assertEquals("x", mm.get("[1][0][0]"));
-        assertEquals("y", mm.get("[1][0][1]"));
-        assertEquals("z", mm.get("[1][0][2]"));
+
+        assertEquals("2", mm.get("[1]_length"));
         assertEquals("3", mm.get("[1][0]_length"));
-        assertEquals("1", mm.get("[1]_length"));
-        assertEquals("2", mm.get("_length"));
+        assertEquals("3", mm.get("[1][1]_length"));
+
+        assertEquals("3", mm.get("[2]_length"));
+        assertEquals("3", mm.get("[2][0]_length"));
+        assertEquals("3", mm.get("[2][1]_length"));
+        assertEquals("3", mm.get("[2][2]_length"));
+
+        assertEquals("x", mm.get("[0][0][0]"));
+        assertEquals("y", mm.get("[0][0][1]"));
+        assertEquals("z", mm.get("[0][0][2]"));
+
+        assertEquals("abc", mm.get("[1][0][0]"));
+        assertEquals("def", mm.get("[1][0][1]"));
+        assertEquals("xyz", mm.get("[1][0][2]"));
+
+        assertEquals("123", mm.get("[1][1][0]"));
+        assertEquals("456", mm.get("[1][1][1]"));
+        assertEquals("789", mm.get("[1][1][2]"));
+
+        assertEquals("a", mm.get("[2][0][0]"));
+        assertEquals("b", mm.get("[2][0][1]"));
+        assertEquals("c", mm.get("[2][0][2]"));
+
+        assertEquals("d", mm.get("[2][1][0]"));
+        assertEquals("e", mm.get("[2][1][1]"));
+        assertEquals("f", mm.get("[2][1][2]"));
+
+        assertEquals("1", mm.get("[2][2][0]"));
+        assertEquals("2", mm.get("[2][2][1]"));
+        assertEquals("3", mm.get("[2][2][2]"));
     }
 
     @Test
@@ -216,6 +237,7 @@ public class TestJsonParser {
         mm = JsonParser.convertToProperties(mm.get("input.parameters[0].value"));
         assertEquals("0.2.0.0/16", mm.get("[0].id"));
         assertEquals("ge04::/64", mm.get("[1].id"));
+        assertEquals("2", mm.get("_length"));
     }
 
 }
