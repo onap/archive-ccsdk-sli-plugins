@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -42,6 +43,46 @@ public final class JsonParser {
         // Preventing instantiation of the same.
     }
 
+
+    private static void handleJsonArray(String key, Map<String, Object> jArrayMap, JSONArray jsonArr) throws JSONException {
+        JSONObject jsonObj;
+        JSONArray subJsonArr;
+        boolean stripKey = false;
+
+        for (int i = 0, length = jsonArr.length(); i < length; i++) {
+            if (stripKey)
+                key = key.substring(0, key.length()-3);
+
+            subJsonArr = jsonArr.optJSONArray(i);
+            if (subJsonArr != null) {
+                key = StringUtils.trimToEmpty(key) + "[" + i + "]";
+                jArrayMap.putIfAbsent(key + "_length", String.valueOf(subJsonArr.length()));
+                handleJsonArray(key, jArrayMap, subJsonArr);
+                stripKey = true;
+                continue;
+            }
+
+            jsonObj = jsonArr.optJSONObject(i);
+            if (jsonObj != null) {
+                Iterator<String> ii = jsonObj.keys();
+                while (ii.hasNext()) {
+                    String nodeKey = ii.next();
+                    String key1 = "[" + i + "]." + nodeKey;
+                    String[] subKey = key1.split(":");
+                    if (subKey.length == 2) {
+                        jArrayMap.putIfAbsent(subKey[1], jsonObj.get(nodeKey));
+                    } else {
+                        jArrayMap.putIfAbsent(key1, jsonObj.get(nodeKey));
+                    }
+                }
+            }
+            else {
+                jArrayMap.putIfAbsent(StringUtils.trimToEmpty(key), jsonArr);
+                break;
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static Map<String, String> convertToProperties(String s)
             throws SvcLogicException {
@@ -50,27 +91,13 @@ public final class JsonParser {
 
         try {
             Map<String, Object> wm = new HashMap<>();
-            String topLvlArrLength = null;
             JSONObject json;
             JSONArray jsonArr;
             //support top level list in json response
             if (s.startsWith("[")) {
                 jsonArr = new JSONArray(s);
-                topLvlArrLength = String.valueOf(jsonArr.length());
-                for (int i = 0, length = jsonArr.length(); i < length; i++) {
-                    json = jsonArr.getJSONObject(i);
-                    Iterator<String> ii = json.keys();
-                    while (ii.hasNext()) {
-                        String key = ii.next();
-                        String key1 = "[" + i + "]." + key;
-                        String[] subKey = key1.split(":");
-                        if (subKey.length == 2) {
-                            wm.put(subKey[1], json.get(key));
-                        } else {
-                            wm.put(key1, json.get(key));
-                        }
-                    }
-                }
+                wm.put("_length", String.valueOf(jsonArr.length()));
+                handleJsonArray(null, wm, jsonArr);
             } else {
                 json = new JSONObject(s);
                 Iterator<String> ii = json.keys();
@@ -86,9 +113,6 @@ public final class JsonParser {
             }
 
             Map<String, String> mm = new HashMap<>();
-            if (topLvlArrLength != null) {
-                mm.put("_length", topLvlArrLength);
-            }
             while (!wm.isEmpty()) {
                 for (String key : new ArrayList<>(wm.keySet())) {
                     Object o = wm.get(key);
@@ -96,7 +120,6 @@ public final class JsonParser {
 
                     if (o instanceof Boolean || o instanceof Number || o instanceof String) {
                         mm.put(key, o.toString());
-
                         log.info("Added property: {} : {}", key, o.toString());
                     } else if (o instanceof JSONObject) {
                         JSONObject jo = (JSONObject) o;
@@ -113,8 +136,7 @@ public final class JsonParser {
                     } else if (o instanceof JSONArray) {
                         JSONArray ja = (JSONArray) o;
                         mm.put(key + "_length", String.valueOf(ja.length()));
-
-                        log.info("Added property: {}_length: {}", key, String.valueOf(ja.length()));
+                        log.info("Added property: {}_length: {}", key, ja.length());
 
                         for (int i = 0; i < ja.length(); i++) {
                             wm.put(key + '[' + i + ']', ja.get(i));
