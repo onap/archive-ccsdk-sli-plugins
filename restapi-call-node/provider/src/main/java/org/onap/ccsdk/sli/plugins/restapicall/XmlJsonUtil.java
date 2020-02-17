@@ -397,18 +397,18 @@ public final class XmlJsonUtil {
     }
 
     private static String escapeXml(String v) {
-        String s = v.replaceAll("&", "&amp;");
-        s = s.replaceAll("<", "&lt;");
-        s = s.replaceAll("'", "&apos;");
-        s = s.replaceAll("\"", "&quot;");
-        s = s.replaceAll(">", "&gt;");
-        return s;
+        return v.replaceAll("\\r\\n|\\r|\\n", " ")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll("'", "&apos;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll(">", "&gt;");
     }
 
     private static String escapeJson(String v) {
-        String s = v.replaceAll("\\\\", "\\\\\\\\");
-        s = s.replaceAll("\"", "\\\\\"");
-        return s;
+        return v.replaceAll("\\r\\n|\\r|\\n", " ")
+                .replaceAll("\\\\", "\\\\\\\\")
+                .replaceAll("\"", "\\\\\"");
     }
 
     private static String pad(int n) {
