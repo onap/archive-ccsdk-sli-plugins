@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +143,7 @@ public final class XmlJsonUtil {
         }
 
         if (o instanceof String) {
-            return escape ? escapeXml((String) o) : (String) o;
+            return escape ? StringEscapeUtils.escapeXml10((String) o) : (String) o;
         };
 
         if (o instanceof Map) {
@@ -152,7 +153,7 @@ public final class XmlJsonUtil {
                 Object v = entry.getValue();
                 String key = entry.getKey();
                 if (v instanceof String) {
-                    String s = escape ? escapeXml((String) v) : (String) v;
+                    String s = escape ? StringEscapeUtils.escapeXml10((String) v) : (String) v;
                     ss.append(pad(indent)).append('<').append(key).append('>');
                     ss.append(s);
                     ss.append("</").append(key).append('>').append('\n');
@@ -190,7 +191,7 @@ public final class XmlJsonUtil {
     @SuppressWarnings("unchecked")
     private static void generateJson(StringBuilder ss, Object o, int indent, boolean padFirst, boolean escape, boolean quotes) {
         if (o instanceof String) {
-            String s = escape ? escapeJson((String) o) : (String) o;
+            String s = escape ? StringEscapeUtils.escapeJson((String) o) : (String) o;
             if (padFirst) {
                 ss.append(pad(indent));
             }
@@ -393,21 +394,6 @@ public final class XmlJsonUtil {
             k = 0;
         }
 
-        return s;
-    }
-
-    private static String escapeXml(String v) {
-        String s = v.replaceAll("&", "&amp;");
-        s = s.replaceAll("<", "&lt;");
-        s = s.replaceAll("'", "&apos;");
-        s = s.replaceAll("\"", "&quot;");
-        s = s.replaceAll(">", "&gt;");
-        return s;
-    }
-
-    private static String escapeJson(String v) {
-        String s = v.replaceAll("\\\\", "\\\\\\\\");
-        s = s.replaceAll("\"", "\\\\\"");
         return s;
     }
 
