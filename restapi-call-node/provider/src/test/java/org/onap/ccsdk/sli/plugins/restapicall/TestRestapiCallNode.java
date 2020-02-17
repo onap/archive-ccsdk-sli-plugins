@@ -528,7 +528,27 @@ public class TestRestapiCallNode {
         RestapiCallNode rcn = new RestapiCallNode();
         String request = rcn.buildXmlJsonRequest(ctx, rcn.readFile("src/test/resources/testEmbeddedTemplate.json"), Format.JSON);
         //This will throw a JSONException and fail the test case if rest api call node doesn't form valid JSON
-        JSONObject requestObj = new JSONObject(request);
+        assertNotNull(new JSONObject(request));
+    }
+
+    @Test
+    public void testMultiLineEmbeddedJsonTemplate() throws Exception {
+        SvcLogicContext ctx = new SvcLogicContext();
+        String complexObj = "{\n"
+                            + "  \"image_name\": \"Ubuntu 14.04\",\n"
+                            + "  \"service-instance-id\": \"1\",\n"
+                            + "  \"vnf-model-customization-uuid\": \"2f\",\n"
+                            + "  \"vnf-id\": \"3b\"\n"
+                            + "}";
+        ctx.setAttribute("reqId", "1235");
+        ctx.setAttribute("subReqId", "054243");
+        ctx.setAttribute("actionName", "CREATE");
+        ctx.setAttribute("myPrefix", "2016-09-09 16:30:35.0");
+        ctx.setAttribute("complexObj", complexObj);
+        RestapiCallNode rcn = new RestapiCallNode();
+        String request = rcn.buildXmlJsonRequest(ctx, rcn.readFile("src/test/resources/testMultiLineEmbeddedTemplate.json"), Format.JSON);
+        //This will throw a JSONException and fail the test case if rest api call node doesn't form valid JSON
+        assertNotNull(new JSONObject(request));
     }
 
 }
