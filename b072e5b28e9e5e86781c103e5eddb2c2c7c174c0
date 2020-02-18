@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b401eeee_136b4671",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/XmlJsonUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2020-02-18T17:19:59Z",
+      "side": 1,
+      "message": "Can\u0027t you use \\R instead?",
+      "revId": "b072e5b28e9e5e86781c103e5eddb2c2c7c174c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
