@@ -34,8 +34,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class TestRestapiCallNode {
 
@@ -60,6 +62,23 @@ public class TestRestapiCallNode {
 
         RestapiCallNode rcn = new RestapiCallNode();
         rcn.sendRequest(p, ctx);
+    }
+    
+    @Test
+    public void testTargetEntity() throws SvcLogicException {
+        SvcLogicContext ctx = new SvcLogicContext();
+
+        Map<String, String> p = new HashMap<>();
+        p.put("restapiUrl", "https://echo.getpostman.com/delete");
+        p.put("restapiUser", "user1");
+        p.put("restapiPassword", "pwd1");
+        p.put("httpMethod", "delete");
+        String entity = "myLocalEntity";
+        p.put("targetEntity", entity);
+
+        RestapiCallNode rcn = new MockRestApiCallNode();
+        rcn.sendRequest(p, ctx);
+        assertEquals(entity, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
     }
 
     @Test
