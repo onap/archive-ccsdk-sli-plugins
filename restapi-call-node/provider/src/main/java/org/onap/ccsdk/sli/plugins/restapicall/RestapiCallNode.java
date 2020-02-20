@@ -73,8 +73,10 @@ import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
 import org.onap.logging.filter.base.MetricLogClientFilter;
+import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class RestapiCallNode implements SvcLogicJavaPlugin {
 
@@ -223,6 +225,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         p.accept = parseParam(paramMap, "accept", false, null);
         p.multipartFormData = valueOf(parseParam(paramMap, "multipartFormData", false, "false"));
         p.multipartFile = parseParam(paramMap, "multipartFile", false, null);
+        p.targetEntity = parseParam(paramMap, "targetEntity", false, null);
         return p;
     }
 
@@ -463,10 +466,13 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected void sendRequest(Map<String, String> paramMap, SvcLogicContext ctx, RetryPolicy retryPolicy)
         throws SvcLogicException {
 
-        HttpResponse r = new HttpResponse();
+    	HttpResponse r = new HttpResponse();
         try {
             handlePartner(paramMap);
             Parameters p = getParameters(paramMap, new Parameters());
+            if(p.targetEntity != null && !p.targetEntity.isEmpty()) {
+                MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY, p.targetEntity);
+            }
             if (p.restapiUrl.contains(",") && retryPolicy == null) {
                 String[] urls = p.restapiUrl.split(",");
                 retryPolicy = new RetryPolicy(urls, urls.length * 2);
@@ -873,8 +879,6 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
                         singlePair.substring(equalPosition + 1, singlePair.length()));
                 }
             }
-
-            invocationBuilder.header("X-ECOMP-RequestID", org.slf4j.MDC.get("X-ECOMP-RequestID"));
 
             Response response;
 

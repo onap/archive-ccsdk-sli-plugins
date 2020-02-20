@@ -54,4 +54,5 @@ public class Parameters {
     public String accept;
     public boolean multipartFormData;
     public String multipartFile;
+    public String targetEntity;
 }
