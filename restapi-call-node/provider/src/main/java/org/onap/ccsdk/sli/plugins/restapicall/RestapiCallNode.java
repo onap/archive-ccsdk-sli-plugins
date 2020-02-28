@@ -25,15 +25,22 @@ package org.onap.ccsdk.sli.plugins.restapicall;
 import static java.lang.Boolean.valueOf;
 import static javax.ws.rs.client.Entity.entity;
 import static org.onap.ccsdk.sli.plugins.restapicall.AuthType.fromString;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,7 +79,9 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.onap.ccsdk.sli.core.sli.SvcLogicContext;
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.SvcLogicJavaPlugin;
+import org.onap.logging.filter.base.HttpURLConnectionMetricUtil;
 import org.onap.logging.filter.base.MetricLogClientFilter;
+import org.onap.logging.filter.base.ONAPComponents;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,6 +137,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         httpReadTimeout = readOptionalInteger("HTTP_READ_TIMEOUT_MS",DEFAULT_HTTP_READ_TIMEOUT_MS);
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadPartners(JSONObject partners) {
         Iterator<String> keys = partners.keys();
         String partnerUserKey = "user";
@@ -956,6 +966,16 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             byte[] data = Files.readAllBytes(Paths.get(p.fileName));
 
             r = sendHttpData(data, p);
+
+            for (int i = 0; i < 10 && r.code == 301; i++) {
+                String newUrl = r.headers2.get("Location").get(0);
+
+                log.info("Got response code 301. Sending same request to URL: " + newUrl);
+
+                p.url = newUrl;
+                r = sendHttpData(data, p);
+            }
+
             setResponseStatus(ctx, p.responsePrefix, r);
 
         } catch (SvcLogicException | IOException e) {
@@ -1030,12 +1050,27 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         }
     }
 
-    protected HttpResponse sendHttpData(byte[] data, FileParam p) throws SvcLogicException {
+    protected HttpResponse sendHttpData(byte[] data, FileParam p) throws IOException {
+        URL url = new URL(p.url);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-        Client client = ClientBuilder.newBuilder().build();
-        setClientTimeouts(client);
-        client.property(ClientProperties.FOLLOW_REDIRECTS, true);
-        WebTarget webTarget = addAuthType(client, p).target(p.url);
+        log.info("Connection: " + con.getClass().getName());
+
+        con.setRequestMethod(p.httpMethod.toString());
+        con.setRequestProperty("Content-Type", "application/octet-stream");
+        con.setRequestProperty("Accept", "*/*");
+        con.setRequestProperty("Expect", "100-continue");
+        con.setFixedLengthStreamingMode(data.length);
+        con.setInstanceFollowRedirects(false);
+
+        if (p.user != null && p.password != null) {
+            String authString = p.user + ":" + p.password;
+            String authStringEnc = Base64.getEncoder().encodeToString(authString.getBytes());
+            con.setRequestProperty("Authorization", "Basic " + authStringEnc);
+        }
+
+        con.setDoInput(true);
+        con.setDoOutput(true);
 
         log.info("Sending file");
         long t1 = System.currentTimeMillis();
@@ -1044,69 +1079,46 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         r.code = 200;
 
         if (!p.skipSending) {
-            String tt = "application/octet-stream";
-            Invocation.Builder invocationBuilder = webTarget.request(tt).accept(tt);
+            HttpURLConnectionMetricUtil util = new HttpURLConnectionMetricUtil();
+            util.logBefore(con, ONAPComponents.SDNC_ADAPTER);
 
-            Response response;
+            con.connect();
 
+            boolean continue100failed = false;
             try {
-                if (p.httpMethod == HttpMethod.POST) {
-                    response = invocationBuilder.post(Entity.entity(data, tt));
-                } else if (p.httpMethod == HttpMethod.PUT) {
-                    response = invocationBuilder.put(Entity.entity(data, tt));
-                } else {
-                    throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
-                }
-            } catch (ProcessingException e) {
-                throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
+                OutputStream os = con.getOutputStream();
+                os.write(data);
+                os.flush();
+                os.close();
+            } catch (ProtocolException e) {
+                continue100failed = true;
             }
 
-            r.code = response.getStatus();
-            r.headers = response.getStringHeaders();
-            EntityTag etag = response.getEntityTag();
-            if (etag != null) {
-                r.message = etag.getValue();
-            }
-            if (response.hasEntity() && r.code != 204) {
-                r.body = response.readEntity(String.class);
-            }
+            r.code = con.getResponseCode();
+            r.headers2 = con.getHeaderFields();
 
-            if (r.code == 301) {
-                String newUrl = response.getStringHeaders().getFirst("Location");
-
-                log.info("Got response code 301. Sending same request to URL: {}", newUrl);
-
-                webTarget = client.target(newUrl);
-                invocationBuilder = webTarget.request(tt).accept(tt);
-
-                try {
-                    if (p.httpMethod == HttpMethod.POST) {
-                        response = invocationBuilder.post(Entity.entity(data, tt));
-                    } else if (p.httpMethod == HttpMethod.PUT) {
-                        response = invocationBuilder.put(Entity.entity(data, tt));
-                    } else {
-                        throw new SvcLogicException("Http operation" + p.httpMethod + "not supported");
-                    }
-                } catch (ProcessingException e) {
-                    throw new SvcLogicException(requestPostingException + e.getLocalizedMessage(), e);
+            if (r.code != 204 && !continue100failed) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
                 }
+                in.close();
 
-                r.code = response.getStatus();
-                etag = response.getEntityTag();
-                if (etag != null) {
-                    r.message = etag.getValue();
-                }
-                if (response.hasEntity() && r.code != 204) {
-                    r.body = response.readEntity(String.class);
-                }
+                r.body = response.toString();
             }
+
+            util.logAfter(con);
+
+            con.disconnect();
         }
 
         long t2 = System.currentTimeMillis();
-        log.info(responseReceivedMessage, t2 - t1);
-        log.info(responseHttpCodeMessage, r.code);
+        log.info("Response received. Time: {}", t2 - t1);
+        log.info("HTTP response code: {}", r.code);
         log.info("HTTP response message: {}", r.message);
-        logHeaders(r.headers);
+        logHeaders(r.headers2);
         log.info("HTTP response: {}", r.body);
 
         return r;
@@ -1151,6 +1163,26 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
 
         for (String name : ll) {
             log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
+        }
+    }
+
+    private void logHeaders(Map<String, List<String>> mm) {
+        if (mm == null || mm.isEmpty()) {
+            return;
+        }
+
+        List<String> ll = new ArrayList<>();
+        for (String s : mm.keySet()) {
+            if (s != null) {
+                ll.add(s);
+            }
+        }
+        Collections.sort(ll);
+
+        for (String name : ll) {
+            List<String> v = mm.get(name);
+            log.info("--- {}:{}", name, String.valueOf(mm.get(name)));
+            log.info("--- " + name + ": " + (v.size() == 1 ? v.get(0) : v));
         }
     }
 
