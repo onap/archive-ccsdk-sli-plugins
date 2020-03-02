@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "132ad1e7_d34bc55a",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 978,
+      "author": {
+        "id": 865
+      },
+      "writtenOn": "2020-03-02T14:26:31Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this if condition be looping, what if #976 again respond with code 301 ?",
+      "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
