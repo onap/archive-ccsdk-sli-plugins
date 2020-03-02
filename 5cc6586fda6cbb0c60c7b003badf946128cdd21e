@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9363c910_1cb61cc1",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 975,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2020-03-02T15:06:50Z",
+      "side": 1,
+      "message": "Is the protocol the same (http vs https)? If so you can use https://docs.oracle.com/javase/8/docs/api/java/net/HttpURLConnection.html#setFollowRedirects-boolean-",
+      "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "132ad1e7_d34bc55a",
         "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
         "patchSetId": 1
@@ -49,6 +66,57 @@
       "side": 1,
       "message": "I saw it\u0027s same as before, but lopping same shouldn\u0027t harm with some timeout / count as loop break",
       "parentUuid": "055bedbb_713a8aae",
+      "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee06bcab_f690f242",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1083,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2020-03-02T15:06:50Z",
+      "side": 1,
+      "message": "The second argument is the TargetEntity I believe this should be changed to DMAAP (if this is always targeting DMAAP)",
+      "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2381a31_b2c496a0",
+        "filename": "restapi-call-node/provider/src/test/java/org/onap/ccsdk/sli/plugins/restapicall/TestRestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2020-03-02T15:06:50Z",
+      "side": 1,
+      "message": "Don\u0027t expose AT\u0026T internal URLs",
+      "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2718e60_ea6b9de7",
+        "filename": "restapi-call-node/provider/src/test/resources/big_file.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1219
+      },
+      "writtenOn": "2020-03-02T15:06:50Z",
+      "side": 1,
+      "message": "Some of these names look like internal VM names. Is this real data?\n\nAlso I don\u0027t think we need to check in a large file. I think performance testing shouldn\u0027t be done in a junit.",
       "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
