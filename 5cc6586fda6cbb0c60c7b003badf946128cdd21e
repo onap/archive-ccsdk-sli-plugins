@@ -34,6 +34,24 @@
       "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c8b7a4f_d13cb429",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/RestapiCallNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 978,
+      "author": {
+        "id": 865
+      },
+      "writtenOn": "2020-03-02T14:43:25Z",
+      "side": 1,
+      "message": "I saw it\u0027s same as before, but lopping same shouldn\u0027t harm with some timeout / count as loop break",
+      "parentUuid": "055bedbb_713a8aae",
+      "revId": "5cc6586fda6cbb0c60c7b003badf946128cdd21e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
