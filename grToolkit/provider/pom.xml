@@ -10,7 +10,7 @@
     <name>ccsdk-sli-plugins :: gr-toolkit :: ${project.artifactId}</name>
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>gr-toolkit-provider</artifactId>
-    <version>0.7.1-SNAPSHOT</version>
+    <version>0.7.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
