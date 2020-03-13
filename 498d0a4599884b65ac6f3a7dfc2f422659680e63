@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "ae02de80_165e68f2",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/XmlJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 865
+      },
+      "writtenOn": "2020-03-13T17:38:26Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6a816e69_a714ce62",
+      "range": {
+        "startLine": 177,
+        "startChar": 8,
+        "endLine": 201,
+        "endChar": 9
+      },
+      "revId": "498d0a4599884b65ac6f3a7dfc2f422659680e63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ac7cc671_b6b7f9cb",
         "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/XmlJsonUtil.java",
         "patchSetId": 1
@@ -81,6 +105,24 @@
       "revId": "498d0a4599884b65ac6f3a7dfc2f422659680e63",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fdcf870a_aeb0ce36",
+        "filename": "restapi-call-node/provider/src/main/java/org/onap/ccsdk/sli/plugins/restapicall/XmlJsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 865
+      },
+      "writtenOn": "2020-03-13T17:38:26Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b986aabd_e202db92",
+      "revId": "498d0a4599884b65ac6f3a7dfc2f422659680e63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
