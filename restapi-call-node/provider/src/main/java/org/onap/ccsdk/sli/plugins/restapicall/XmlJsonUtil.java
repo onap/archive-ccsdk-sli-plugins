@@ -83,6 +83,10 @@ public final class XmlJsonUtil {
                 continue;
             }
 
+            if (value == null || value.trim().isEmpty()) {
+                continue;
+            }
+
             if (key.startsWith(var + "[")) {
                 String newKey = key.substring(var.length());
                 set(ll, newKey, value);
