@@ -13,10 +13,6 @@
     <version>0.7.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <properties>
-        <ccsdk.sli.core.version>${project.version}</ccsdk.sli.core.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
