@@ -19,10 +19,6 @@
 
 
 <!--
-    <properties>
-        <ccsdk.sli.core.version>${project.version}</ccsdk.sli.core.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
