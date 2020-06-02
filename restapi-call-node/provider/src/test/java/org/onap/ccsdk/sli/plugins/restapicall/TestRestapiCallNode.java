@@ -22,8 +22,11 @@
 package org.onap.ccsdk.sli.plugins.restapicall;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.codehaus.jettison.json.JSONObject;
@@ -561,6 +564,41 @@ public class TestRestapiCallNode {
         String request = rcn.buildXmlJsonRequest(ctx, rcn.readFile("src/test/resources/testMultiLineEmbeddedTemplate.json"), Format.JSON);
         //This will throw a JSONException and fail the test case if rest api call node doesn't form valid JSON
         assertNotNull(new JSONObject(request));
+    }
+    
+    @Test
+    public void testGetMultipleUrls() throws Exception{
+       String[] urls =  RestapiCallNode.getMultipleUrls("http://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Banana,https://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Potato");
+       assertEquals("http://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Banana",urls[0]);
+       assertEquals("https://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Potato",urls[1]);
+
+       urls =  RestapiCallNode.getMultipleUrls("https://wiki.onap.org/,http://localhost:7001/,http://wiki.onap.org/");
+       assertEquals("https://wiki.onap.org/",urls[0]);
+       assertEquals("http://localhost:7001/",urls[1]);
+       assertEquals("http://wiki.onap.org/",urls[2]);
+       
+       urls =  RestapiCallNode.getMultipleUrls("https://wiki.onap.org/test=4,5,6,http://localhost:7001/test=1,2,3,http://wiki.onap.org/test=7,8,9,10");
+       assertEquals("https://wiki.onap.org/test=4,5,6",urls[0]);
+       assertEquals("http://localhost:7001/test=1,2,3",urls[1]);
+       assertEquals("http://wiki.onap.org/test=7,8,9,10",urls[2]);
+
+       urls =  RestapiCallNode.getMultipleUrls("https://wiki.onap.org/,https://readthedocs.org/projects/onap/");
+       assertEquals("https://wiki.onap.org/",urls[0]);
+       assertEquals("https://readthedocs.org/projects/onap/",urls[1]);
+    }
+    
+    @Test
+    public void testContainsMultipleUrls() throws Exception{
+        assertFalse(RestapiCallNode.containsMultipleUrls("https://wiki.onap.org/"));
+        assertFalse(RestapiCallNode.containsMultipleUrls("http://wiki.onap.org/"));
+        assertFalse(RestapiCallNode.containsMultipleUrls("http://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Banana"));
+        assertFalse(RestapiCallNode.containsMultipleUrls("https://localhost:8008/params=1,2,3,4,5,6"));
+
+        assertTrue(RestapiCallNode.containsMultipleUrls("https://wiki.onap.org/,https://readthedocs.org/projects/onap/"));
+        assertTrue(RestapiCallNode.containsMultipleUrls("http://localhost:7001/,http://localhost:7002"));
+        assertTrue(RestapiCallNode.containsMultipleUrls("http://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Banana,https://localhost:8008/rest/restconf/data/abc:def/abc:action=Create,deviceType=Potato"));
+        assertTrue(RestapiCallNode.containsMultipleUrls("https://wiki.onap.org/,http://localhost:7001/,http://wiki.onap.org/"));
+        assertTrue(RestapiCallNode.containsMultipleUrls("https://wiki.onap.org/test=4,5,6,http://localhost:7001/test=1,2,3,http://wiki.onap.org/test=7,8,9,10""));
     }
 
 }

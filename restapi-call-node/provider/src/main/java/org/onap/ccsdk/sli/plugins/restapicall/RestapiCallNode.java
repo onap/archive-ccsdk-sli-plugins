@@ -50,6 +50,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -112,6 +115,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
     protected Integer httpReadTimeout;
 
     protected HashMap<String, PartnerDetails> partnerStore;
+    private static final Pattern retryPattern = Pattern.compile(".*,(http|https):.*");
 
     public RestapiCallNode() {
         String configDir = System.getProperty(PROPERTIES_DIR_KEY, DEFAULT_PROPERTIES_DIR);
@@ -246,8 +250,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      * @throws SvcLogicException when URL validation fails
      */
     private static void validateUrl(String restapiUrl) throws SvcLogicException {
-        if (restapiUrl.contains(",")) {
-            String[] urls = restapiUrl.split(",");
+        if (containsMultipleUrls(restapiUrl)) {
+            String[] urls = getMultipleUrls(restapiUrl);
             for (String url : urls) {
                 validateUrl(url);
             }
@@ -483,8 +487,8 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             if(p.targetEntity != null && !p.targetEntity.isEmpty()) {
                 MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY, p.targetEntity);
             }
-            if (p.restapiUrl.contains(",") && retryPolicy == null) {
-                String[] urls = p.restapiUrl.split(",");
+            if (containsMultipleUrls(p.restapiUrl) && retryPolicy == null) {
+                String[] urls = getMultipleUrls(p.restapiUrl);
                 retryPolicy = new RetryPolicy(urls, urls.length * 2);
                 p.restapiUrl = urls[0];
             }
@@ -1260,6 +1264,30 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         return defaultValue;
     }
 
+    protected static String[] getMultipleUrls(String restapiUrl) {
+        List<String> urls = new ArrayList<String>();
+        int start = 0;
+        for (int i = 0; i < restapiUrl.length(); i++) {
+            if (restapiUrl.charAt(i) == ',') {
+                if (i + 9 < restapiUrl.length()) {
+                    String part = restapiUrl.substring(i + 1, i + 9);
+                    if (part.equals("https://") || part.startsWith("http://")) {
+                        urls.add(restapiUrl.substring(start, i));
+                        start = i + 1;
+                    }
+                }
+            } else if (i == restapiUrl.length() - 1) {
+                urls.add(restapiUrl.substring(start, i + 1));
+            }
+        }
+        String[] arr = new String[urls.size()];
+        return urls.toArray(arr);
+    }
+
+    protected static boolean containsMultipleUrls(String restapiUrl) {
+        Matcher m = retryPattern.matcher(restapiUrl);
+        return m.matches();
+    }
 
     private static class FileParam {
 
