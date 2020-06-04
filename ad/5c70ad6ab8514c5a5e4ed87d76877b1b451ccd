@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Brian Freeman <bf1936@att.com>
+Code-Review+1: David Perez Caparros <david.perezcaparros@swisscom.com>
+Code-Review+2: Dan Timoney <dtimoney@att.com>
+Submitted-by: Dan Timoney <dtimoney@att.com>
+Submitted-at: Thu, 04 Jun 2020 14:53:35 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/ccsdk/sli/plugins/+/108706
+Project: ccsdk/sli/plugins
+Branch: refs/heads/master
