@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>binding-parent</artifactId>
-        <version>1.5.9</version>
+        <version>1.5.10-SNAPSHOT</version>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>properties-node-provider</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <name>ccsdk-sli-plugins :: properties-node :: ${project.artifactId}</name>
