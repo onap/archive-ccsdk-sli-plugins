@@ -217,7 +217,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
      * on a single line.
      */
     private void defineMembers() {
-        member = configDatastore.getActorContext().getCurrentMemberName().getName();
+        member = configDatastore.getActorUtils().getCurrentMemberName().getName();
         log.info("defineMembers(): Cluster member: {}", member);
 
         log.info("defineMembers(): Parsing akka.conf for cluster memberMap...");
@@ -452,6 +452,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
      * @deprecated No longer used since the refactor to use the HealthResolver
      *             pattern. Retained so the logic can be replicated later.
      */
+    @Deprecated
     private void isolateSiteFromCluster(ArrayList<ClusterActor> activeSite, ArrayList<ClusterActor> standbySite, String port) {
         log.info("isolateSiteFromCluster(): Halting Akka traffic...");
         for(ClusterActor actor : standbySite) {
@@ -486,6 +487,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
      * @deprecated No longer used since the refactor to use the HealthResolver
      *             pattern. Retained so the logic can be replicated later.
      */
+    @Deprecated
     private void downUnreachableNodes(ArrayList<ClusterActor> activeSite, ArrayList<ClusterActor> standbySite, String port) {
         log.info("downUnreachableNodes(): Setting site unreachable...");
         JSONObject jolokiaInput = new JSONObject();
@@ -521,6 +523,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
      * @deprecated No longer used since the refactor to use the HealthResolver
      *             pattern. Retained so the logic can be replicated later.
      */
+    @Deprecated
     private void backupMdSal(ArrayList<ClusterActor> activeSite, String port) {
         log.info("backupMdSal(): Backing up data...");
         try {

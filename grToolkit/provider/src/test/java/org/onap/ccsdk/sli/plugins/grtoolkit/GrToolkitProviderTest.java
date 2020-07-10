@@ -35,7 +35,7 @@ import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
 
 import org.opendaylight.controller.cluster.access.concepts.MemberName;
 import org.opendaylight.controller.cluster.datastore.DistributedDataStoreInterface;
-import org.opendaylight.controller.cluster.datastore.utils.ActorContext;
+import org.opendaylight.controller.cluster.datastore.utils.ActorUtils;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
@@ -101,11 +101,11 @@ public class GrToolkitProviderTest {
         dbLibService = mock(DbLibService.class);
         connection = mock(DBLibConnection.class);
 
-        ActorContext actorContext = mock(ActorContext.class);
+        ActorUtils actorContext = mock(ActorUtils.class);
         MemberName memberName = MemberName.forName("Test");
 
         when(actorContext.getCurrentMemberName()).thenReturn(memberName);
-        when(configDatastore.getActorContext()).thenReturn(actorContext);
+        when(configDatastore.getActorUtils()).thenReturn(actorContext);
 
         try {
             when(connection.isReadOnly()).thenReturn(false);
