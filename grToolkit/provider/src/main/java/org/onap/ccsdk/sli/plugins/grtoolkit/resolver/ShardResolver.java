@@ -78,7 +78,7 @@ public class ShardResolver {
     }
 
     private void getMemberStatus(ClusterActor clusterActor) throws IOException {
-        log.info("getMemberStatus(): Getting member status for {}", clusterActor.getNode());
+        log.debug("getMemberStatus(): Getting member status for {}", clusterActor.getNode());
         ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + clusterActor.getNode() + jolokiaClusterPath, ConnectionManager.HttpMethod.GET, null, credentials);
         try {
             JSONObject responseJson = new JSONObject(response.content);
@@ -93,7 +93,7 @@ public class ShardResolver {
     }
 
     private void getShardStatus(ClusterActor clusterActor) throws IOException {
-        log.info("getShardStatus(): Getting shard status for {}", clusterActor.getNode());
+        log.debug("getShardStatus(): Getting shard status for {}", clusterActor.getNode());
         ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + clusterActor.getNode() + shardManagerPath, ConnectionManager.HttpMethod.GET, null, credentials);
         try {
             JSONObject responseValue = new JSONObject(response.content).getJSONObject(VALUE);
@@ -123,12 +123,12 @@ public class ShardResolver {
     }
 
     private void extractShardInfo(ClusterActor clusterActor, String shardName, String shardPath) throws IOException {
-        log.info("extractShardInfo(): Extracting shard info for {}", shardName);
+        log.debug("extractShardInfo(): Extracting shard info for {}", shardName);
         String shardPrefix = "";
 //        String shardPrefix = clusterActor.getMember() + "-shard-";
-        log.debug("extractShardInfo(): Pulling config info for {} from: {}", shardName, shardPath);
+        log.trace("extractShardInfo(): Pulling config info for {} from: {}", shardName, shardPath);
         ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + clusterActor.getNode() + shardPath, ConnectionManager.HttpMethod.GET, null, credentials);
-        log.debug("extractShardInfo(): Response: {}", response.content);
+        log.trace("extractShardInfo(): Response: {}", response.content);
 
         try {
             JSONObject shardValue = new JSONObject(response.content).getJSONObject(VALUE);
@@ -172,6 +172,6 @@ public class ShardResolver {
             clusterActor.setUnreachable(true);
             clusterActor.setUp(false);
         }
-        log.info("getControllerHealth(): MemberInfo:\n{}", clusterActor);
+        log.debug("getControllerHealth(): MemberInfo:\n{}", clusterActor);
     }
 }

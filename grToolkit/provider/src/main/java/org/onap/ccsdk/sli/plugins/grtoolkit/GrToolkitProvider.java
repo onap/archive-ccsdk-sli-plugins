@@ -218,9 +218,9 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
      */
     private void defineMembers() {
         member = configDatastore.getActorContext().getCurrentMemberName().getName();
-        log.info("defineMembers(): Cluster member: {}", member);
+        log.debug("defineMembers(): Cluster member: {}", member);
 
-        log.info("defineMembers(): Parsing akka.conf for cluster memberMap...");
+        log.debug("defineMembers(): Parsing akka.conf for cluster memberMap...");
         try {
             File akkaConfigFile = new File(this.akkaConfig);
             try(FileReader fileReader = new FileReader(akkaConfigFile);
@@ -532,7 +532,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         for(ClusterActor actor : activeSite) {
             try {
                 // Move data offsite
-                log.info("backupMdSal(): Backing up data for: {}", actor.getNode());
+                log.debug("backupMdSal(): Backing up data for: {}", actor.getNode());
                 ConnectionResponse response = ConnectionManager.getConnectionResponse(httpProtocol + actor.getNode() + ":" + port + "/restconf/operations/daexim-offsite-backup:backup-data", ConnectionManager.HttpMethod.POST, null, "");
             } catch(IOException e) {
                 log.error("backupMdSal(): Error backing up data.", e);
@@ -646,7 +646,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
                 self = clusterActor;
             }
             memberMap.put(clusterActor.getNode(), clusterActor);
-            log.info("parseSeedNodes(): {}", clusterActor);
+            log.debug("parseSeedNodes(): {}", clusterActor);
         }
 
         createHealthResolver();

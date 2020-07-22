@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.onap.ccsdk.sli.core.dblib.DBLibConnection;
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.AdminHealth;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
@@ -41,7 +40,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +61,6 @@ import static org.mockito.Mockito.when;
 public class SixNodeHealthResolverTest {
     private Map<String, ClusterActor> memberMap;
     private DbLibService dbLibService;
-    private DBLibConnection connection;
     private SixNodeHealthResolver resolver;
 
     @Rule
@@ -80,7 +77,6 @@ public class SixNodeHealthResolverTest {
         }
 
         dbLibService = mock(DbLibService.class);
-        connection = mock(DBLibConnection.class);
         resolver = new SixNodeHealthResolver(memberMap, properties, dbLibService);
     }
 
@@ -121,11 +117,8 @@ public class SixNodeHealthResolverTest {
     @Test
     public void getDatabaseHealth() {
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         DatabaseHealth health = resolver.getDatabaseHealth();
@@ -135,11 +128,8 @@ public class SixNodeHealthResolverTest {
     @Test
     public void getDatabaseHealthFaulty() {
         try {
-            when(connection.isReadOnly()).thenReturn(true);
-            when(connection.isClosed()).thenReturn(true);
-            when(dbLibService.isActive()).thenReturn(false);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"faulty\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"faulty\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         DatabaseHealth health = resolver.getDatabaseHealth();
@@ -149,11 +139,8 @@ public class SixNodeHealthResolverTest {
     @Test
     public void getDatabaseHealthException() {
         try {
-            when(connection.isReadOnly()).thenThrow(new SQLException());
-            when(connection.isClosed()).thenReturn(true);
-            when(dbLibService.isActive()).thenReturn(false);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenThrow(new Exception());
+        } catch(Exception e) {
             fail();
         }
         DatabaseHealth health = resolver.getDatabaseHealth();
@@ -213,7 +200,7 @@ public class SixNodeHealthResolverTest {
         }
 
         if(clusterBody == null || shardManagerBody == null || shardDefaultBody == null || shardOperationalBody == null
-            || componentBody == null || identifierBody == null) {
+                   || componentBody == null || identifierBody == null) {
             fail();
         }
         stubFor(get(urlEqualTo("/jolokia/read/akka:type=Cluster")).willReturn(aResponse().withStatus(200).withBody(clusterBody)));
@@ -230,11 +217,8 @@ public class SixNodeHealthResolverTest {
         stubController();
         stubFor(get(urlEqualTo("/adm/healthcheck")).willReturn(aResponse().withStatus(200)));
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         List<SiteHealth> health = resolver.getSiteHealth();
@@ -249,11 +233,8 @@ public class SixNodeHealthResolverTest {
         stubController();
         stubFor(get(urlEqualTo("/adm/healthcheck")).willReturn(aResponse().withStatus(200)));
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         stubFor(get(urlEqualTo("/jolokia/read/org.opendaylight.controller:Category=ShardManager,name=shard-manager-config,type=DistributedConfigDatastore")).inScenario("testing").whenScenarioStateIs("next").willReturn(aResponse().withBodyFile("nonexistent")));
@@ -269,11 +250,8 @@ public class SixNodeHealthResolverTest {
         stubController();
         stubFor(get(urlEqualTo("/adm/healthcheck")).willReturn(aResponse().withStatus(200)));
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         stubFor(get(urlEqualTo("/jolokia/read/org.opendaylight.controller:Category=Shards,name=member-1-shard-default-config,type=DistributedConfigDatastore")).inScenario("testing").willReturn(aResponse().withBodyFile("nonexistent")).willSetStateTo("next"));
@@ -289,11 +267,8 @@ public class SixNodeHealthResolverTest {
         stubController();
         stubFor(get(urlEqualTo("/adm/healthcheck")).willReturn(aResponse().withStatus(200)));
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         stubFor(get(urlEqualTo("/jolokia/read/akka:type=Cluster")).willReturn(aResponse().withStatus(200).withBodyFile("nonexistent")));
@@ -310,11 +285,8 @@ public class SixNodeHealthResolverTest {
         stubFor(post(urlEqualTo("/restconf/operations/gr-toolkit:admin-health")).inScenario("testing").willReturn(aResponse().withBodyFile("nonexistent")).willSetStateTo("next"));
         stubFor(get(urlEqualTo("/restconf/operations/gr-toolkit:admin-health")).inScenario("testing").whenScenarioStateIs("next").willReturn(aResponse().withBodyFile("nonexistent")));
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
         List<SiteHealth> health = resolver.getSiteHealth();

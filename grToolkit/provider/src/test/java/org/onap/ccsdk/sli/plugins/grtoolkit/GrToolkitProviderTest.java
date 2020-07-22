@@ -29,7 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 
-import org.onap.ccsdk.sli.core.dblib.DBLibConnection;
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
 import org.onap.ccsdk.sli.plugins.grtoolkit.data.ClusterActor;
 
@@ -56,7 +55,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -83,7 +81,6 @@ public class GrToolkitProviderTest {
     RpcProviderRegistry rpcProviderRegistry;
     DistributedDataStoreInterface configDatastore;
     DbLibService dbLibService;
-    DBLibConnection connection;
     Properties properties;
 
     @Rule
@@ -99,7 +96,6 @@ public class GrToolkitProviderTest {
         rpcProviderRegistry = mock(RpcProviderRegistry.class);
         configDatastore = mock(DistributedDataStoreInterface.class);
         dbLibService = mock(DbLibService.class);
-        connection = mock(DBLibConnection.class);
 
         ActorContext actorContext = mock(ActorContext.class);
         MemberName memberName = MemberName.forName("Test");
@@ -108,11 +104,8 @@ public class GrToolkitProviderTest {
         when(configDatastore.getActorContext()).thenReturn(actorContext);
 
         try {
-            when(connection.isReadOnly()).thenReturn(false);
-            when(connection.isClosed()).thenReturn(false);
-            when(dbLibService.isActive()).thenReturn(true);
-            when(dbLibService.getConnection()).thenReturn(connection);
-        } catch(SQLException e) {
+            when(dbLibService.healthcheck()).thenReturn("{\"status\":\"healthy\",\"db-connection\":[{\"name\":\"172.17.0.2\",\"state\":\"healthy\"},{\"name\":\"172.17.0.2\",\"state\":\"unhealthy\"}]}");
+        } catch(Exception e) {
             fail();
         }
 
@@ -204,26 +197,11 @@ public class GrToolkitProviderTest {
     }
 
     @Test
-    public void databaseHealthWhenROTest() {
-        try {
-            when(connection.isReadOnly()).thenReturn(true);
-        } catch(SQLException e) {
-            fail();
-        }
-        ListenableFuture<RpcResult<DatabaseHealthOutput>> result = provider.databaseHealth(null);
-        try {
-            assertEquals("500", result.get().getResult().getStatus());
-        } catch(InterruptedException | ExecutionException e) {
-            fail();
-        }
-    }
-
-    @Test
     public void databaseHealthWhenExceptionTest() {
         try {
-            when(connection.isReadOnly()).thenThrow(new SQLException());
-        } catch(SQLException e) {
-            //expected
+            when(dbLibService.healthcheck()).thenThrow(new Exception());
+        } catch(Exception e) {
+            fail();
         }
         ListenableFuture<RpcResult<DatabaseHealthOutput>> result = provider.databaseHealth(null);
         try {

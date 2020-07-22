@@ -24,6 +24,7 @@ package org.onap.ccsdk.sli.plugins.grtoolkit.resolver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.json.JSONString;
 import org.onap.ccsdk.sli.core.dblib.DbLibService;
 import org.onap.ccsdk.sli.plugins.grtoolkit.connection.ConnectionManager;
 import org.onap.ccsdk.sli.plugins.grtoolkit.connection.ConnectionResponse;
@@ -124,7 +125,7 @@ public abstract class HealthResolver {
             ConnectionResponse response = ConnectionManager.getConnectionResponse(adminPath, ConnectionManager.HttpMethod.GET, null, null);
             Health health = (response.statusCode == 200) ? HEALTHY : Health.FAULTY;
             AdminHealth adminHealth = new AdminHealth(health, response.statusCode);
-            log.info("getAdminHealth(): Response: {}", response);
+            log.debug("getAdminHealth(): Response: {}", response);
             return adminHealth;
         } catch(IOException e) {
             log.error("getAdminHealth(): Problem getting ADM health.", e);
@@ -133,9 +134,8 @@ public abstract class HealthResolver {
     }
 
     /**
-     * Uses {@code DbLibService} to get a connection to the database. If
-     * {@code DbLibService} is active and the connection it returns is not read
-     * only, the database(s) is assumed to be healthy.
+     * Uses {@code DbLibService.healthcheck()} to get the health of the
+     * database cluster.
      *
      * @return an {@code DatabaseHealth} object with health of the database
      * @see org.onap.ccsdk.sli.plugins.grtoolkit.GrToolkitProvider
@@ -143,22 +143,20 @@ public abstract class HealthResolver {
      */
     public DatabaseHealth getDatabaseHealth() {
         log.info("getDatabaseHealth(): Determining database health...");
-        try (Connection connection = dbLib.getConnection()){
-            log.debug("getDatabaseHealth(): DBLib isActive(): {}", dbLib.isActive());
-            log.debug("getDatabaseHealth(): DBLib isReadOnly(): {}", connection.isReadOnly());
-            log.debug("getDatabaseHealth(): DBLib isClosed(): {}", connection.isClosed());
-            if(!dbLib.isActive() || connection.isClosed() || connection.isReadOnly()) {
-                log.warn("getDatabaseHealth(): Database is FAULTY");
+        try {
+            log.debug("getDatabaseHealth(): {}", dbLib.healthcheck());
+            JSONObject responseJson = new JSONObject(dbLib.healthcheck());
+            String responseValue = responseJson.getString("status");
+            log.debug("getDatabaseHealth(): Found value: {}", responseValue);
+            if(responseValue.equalsIgnoreCase(HEALTHY.toString())) {
+                return new DatabaseHealth(Health.HEALTHY);
+            } else {
                 return new DatabaseHealth(Health.FAULTY);
             }
-            log.info("getDatabaseHealth(): Database is HEALTHY");
-        } catch(SQLException e) {
-            log.error("getDatabaseHealth(): Database is FAULTY");
-            log.error("getDatabaseHealth(): Error", e);
+        } catch(Exception e) {
+            log.error("getDatabaseHealth(): Problem getting database health.",e);
             return new DatabaseHealth(Health.FAULTY);
         }
-
-        return new DatabaseHealth(HEALTHY);
     }
 
     /**

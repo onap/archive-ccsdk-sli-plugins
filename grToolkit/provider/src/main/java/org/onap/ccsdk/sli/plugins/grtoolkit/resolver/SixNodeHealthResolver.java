@@ -289,7 +289,7 @@ public class SixNodeHealthResolver extends HealthResolver {
      */
     @Override
     public void resolveSites() {
-        log.info("Map contains {} entries", memberMap.size());
+        log.debug("Map contains {} entries", memberMap.size());
         memberMap.forEach((key, value) -> resolveSiteForMember(value));
     }
 
@@ -307,7 +307,7 @@ public class SixNodeHealthResolver extends HealthResolver {
             } else {
                 actor.setSite("Site 2");
             }
-            log.info("resolveSiteForMember(): {} belongs to {}", actor.getNode(), actor.getSite());
+            log.debug("resolveSiteForMember(): {} belongs to {}", actor.getNode(), actor.getSite());
         } catch (NumberFormatException e) {
             log.error("resolveSiteForMember(): Could not parse member number for {}. Defaulting to Site 1.", actor.getNode());
             actor.setSite("resolveSiteForMember(): Site 1");

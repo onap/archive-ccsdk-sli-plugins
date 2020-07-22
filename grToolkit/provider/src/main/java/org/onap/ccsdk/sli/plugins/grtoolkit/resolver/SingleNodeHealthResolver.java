@@ -143,7 +143,7 @@ public class SingleNodeHealthResolver extends HealthResolver {
      */
     @Override
     public void resolveSites() {
-        log.info("Map contains {} entries", memberMap.size());
+        log.debug("Map contains {} entries", memberMap.size());
         memberMap.forEach((key, value) -> resolveSiteForMember(value));
     }
 
@@ -155,6 +155,6 @@ public class SingleNodeHealthResolver extends HealthResolver {
      */
     private void resolveSiteForMember(ClusterActor actor) {
         actor.setSite("Site 1");
-        log.info("resolveSiteForMember(): {} belongs to {}", actor.getNode(), actor.getSite());
+        log.debug("resolveSiteForMember(): {} belongs to {}", actor.getNode(), actor.getSite());
     }
 }
