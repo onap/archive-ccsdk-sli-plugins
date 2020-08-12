@@ -122,7 +122,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             loadPartners(partners);
             log.info("Partners support enabled");
         } catch (Exception e) {
-            log.warn("Partners file could not be read, Partner support will not be enabled.", e);
+            log.warn("Partners file could not be read, Partner support will not be enabled." + e.getMessage());
         }
 
         try (FileInputStream in = new FileInputStream(configDir + "/" + UEB_PROPERTIES_FILE_NAME)) {
@@ -131,7 +131,7 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
             uebServers = props.getProperty("servers");
             log.info("UEB support enabled");
         } catch (Exception e) {
-            log.warn("UEB properties could not be read, UEB support will not be enabled.", e);
+            log.warn("UEB properties could not be read, UEB support will not be enabled." + e.getMessage());
         }
         httpConnectTimeout = readOptionalInteger("HTTP_CONNECT_TIMEOUT_MS",DEFAULT_HTTP_CONNECT_TIMEOUT_MS);
         httpReadTimeout = readOptionalInteger("HTTP_READ_TIMEOUT_MS",DEFAULT_HTTP_READ_TIMEOUT_MS);

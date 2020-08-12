@@ -62,7 +62,7 @@ public class TemplateNode implements SvcLogicJavaPlugin {
         try (FileInputStream in = new FileInputStream(configDir + "/" + TEMPLATE_PROPERTIES_FILE_NAME)) {
             props.load(in);
         } catch (Exception e) {
-            logger.warn("Properties not loaded for template node, using sensible defaults", e);
+            logger.warn("Properties not loaded for template node, using sensible defaults" + e.getMessage());
         }
 
         // give sensible defaults for required properties
