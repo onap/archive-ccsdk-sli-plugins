@@ -36,6 +36,9 @@ public class Parameters {
     public Set<String> listNameList;
     public boolean skipSending;
     public boolean convertResponse;
+    public String keyStoreFileName;
+    public String keyStorePassword;
+    public boolean ssl;
     public String customHttpHeaders;
     public String partner;
     public Boolean dumpHeaders;
