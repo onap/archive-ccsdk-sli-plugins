@@ -38,6 +38,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -52,6 +53,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -222,6 +225,9 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         String skipSendingStr = paramMap.get(skipSendingMessage);
         p.skipSending = "true".equalsIgnoreCase(skipSendingStr);
         p.convertResponse = valueOf(parseParam(paramMap, "convertResponse", false, "true"));
+        p.keyStoreFileName = parseParam(paramMap, "keyStoreFileName", false, null);
+        p.keyStorePassword = parseParam(paramMap, "keyStorePassword", false, null);
+        p.ssl = p.keyStoreFileName != null && p.keyStorePassword != null;
         p.customHttpHeaders = parseParam(paramMap, "customHttpHeaders", false, null);
         p.partner = parseParam(paramMap, "partner", false, null);
         p.dumpHeaders = valueOf(parseParam(paramMap, "dumpHeaders", false, null));
@@ -781,9 +787,18 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
      */
     public HttpResponse sendHttpRequest(String request, Parameters p) throws SvcLogicException {
 
-        HttpsURLConnection.setDefaultHostnameVerifier((string, ssls) -> true);
+        SSLContext ssl = null;
+        if (p.ssl && p.restapiUrl.startsWith("https")) {
+            ssl = createSSLContext(p);
+        }
+        Client client;
+        if (ssl != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(ssl.getSocketFactory());
+            client = ClientBuilder.newBuilder().sslContext(ssl).hostnameVerifier((s, sslSession) -> true).build();
+        } else {
+            client = ClientBuilder.newBuilder().hostnameVerifier((s, sslSession) -> true).build();
+        }
 
-        Client client = ClientBuilder.newBuilder().hostnameVerifier((s, sslSession) -> true).build();
         setClientTimeouts(client);
         // Needed to support additional HTTP methods such as PATCH
         client.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
@@ -904,6 +919,23 @@ public class RestapiCallNode implements SvcLogicJavaPlugin {
         log.info("HTTP response: {}", r.body);
 
         return r;
+    }
+
+    protected SSLContext createSSLContext(Parameters p) {
+        try (FileInputStream in = new FileInputStream(p.keyStoreFileName)) {
+            HttpsURLConnection.setDefaultHostnameVerifier((string, ssls) -> true);
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            char[] pwd = p.keyStorePassword.toCharArray();
+            ks.load(in, pwd);
+            kmf.init(ks, pwd);
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(kmf.getKeyManagers(), null, null);
+            return ctx;
+        } catch (Exception e) {
+            log.error("Error creating SSLContext: {}", e.getMessage(), e);
+        }
+        return null;
     }
 
     protected void setFailureResponseStatus(SvcLogicContext ctx, String prefix, String errorMessage,
