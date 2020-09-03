@@ -38,7 +38,6 @@ import java.util.Properties;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.annotation.Nonnull;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -104,17 +103,19 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * API implementation of the {@code GrToolkitService} interface generated from
  * the gr-toolkit.yang model. The RPCs contained within this class are meant to
- * run in an architecture agnostic fashion, where the response is repeatable
- * and predictable across any given node configuration. To facilitate this,
- * health checking and failover logic has been abstracted into the
+ * run in an architecture agnostic fashion, where the response is repeatable and
+ * predictable across any given node configuration. To facilitate this, health
+ * checking and failover logic has been abstracted into the
  * {@code HealthResolver} classes.
  * <p>
  * Anyone who wishes to write a custom resolver for use with GR Toolkit should
- * extend the {@code HealthResolver} class. The currently provided resolvers
- * are useful references for further implementation.
+ * extend the {@code HealthResolver} class. The currently provided resolvers are
+ * useful references for further implementation.
  *
  * @author Anthony Haddox
  * @see GrToolkitService
@@ -144,20 +145,20 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     private HealthResolver resolver;
 
     /**
-     * Constructs the provider for the GR Toolkit API. Dependencies are
-     * injected using the GrToolkit.xml blueprint.
+     * Constructs the provider for the GR Toolkit API. Dependencies are injected
+     * using the GrToolkit.xml blueprint.
      *
-     * @param dataBroker The Data Broker
+     * @param dataBroker                  The Data Broker
      * @param notificationProviderService The Notification Service
-     * @param rpcProviderRegistry The RPC Registry
-     * @param configDatastore The Configuration Data Store provided by the controller
-     * @param dbLibService Reference to the controller provided DbLibService
+     * @param rpcProviderRegistry         The RPC Registry
+     * @param configDatastore             The Configuration Data Store provided by
+     *                                    the controller
+     * @param dbLibService                Reference to the controller provided
+     *                                    DbLibService
      */
-    public GrToolkitProvider(DataBroker dataBroker,
-                             NotificationPublishService notificationProviderService,
-                             RpcProviderRegistry rpcProviderRegistry,
-                             DistributedDataStoreInterface configDatastore,
-                             DbLibService dbLibService) {
+    public GrToolkitProvider(DataBroker dataBroker, NotificationPublishService notificationProviderService,
+            RpcProviderRegistry rpcProviderRegistry, DistributedDataStoreInterface configDatastore,
+            DbLibService dbLibService) {
         log.info("Creating provider for {}", APP_NAME);
         this.executor = Executors.newFixedThreadPool(1);
         this.dataBroker = dataBroker;
@@ -169,8 +170,8 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
     }
 
     /**
-     * Initializes some structures necessary to hold health check information
-     * and perform failovers.
+     * Initializes some structures necessary to hold health check information and
+     * perform failovers.
      */
     private void initialize() {
         log.info("Initializing provider for {}", APP_NAME);
@@ -183,38 +184,40 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
 
     /**
      * Creates the {@code Properties} object with the contents of
-     * gr-toolkit.properties, found at the {@code SDNC_CONFIG_DIR} directory,
-     * which should be set as an environment variable. If the properties file
-     * is not found, GR Toolkit will not function.
+     * gr-toolkit.properties, found at the {@code SDNC_CONFIG_DIR} directory, which
+     * should be set as an environment variable. If the properties file is not
+     * found, GR Toolkit will not function.
      */
     private void setProperties() {
         log.info("Loading properties from {}", PROPERTIES_FILE);
         properties = new Properties();
         File propertiesFile = new File(PROPERTIES_FILE);
-        if(!propertiesFile.exists()) {
+        if (!propertiesFile.exists()) {
             log.warn("setProperties(): Properties file not found.");
         } else {
-            try(FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
+            try (FileInputStream fileInputStream = new FileInputStream(propertiesFile)) {
                 properties.load(fileInputStream);
-                if(!properties.containsKey(PropertyKeys.SITE_IDENTIFIER)) {
+                if (!properties.containsKey(PropertyKeys.SITE_IDENTIFIER)) {
                     properties.put(PropertyKeys.SITE_IDENTIFIER, "Unknown Site");
                 }
-                httpProtocol = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL).trim()) ? "https://" : "http://";
+                httpProtocol = "true".equals(properties.getProperty(PropertyKeys.CONTROLLER_USE_SSL).trim())
+                        ? "https://"
+                        : "http://";
                 akkaConfig = properties.getProperty(PropertyKeys.AKKA_CONF_LOCATION).trim();
-                if(StringUtils.isEmpty(siteIdentifier)) {
+                if (StringUtils.isEmpty(siteIdentifier)) {
                     siteIdentifier = properties.getProperty(PropertyKeys.SITE_IDENTIFIER).trim();
                 }
                 log.info("setProperties(): Loaded properties.");
-            } catch(IOException e) {
+            } catch (IOException e) {
                 log.error("setProperties(): Error loading properties.", e);
             }
         }
     }
 
     /**
-     * Parses the akka.conf file used by the controller to define an akka
-     * cluster. This method requires the <i>seed-nodes</i> definition to exist
-     * on a single line.
+     * Parses the akka.conf file used by the controller to define an akka cluster.
+     * This method requires the <i>seed-nodes</i> definition to exist on a single
+     * line.
      */
     private void defineMembers() {
         member = configDatastore.getActorUtils().getCurrentMemberName().getName();
@@ -223,19 +226,19 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
         log.info("defineMembers(): Parsing akka.conf for cluster memberMap...");
         try {
             File akkaConfigFile = new File(this.akkaConfig);
-            try(FileReader fileReader = new FileReader(akkaConfigFile);
-                BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            try (FileReader fileReader = new FileReader(akkaConfigFile);
+                    BufferedReader bufferedReader = new BufferedReader(fileReader)) {
                 String line;
-                while((line = bufferedReader.readLine()) != null) {
-                    if(line.contains("seed-nodes =")) {
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (line.contains("seed-nodes =")) {
                         parseSeedNodes(line);
                         break;
                     }
                 }
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             log.error("defineMembers(): Couldn't load akka", e);
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             log.error("defineMembers(): akkaConfig is null. Check properties file and restart {} bundle.", APP_NAME);
             log.error("defineMembers(): NullPointerException", e);
         }
@@ -266,7 +269,7 @@ public class GrToolkitProvider implements AutoCloseable, GrToolkitService, DataT
      * @param changes Data tree changes.
      */
     @Override
-    public void onDataTreeChanged(@Nonnull Collection changes) {
+    public void onDataTreeChanged(@NonNull Collection changes) {
         log.info("onDataTreeChanged(): No changes.");
     }
 
