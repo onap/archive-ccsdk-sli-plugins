@@ -28,6 +28,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -57,6 +58,10 @@ public final class XmlParser {
         Handler handler = new Handler(listNameList);
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
+
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             SAXParser saxParser = factory.newSAXParser();
             InputStream in = new ByteArrayInputStream(s.getBytes());
             saxParser.parse(in, handler);
