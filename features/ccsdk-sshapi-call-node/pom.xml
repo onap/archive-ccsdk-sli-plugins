@@ -11,15 +11,11 @@
 
     <groupId>org.onap.ccsdk.sli.plugins</groupId>
     <artifactId>ccsdk-sshapi-call-node</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>feature</packaging>
 
     <name>ccsdk-sli-plugins :: sshapi-call-node :: ${project.artifactId}</name>
     <!--
-    <properties>
-        <ccsdk.sli.core.version>${project.version}</ccsdk.sli.core.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
